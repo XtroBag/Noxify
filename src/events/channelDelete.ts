@@ -14,6 +14,7 @@ export = {
 
       if (guildData.loggingChannel === channel.id) {
         guildData.loggingActive = false;
+        guildData.loggingChannel = "";
 
         await guildData.save();
       }

@@ -1,4 +1,4 @@
-export interface GuildData {
+export interface ServerData {
   name: string;
   guildID: string;
   loggingChannel: string;

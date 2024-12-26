@@ -1,11 +1,11 @@
 import { Schema, SchemaTypes } from "mongoose";
-import { GuildData } from "../types/Database";
+import { ServerData } from "../types/Database";
 
-export const GuildSchema = new Schema<GuildData>({
+export const ServerSchema = new Schema<ServerData>({
   name: { type: String, required: true },
   guildID: { type: String, required: true },
-  loggingChannel: { type: SchemaTypes.String, required: true, default: '' },
-  loggingActive: { type: SchemaTypes.Boolean, required: true, default: true }
+  loggingChannel: { type: SchemaTypes.String, default: '' },
+  loggingActive: { type: SchemaTypes.Boolean, default: false }
 });
 
 

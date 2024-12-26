@@ -1,5 +1,3 @@
-# Noxify: A Collaborative Project by XtroBag and BroBoiler
-
 <p align="center">
   <img src="banner.png" alt="Noxify's Banner">
 </p>

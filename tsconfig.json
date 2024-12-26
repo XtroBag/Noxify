@@ -19,7 +19,6 @@
     "removeComments": true,
     "typeRoots": ["node_modules/@types", "./handler/types/ProcessEnv.d.ts"],
     "baseUrl": "./",
-    "lib": ["esnext", "dom"]
   },
   "files": ["src/index.ts"],
   "include": ["./**/*.ts"],

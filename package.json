@@ -1,7 +1,7 @@
 {
-  "name": "discordjs-command-handler",
+  "name": "noxify",
   "version": "1.0.0",
-  "description": "A comprehensive TypeScript command handler for Discord.js, featuring slash commands, prefix commands, message events, automatic intents, and more.",
+  "description": "A silly app coded by XtroBag",
   "main": "src/index.ts",
   "scripts": {
     "clean-windows": "rd /s /q dist",
@@ -12,7 +12,7 @@
     "cs": "npm run compile && npm run start"
   },
   "keywords": [],
-  "author": "Lukas Baum",
+  "author": "XtroBag",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.12.12",

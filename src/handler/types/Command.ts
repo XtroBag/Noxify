@@ -65,15 +65,15 @@ export interface SlashCommandModule extends BaseCommandModule {
     type: CommandTypes.SlashCommand;
     register: RegisterTypes;
     data: SlashCommandBuilder;
-    autocomplete?: (interaction: AutocompleteInteraction, mongodb?: Mongoose) => Promise<void>;
-    execute: (client: DiscordClient, interaction: ChatInputCommandInteraction<'cached'>, mongodb?: Mongoose) => Promise<void>;
+    autocomplete?: (interaction: AutocompleteInteraction, mongodb?: Mongoose) => Promise<any>; // used to be Promise<void>;
+    execute: (client: DiscordClient, interaction: ChatInputCommandInteraction<'cached'>, mongodb?: Mongoose) => Promise<any>; // used to be Promise<void>;
 }
 
 export interface ContextMenuCommandModule extends BaseCommandModule {
     type: CommandTypes.ContextMenu;
     register: RegisterTypes;
     data: ContextMenuCommandBuilder;
-    execute: (client: DiscordClient, interaction: ContextMenuCommandInteraction<'cached'>, mongodb?: Mongoose) => Promise<void>;
+    execute: (client: DiscordClient, interaction: ContextMenuCommandInteraction<'cached'>, mongodb?: Mongoose) => Promise<any>; // used to be Promise<void>;
 }
 
 export interface PrefixCommandModule extends BaseCommandModule {
@@ -82,7 +82,7 @@ export interface PrefixCommandModule extends BaseCommandModule {
     category: string;
     permissions?: string[];
     type: CommandTypes.PrefixCommand;
-    execute: (client: DiscordClient, message: Message, args: string[], mongodb?: Mongoose) => Promise<void>;
+    execute: (client: DiscordClient, message: Message, args: string[], mongodb?: Mongoose) => Promise<any>; // used to be Promise<void>;
 }
 
 export interface MessageCommandModule extends BaseCommandModule {
@@ -90,7 +90,7 @@ export interface MessageCommandModule extends BaseCommandModule {
     aliases?: string[];
     permissions?: string[];
     type: CommandTypes.MessageCommand;
-    execute: (client: DiscordClient, message: Message, args: string[], mongodb?: Mongoose) => Promise<void>;
+    execute: (client: DiscordClient, message: Message, args: string[], mongodb?: Mongoose) => Promise<any>; // used to be Promise<void>;
 }
 
 export interface PingCommandModule extends BaseCommandModule {
@@ -98,7 +98,7 @@ export interface PingCommandModule extends BaseCommandModule {
     aliases?: string[];
     permissions?: string[];
     type: CommandTypes.PingCommand;
-    execute: (client: DiscordClient, message: Message, args: string[], mongodb?: Mongoose) => Promise<void>;
+    execute: (client: DiscordClient, message: Message, args: string[], mongodb?: Mongoose) => Promise<any>; // used to be Promise<void>;
 }
 
 export interface RegisterCommandOptions {

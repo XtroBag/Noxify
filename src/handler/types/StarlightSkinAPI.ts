@@ -7,6 +7,7 @@ export enum RenderCrops {
 }
 
 export enum RenderTypes {
+  Default = "default",
   Marching = "marching",
   Walking = "walking",
   Crouching = "crouching",
@@ -35,6 +36,10 @@ export enum RenderTypes {
 
 type CommonRenderCrops = RenderCrops.Full | RenderCrops.Bust | RenderCrops.Face;
 
+interface DefaultRenderType {
+  type: RenderTypes.Default;
+  crop: CommonRenderCrops;
+}
 interface MarchingRenderType {
   type: RenderTypes.Marching;
   crop: CommonRenderCrops;
@@ -133,6 +138,7 @@ interface SkinRenderType {
 }
 
 export type SkinRenderOptions =
+  | DefaultRenderType
   | MarchingRenderType
   | WalkingRenderType
   | CrouchingRenderType

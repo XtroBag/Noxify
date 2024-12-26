@@ -3,7 +3,7 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../../../handler";
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ApplicationIntegrationType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import {
   RenderCrops,
   RenderTypes,
@@ -13,6 +13,11 @@ import { Colors } from "../../../config";
 
 // Helper function to map RenderTypes to their allowed RenderCrops
 const renderCropsForType = {
+  [RenderTypes.Default]: [
+    RenderCrops.Full,
+    RenderCrops.Bust,
+    RenderCrops.Face,
+  ],
   [RenderTypes.Marching]: [
     RenderCrops.Full,
     RenderCrops.Bust,
@@ -97,6 +102,8 @@ export = {
       .setDescription(
         "Get some awesome minecraft avatar pictures!"
       )
+      .setIntegrationTypes([ApplicationIntegrationType.GuildInstall, ApplicationIntegrationType.UserInstall])
+      .setContexts([InteractionContextType.Guild, InteractionContextType.PrivateChannel])
       .addStringOption((option) =>
         option
           .setName("name")
@@ -124,10 +131,12 @@ export = {
           .setAutocomplete(true)
       ),
   
-    async execute(client, interaction, db): Promise<void> {
+    async execute(client, interaction, db): Promise<any> {
       const playerName = interaction.options.getString("name");
       const renderType = interaction.options.getString("type");
       const renderCrop = interaction.options.getString("crop");
+
+      await interaction.deferReply();
   
       try {
         // Fetch the skin render as a Buffer
@@ -135,10 +144,10 @@ export = {
           renderType as RenderTypes,
           playerName,
           renderCrop as RenderCrops
-        );
+        )
   
         // Send the skin render as an embed
-        await interaction.reply({
+        await interaction.editReply({
           embeds: [
             new EmbedBuilder()
               .setImage("attachment://skin.png")
@@ -154,14 +163,12 @@ export = {
       } catch (error) {
         // Check if the error message contains 'Player not found' or a related error message
         if (error.message.includes("Player not found")) {
-          await interaction.reply({
+          await interaction.editReply({
             content: `The Minecraft player "${playerName}" could not be found. Please check the username and try again.`,
-            ephemeral: true, // Make it ephemeral to avoid cluttering the channel
           });
         } else {
-          await interaction.reply({
+          await interaction.editReply({
             content: "Failed to fetch skin render. Please try again later.",
-            ephemeral: true, // Make it ephemeral to avoid cluttering the channel
           });
         }
       }

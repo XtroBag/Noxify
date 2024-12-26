@@ -1,2 +1,1 @@
-This is the offical readme of Noxify
-BroBoiler was here :)
+Noxify is a Discord App created by XtroBag and BroBoiler, it's still in development but it so far it has tons of activities and moderation, including a logging channel, an economy setup, and tons of otber fun commands.

@@ -16,10 +16,10 @@ Noxify is a Discord bot currently under active development by XtroBag and BroBoi
     * `work`: Earn in-game currency by completing daily tasks.
 
 * **Utility & Fun:**
-    * `mcskin`: View Minecraft player skins.
+    * `mcskin`: Get customized Minecraft player skins.
     * `rps`: Play a classic game of Rock-Paper-Scissors.
     * `say`: Make the bot speak in a designated channel.
-    * `github`: Access our GitHub repository for the latest updates and source code.
+    * `github`: Access GitHub users information.
     * `help`: Get a list of available commands and their descriptions.
 
 * **Moderation & Administration:**

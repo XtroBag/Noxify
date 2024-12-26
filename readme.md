@@ -1,1 +1,5 @@
+<p align="center">
+  <img src="logo.png" alt="Noxify's Banner">
+</p>
+
 Noxify is a Discord App created by XtroBag and BroBoiler, it's still in development but so far it has tons of activities and moderation, including a logging channel, an economy setup, and tons of other fun commands.

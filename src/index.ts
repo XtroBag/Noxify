@@ -3,10 +3,6 @@ import { AutomaticIntents } from "./handler";
 import { DiscordClient } from "./handler/util/DiscordClient";
 
 export const client: DiscordClient = new DiscordClient({
-    // "AutomaticIntents" will provide your client with all necessary Intents.
-    // By default, two specific Intents are enabled (Guilds, & MessageContent).
-    // For details or modifications, see the config.ts file.
-    // Manually adding Intents also works.
     intents: AutomaticIntents
 });
 

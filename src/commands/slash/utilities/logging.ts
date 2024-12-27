@@ -44,6 +44,10 @@ export = {
                 {
                   id: interaction.guild.roles.everyone.id,
                   deny: ['ViewChannel', 'SendMessages'],
+                },
+                { 
+                  id: interaction.guild.members.me.id,
+                  allow: ['ViewChannel', 'SendMessages', 'EmbedLinks', 'ManageChannels']
                 }
               ],
             });

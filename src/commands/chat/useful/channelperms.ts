@@ -7,7 +7,7 @@ export = {
   category: "useful",
   ownerOnly: true,
   type: CommandTypes.PrefixCommand,
-  async execute(client, message, args, db): Promise<void> {
+  async execute({ client, message, args }) {
     const channel = message.mentions.channels.first();
 
     if (channel?.type === ChannelType.GuildText) {

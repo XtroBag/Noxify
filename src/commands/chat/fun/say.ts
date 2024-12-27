@@ -7,7 +7,7 @@ export = {
   category: "fun",
   
   type: CommandTypes.PrefixCommand,
-  async execute(client, message, args, db): Promise<void> {
+  async execute({ client, message, args }) {
 
     const messageToSay = args.join(" ");
 

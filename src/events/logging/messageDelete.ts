@@ -3,7 +3,6 @@ import {
   channelMention,
   EmbedBuilder,
   Events,
-  Message,
   TextChannel,
   userMention,
 } from "discord.js";
@@ -12,7 +11,7 @@ import { Colors } from "../../config";
 
 export = {
   name: Events.MessageDelete,
-  async execute(client, message: Message): Promise<any> {
+  async execute({ client, args: [message] }) {
     try {
       if (message.author.bot) return;
 
@@ -95,4 +94,4 @@ export = {
       console.error("Error handling message delete event:", error);
     }
   },
-} as EventModule;
+} as EventModule<"messageDelete">;

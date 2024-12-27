@@ -1,6 +1,5 @@
 import { glob } from "glob";
 import Logger from "./Logger";
-import { client } from "../../index";
 import { Interaction } from "discord.js";
 import { DiscordClient } from "./DiscordClient";
 import { componentsFolderName } from "../../config";

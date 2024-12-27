@@ -131,7 +131,7 @@ export = {
           .setAutocomplete(true)
       ),
   
-    async execute(client, interaction, db): Promise<any> {
+    async execute({ client, interaction }) {
       const playerName = interaction.options.getString("name");
       const renderType = interaction.options.getString("type");
       const renderCrop = interaction.options.getString("crop");

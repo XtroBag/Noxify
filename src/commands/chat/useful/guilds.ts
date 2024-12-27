@@ -8,7 +8,7 @@ export = {
   category: "useful",
   ownerOnly: true,
   type: CommandTypes.PrefixCommand,
-  async execute(client, message, args, db): Promise<void> {
+  async execute({ client, message, args }) {
     const guilds = client.guilds.cache
       .sort((a, b) => b.memberCount - a.memberCount)
       .first(10);

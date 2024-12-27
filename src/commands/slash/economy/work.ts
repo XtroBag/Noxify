@@ -17,7 +17,7 @@ export = {
     .setName("work")
     .setDescription("Work a job to earn some currency"),
 
-  async execute(client, interaction, db): Promise<void> {
+  async execute({ client, interaction }) {
     const economy = await getEconomy({ guildID: interaction.guildId });
 
     if (!economy) {

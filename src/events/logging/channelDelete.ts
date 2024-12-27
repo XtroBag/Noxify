@@ -1,16 +1,14 @@
 import { EventModule } from "../../handler";
-import { Events, GuildChannel } from "discord.js";
-import { Server } from "../../handler/schemas/models/Models"; // Assuming you have a model like this for the server schema.
+import { ChannelType, Events, GuildChannel } from "discord.js";
+import { Server } from "../../handler/schemas/models/Models";
 
 export = {
   name: Events.ChannelDelete,
-  async execute(client, channel: GuildChannel): Promise<void> {
-    try {
-      const guildData = await Server.findOne({ guildID: channel.guild.id });
+  async execute({ client, args: [channel] }): Promise<void> {
+    if (channel.type === ChannelType.GuildText) {
+      const guildData = await Server.findOne({ guildID: channel.guildId });
 
-      if (!guildData) {
-        return;
-      }
+      if (!guildData) return;
 
       if (guildData.loggingChannel === channel.id) {
         guildData.loggingActive = false;
@@ -18,8 +16,6 @@ export = {
 
         await guildData.save();
       }
-    } catch (error) {
-      console.error("Error handling channel delete:", error);
     }
   },
-} as EventModule;
+} as EventModule<"channelDelete">;

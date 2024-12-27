@@ -16,7 +16,7 @@ export = {
     .setName("leaderboard")
     .setDescription("Check the server's most top richest members."),
 
-  async execute(client, interaction, db): Promise<void> {
+  async execute({ client, interaction }) {
     const economyData = await getEconomy({ guildID: interaction.guildId });
 
     if (!economyData) {

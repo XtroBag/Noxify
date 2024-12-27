@@ -29,7 +29,7 @@ export = {
         .setMinValue(1)
     ),
 
-  async execute(client, interaction, db): Promise<void> {
+  async execute({ client, interaction }) {
     const member =
       interaction.options.getMember("member") ?? interaction.member;
     const amount = interaction.options.getNumber("amount");

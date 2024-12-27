@@ -31,7 +31,7 @@ export = {
         .setRequired(true)
     )
     .setDescription("Setup an economy for the server"),
-  async execute(client, interaction, db): Promise<void> {
+  async execute({ client, interaction }) {
     const action = interaction.options.getString("action");
 
     // NEED TO DO:

@@ -46,7 +46,7 @@ export = {
         .setMinValue(1)
     ),
 
-  async execute(client, interaction, db): Promise<void> {
+  async execute({ client, interaction }) {
     const from = interaction.options.getString("from");
     const to = interaction.options.getString("to");
 

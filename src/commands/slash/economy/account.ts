@@ -36,7 +36,7 @@ export = {
           "Check other user's banking information, such as how much they have in their bank or in their wallet."
         )
     ),
-  async execute(client, interaction, db): Promise<void> {
+  async execute({ client, interaction }) {
     const member =
       interaction.options.getMember("member") ?? interaction.member;
 

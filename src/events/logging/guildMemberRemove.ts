@@ -1,13 +1,12 @@
 import { Server } from "../../handler/schemas/models/Models";
 import { EventModule } from "../../handler";
 import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   ChannelType,
   EmbedBuilder,
   Events,
-  GuildMember,
   inlineCode,
   userMention,
 } from "discord.js";
@@ -15,7 +14,7 @@ import { Colors } from "../../config";
 
 export = {
   name: Events.GuildMemberRemove,
-  async execute(client, member: GuildMember): Promise<any> {
+  async execute({ client, args: [member] }) {
     const guild = await Server.findOne({ guildID: member.guild.id });
 
     const loggingChannel = guild.get("loggingChannel");
@@ -46,14 +45,19 @@ export = {
         )
         .setThumbnail(member.user.avatarURL({ extension: "png" }) || "");
 
-          const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-                new ButtonBuilder()
-                .setCustomId(`loggingBan-${member.id}`)
-                .setLabel("Ban")
-                .setStyle(ButtonStyle.Danger)
-              );
+      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`loggingBan-${member.id}`)
+          .setLabel("Ban")
+          .setStyle(ButtonStyle.Danger)
+      );
 
-      await channel.send({ embeds: [embed], components: [row] });
+      await channel.send({
+        embeds: [embed],
+        components: [row],
+        flags: ["SuppressNotifications"],
+        allowedMentions: { repliedUser: false },
+      });
     }
   },
-} as EventModule;
+} as EventModule<"guildMemberRemove">;

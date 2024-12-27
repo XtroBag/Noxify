@@ -7,7 +7,7 @@ export = {
   aliases: ["gh"],
   category: "general",
   type: CommandTypes.PrefixCommand,
-  async execute(client, message, args, db): Promise<any> {
+  async execute({ client, message, args }) {
     const name = args.join(" ");
 
     if (!name) {

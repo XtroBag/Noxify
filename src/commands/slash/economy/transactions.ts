@@ -20,7 +20,7 @@ export = {
     .setDescription("Check personal transactions")
     .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages),
 
-  async execute(client, interaction, db): Promise<void> {
+  async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
 
     const economyData = await getEconomy({ guildID: interaction.guildId });

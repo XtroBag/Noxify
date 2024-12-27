@@ -26,7 +26,6 @@ import {
   User,
   InteractionContextType,
   ApplicationIntegrationType,
-  codeBlock,
 } from "discord.js";
 
 export = {
@@ -50,11 +49,7 @@ export = {
         .setDescription("the member to search for")
         .setRequired(true)
     ),
-  async execute(
-    client,
-    interaction: ChatInputCommandInteraction<"cached">,
-    db
-  ): Promise<void> {
+  async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
 
     const member = interaction.options.getMember("member");

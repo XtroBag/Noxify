@@ -9,7 +9,7 @@ export = {
   disabled: false,
   ownerOnly: false,
   type: CommandTypes.PrefixCommand,
-  async execute(client, message, args, db): Promise<void> {
+  async execute({ client, message, args }) {
     if (message.channel.type === ChannelType.GuildText) {
       // Create the initial embed with instructions
       const embed = new EmbedBuilder()

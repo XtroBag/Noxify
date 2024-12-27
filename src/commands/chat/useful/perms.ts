@@ -14,7 +14,7 @@ export = {
   aliases: ["p"],
   category: 'useful',
   type: CommandTypes.PrefixCommand,
-  async execute(client, message, args, prisma): Promise<void> {
+  async execute({ client, message, args }) {
     const user = message.mentions.users.first();
 
     // If no user is mentioned, reply with a message asking for a user

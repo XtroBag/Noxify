@@ -19,7 +19,7 @@ export = {
         .setDescription("enable or disable the logging system")
         .setRequired(true)
     ),
-  async execute(client, interaction, db) {
+  async execute({ client, interaction }) {
     const status = interaction.options.getBoolean("status");
 
     if (interaction.member.permissions.has("ManageGuild")) {

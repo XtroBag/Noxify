@@ -1,5 +1,5 @@
 import { Intent, ConsoleColor } from "./handler";
-import { EmbedBuilder, Interaction } from "discord.js";
+import { ChatInputCommandInteraction, ContextMenuCommandInteraction, EmbedBuilder } from "discord.js";
 
 // Message command prefix.
 export const prefix: string = ".";
@@ -44,7 +44,7 @@ export function getLoggerErrorMessage(message: string): string {
 
 // Generates an embed when a user lacks the necessary conditions to execute a command.
 export function getCommandNotAllowedEmbed(
-  interaction: Interaction
+  interaction: ChatInputCommandInteraction<"cached"> | ContextMenuCommandInteraction<'cached'>
 ): EmbedBuilder {
   return new EmbedBuilder()
     .setTitle("You are not allowed to use this command!")

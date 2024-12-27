@@ -6,7 +6,7 @@ export = {
   type: CommandTypes.MessageCommand,
   disabled: false,
   ownerOnly: false,
-  async execute(client, message: Message): Promise<void> {
+  async execute({ client, message }) {
     await message.reply(`Hello <@${message.author.id}>`);
-    }
+  },
 } as MessageCommandModule;

@@ -7,7 +7,6 @@ import {
   ChannelType,
   EmbedBuilder,
   Events,
-  GuildMember,
   inlineCode,
   userMention,
 } from "discord.js";
@@ -15,7 +14,7 @@ import { Colors } from "../../config";
 
 export = {
   name: Events.GuildMemberAdd,
-  async execute(client, member: GuildMember): Promise<any> {
+  async execute({ client, args: [member] }) {
     const guild = await Server.findOne({ guildID: member.guild.id });
 
     const loggingChannel = guild.get("loggingChannel");
@@ -52,12 +51,17 @@ export = {
           .setLabel("Kick")
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-        .setCustomId(`loggingBan-${member.id}`)
-        .setLabel("Ban")
-        .setStyle(ButtonStyle.Danger)
+          .setCustomId(`loggingBan-${member.id}`)
+          .setLabel("Ban")
+          .setStyle(ButtonStyle.Danger)
       );
 
-      await channel.send({ embeds: [embed], components: [row] });
+      await channel.send({
+        embeds: [embed],
+        components: [row],
+        flags: ["SuppressNotifications"],
+        allowedMentions: { repliedUser: false },
+      });
     }
   },
-} as EventModule;
+} as EventModule<"guildMemberAdd">;

@@ -50,31 +50,47 @@ export = {
 
           if (loggingChannel)
             return await interaction.reply({
-              embeds: [new EmbedBuilder().setColor(Colors.Warning).setDescription(`This server has a logging channel already setup.`)]
+              embeds: [
+                new EmbedBuilder()
+                  .setColor(Colors.Warning)
+                  .setDescription(
+                    `This server has a logging channel already setup.`
+                  ),
+              ],
             });
 
           return await interaction.reply({
-            embeds: [new EmbedBuilder().setColor(Colors.Success).setDescription(`You're servers logging channel has been enabled!`)]
+            embeds: [
+              new EmbedBuilder()
+                .setColor(Colors.Success)
+                .setDescription(
+                  `You're servers logging channel has been enabled!`
+                ),
+            ],
           });
         } else if (status === false) {
           if (loggingChannel) {
             // Delete the logging channel
-            const channel = await interaction.guild.channels.fetch(loggingChannel);
+            const channel = await interaction.guild.channels.fetch(
+              loggingChannel
+            );
             if (channel) {
-              await channel.delete('Logging system disabled')
+              await channel.delete("Logging system disabled");
             }
 
             // Update the server settings to disable logging
             await Server.updateOne(
               { guildID: interaction.guildId },
-              { loggingActive: false, loggingChannel: '' }
+              { loggingActive: false, loggingChannel: "" }
             );
 
             return await interaction.reply({
               embeds: [
                 new EmbedBuilder()
                   .setColor(Colors.Success)
-                  .setDescription("Logging has been disabled and the logging channel has been deleted."),
+                  .setDescription(
+                    "Logging has been disabled and the logging channel has been deleted."
+                  ),
               ],
             });
           }
@@ -87,12 +103,6 @@ export = {
                 .setDescription("Logging is not enabled in this server."),
             ],
           });
-
-
-
-
-
-
         }
       } catch (error) {
         console.error("Error updating logging settings:", error);
@@ -102,7 +112,11 @@ export = {
       }
     } else {
       await interaction.reply({
-        embeds: [new EmbedBuilder().setColor(Colors.Error).setDescription(`You are missing "ManageGuild" permissions`)]
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Error)
+            .setDescription(`You are missing "ManageGuild" permissions`),
+        ],
       });
     }
   },

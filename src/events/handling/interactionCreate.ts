@@ -1,7 +1,7 @@
-import { EventModule } from "../handler";
+import { EventModule } from "../../handler";
 import { Events, Interaction } from "discord.js";
-import { handleComponents } from "../handler/util/handleComponents";
-import { handleInteractionCommands } from "../handler/util/handleInteractionCommands";
+import { handleComponents } from "../../handler/util/handleComponents";
+import { handleInteractionCommands } from "../../handler/util/handleInteractionCommands";
 
 export = {
     name: Events.InteractionCreate,

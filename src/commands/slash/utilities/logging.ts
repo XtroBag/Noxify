@@ -4,7 +4,7 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../../../handler";
-import { ChannelType, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder, PermissionOverwrites, SlashCommandBuilder } from "discord.js";
 import { Colors } from "../../../config";
 
 export = {
@@ -40,6 +40,12 @@ export = {
               topic:
                 "📣 **WARNING** if you delete this channel logging will be deactivated!",
               type: ChannelType.GuildText,
+              permissionOverwrites: [
+                {
+                  id: interaction.guild.roles.everyone.id,
+                  deny: ['ViewChannel', 'SendMessages'],
+                }
+              ],
             });
 
             await Server.updateOne(

@@ -1,6 +1,6 @@
-import { EventModule } from "../handler";
+import { EventModule } from "../../handler";
 import { Events, GuildChannel } from "discord.js";
-import { Server } from "../handler/schemas/models/Models"; // Assuming you have a model like this for the server schema.
+import { Server } from "../../handler/schemas/models/Models"; // Assuming you have a model like this for the server schema.
 
 export = {
   name: Events.ChannelDelete,

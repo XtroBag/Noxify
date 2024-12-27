@@ -5,7 +5,7 @@ export interface ComponentModule {
     id?: string;
     group?: string;
     type: ComponentTypes;
-    execute: (client: DiscordClient, interaction: any) => Promise<void>;
+    execute: (client: DiscordClient, interaction: any) => Promise<any>;
 }
 
 export interface ComponentCollections {

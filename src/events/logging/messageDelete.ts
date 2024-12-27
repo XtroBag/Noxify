@@ -1,4 +1,4 @@
-import { EventModule } from "../handler";
+import { EventModule } from "../../handler";
 import {
   channelMention,
   EmbedBuilder,
@@ -7,12 +7,12 @@ import {
   TextChannel,
   userMention,
 } from "discord.js";
-import { Server } from "../handler/schemas/models/Models";
-import { Colors } from "../config";
+import { Server } from "../../handler/schemas/models/Models";
+import { Colors } from "../../config";
 
 export = {
   name: Events.MessageDelete,
-  async execute(client, message: Message): Promise<void> {
+  async execute(client, message: Message): Promise<any> {
     try {
       if (message.author.bot) return;
 
@@ -34,12 +34,19 @@ export = {
         if (loggingChannel && loggingChannel.isTextBased()) {
           const embed = new EmbedBuilder()
             .setColor(Colors.Normal)
+            .setTitle("Message Deleted")
             .setAuthor({
               name: message.guild.name,
               iconURL: message.guild.iconURL({ extension: "png" }),
             })
             .setThumbnail(message.author.displayAvatarURL({ extension: "png" }))
-            .setDescription(`Member: ${userMention(message.author.id)}\nDeleted In: ${channelMention(message.channelId)}\nMessage: ${message.content || "*No content*"}\nTime: ${new Date().toLocaleString()}`);
+            .setDescription(
+              `Member: ${userMention(
+                message.author.id
+              )}\nDeleted In: ${channelMention(message.channelId)}\nMessage: ${
+                message.content || "*No content*"
+              }\nTime: ${new Date().toLocaleString()}`
+            );
 
           const videoUrls = [];
           const pictureUrls = [];
@@ -58,15 +65,23 @@ export = {
           }
 
           if (pictureUrls.length > 0) {
-            embed.addFields({ name: "Pictures:", value: pictureUrls.join("\n"), inline: true });
+            embed.addFields({
+              name: "Pictures:",
+              value: pictureUrls.join("\n"),
+              inline: true,
+            });
           }
 
           if (videoUrls.length > 0) {
-            embed.addFields({ name: "Videos:", value: videoUrls.join("\n"), inline: true });
+            embed.addFields({
+              name: "Videos:",
+              value: videoUrls.join("\n"),
+              inline: true,
+            });
           }
 
           if (videoUrls.length === 0 && pictureUrls.length === 0) {
-            embed.addFields({ name: "Attachments:", value: "No Attachments"});
+            embed.addFields({ name: "Attachments:", value: "No Attachments" });
           }
 
           await loggingChannel.send({

@@ -33,10 +33,12 @@ export async function handleComponents(client: DiscordClient, interaction: Inter
 
     const component: ComponentModule | undefined = client.components[getComponentType(interaction)].get(componentId);
 
-    const errorIdMessage = `group=${componentId === customId ? "none" : componentId} id:${customId}`;
-    if (!component) {
-        return Logger.warn(`No component matching ${errorIdMessage} was found.`);
-    }
+    if (!component) return;
+
+     const errorIdMessage = `group=${componentId === customId ? "none" : componentId} id:${customId}`;
+    // if (!component) {
+    //     return Logger.warn(`No component matching ${errorIdMessage} was found.`);
+    // }
 
     if (interaction.isModalSubmit() && component.group) {
         return Logger.error(`The parameter group in ${errorIdMessage} is not allowed.`);

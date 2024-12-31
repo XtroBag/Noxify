@@ -13,8 +13,8 @@ import { parse } from "date-fns";
 export = {
   id: "accountBack",
   type: ComponentTypes.Button,
-  async execute(client, button: ButtonInteraction<"cached">): Promise<void> {
-    const userId = button.customId.split("-")[1];
+  async execute(client, button: ButtonInteraction<"cached">, extras): Promise<void> {
+    const userId = extras[0];
 
     const userData = await button.guild.members.fetch({ user: userId });
 
@@ -62,15 +62,15 @@ export = {
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
-        .setCustomId(`accountRefresh-${userId}`)
+        .setCustomId(`accountRefresh|${userId}`)
         .setLabel("Refresh")
         .setStyle(ButtonStyle.Secondary),
       new ButtonBuilder()
-        .setCustomId(`accountInventory-${userId}`)
+        .setCustomId(`accountInventory|${userId}`)
         .setLabel("Inventory")
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
-        .setCustomId(`accountPrivacy-${userId}`)
+        .setCustomId(`accountPrivacy|${userId}`)
         .setLabel("Privacy")
         .setStyle(ButtonStyle.Danger)
     );

@@ -85,6 +85,7 @@ export = {
       .slice(startTransactionIndex, endTransactionIndex)
       .map((transaction) => {
         return `**Description:** ${transaction.description || "No description"}
+        **Type:** ${transaction.type}
         **Amount:** ${transaction.amount || "No amount"}
         **Time:** ${convertTimeToDiscordTimestamp(transaction.time)}`;
       })
@@ -99,12 +100,12 @@ export = {
 
     const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
       new ButtonBuilder()
-        .setCustomId(`transactions-back-page-${currentPageIndex - 1}`)
+        .setCustomId(`transactions_back_page_${currentPageIndex - 1}`)
         .setLabel("⇽")
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(currentPageIndex === 0),
       new ButtonBuilder()
-        .setCustomId(`transactions-forward-page-${currentPageIndex + 1}`)
+        .setCustomId(`transactions_forward_page_${currentPageIndex + 1}`)
         .setLabel("⇾")
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(currentPageIndex === totalPages - 1)
@@ -129,14 +130,17 @@ export = {
       const customId = buttonInteraction.customId;
       let newPageIndex = currentPageIndex;
 
-      if (customId.startsWith("transactions-back-page")) {
+      // Update page index based on the button clicked
+      if (customId.startsWith("transactions_back_page_")) {
         newPageIndex = Math.max(0, currentPageIndex - 1);
-      } else if (customId.startsWith("transactions-forward-page")) {
+      } else if (customId.startsWith("transactions_forward_page_")) {
         newPageIndex = Math.min(totalPages - 1, currentPageIndex + 1);
       }
 
+      // Update the page index globally
       currentPageIndex = newPageIndex;
 
+      // Update the transaction list for the new page
       const startIdx = currentPageIndex * transactionsPerPage;
       const endIdx = startIdx + transactionsPerPage;
       const transactionsForNewPage = userTransactions
@@ -145,6 +149,7 @@ export = {
           return `**Description:** ${
             transaction.description || "No description"
           }
+          **Type:** ${transaction.type}
           **Amount:** ${transaction.amount || "No amount"}
           **Time:** ${convertTimeToDiscordTimestamp(transaction.time)}`;
         })
@@ -152,38 +157,39 @@ export = {
 
       const newPageInfo = `Page ${currentPageIndex + 1} of ${totalPages}`;
 
+      // Create a new embed with updated content
       const updatedEmbed = new EmbedBuilder()
         .setTitle("Banking Transactions")
         .setDescription(
-          `${
-            transactionsForNewPage || "No transactions found."
-          }\n\n${newPageInfo}`
+          `${transactionsForNewPage || "No transactions found."}\n\n${newPageInfo}`
         )
         .setColor(Colors.Normal);
 
+      // Update the buttons for the new page
+      const updatedRow = new ActionRowBuilder<ButtonBuilder>().setComponents(
+        new ButtonBuilder()
+          .setCustomId(
+            `transactions_back_page_${Math.max(0, currentPageIndex - 1)}`
+          )
+          .setLabel("⇽")
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(currentPageIndex === 0),
+        new ButtonBuilder()
+          .setCustomId(
+            `transactions_forward_page_${Math.min(
+              totalPages - 1,
+              currentPageIndex + 1
+            )}`
+          )
+          .setLabel("⇾")
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(currentPageIndex === totalPages - 1)
+      );
+
+      // Edit the message with the updated embed and buttons
       await buttonInteraction.editReply({
         embeds: [updatedEmbed],
-        components: [
-          new ActionRowBuilder<ButtonBuilder>().setComponents(
-            new ButtonBuilder()
-              .setCustomId(
-                `transactions-back-page-${Math.max(0, currentPageIndex - 1)}`
-              )
-              .setLabel("⇽")
-              .setStyle(ButtonStyle.Secondary)
-              .setDisabled(currentPageIndex === 0),
-            new ButtonBuilder()
-              .setCustomId(
-                `transactions-forward-page-${Math.min(
-                  totalPages - 1,
-                  currentPageIndex + 1
-                )}`
-              )
-              .setLabel("⇾")
-              .setStyle(ButtonStyle.Secondary)
-              .setDisabled(currentPageIndex === totalPages - 1)
-          ),
-        ],
+        components: [updatedRow],
       });
     });
 

@@ -9,8 +9,16 @@ import { ComponentModule, ComponentTypes } from "../../handler";
 export = {
   id: "loggingBan",
   type: ComponentTypes.Button,
-  async execute(client, button: ButtonInteraction<"cached">): Promise<any> {
-    const userId = button.customId.split("-")[1];
+  async execute(
+    client,
+    button: ButtonInteraction<"cached">,
+    extras
+  ): Promise<any> {
+    const userId = extras[0];
+
+    /**
+     * Might need to add checks for if the user is higher then the person clicking the ban <person> button and same for kick
+     */
 
     await button.deferUpdate();
 

@@ -19,6 +19,7 @@
     "removeComments": true,
     "typeRoots": ["node_modules/@types", "./handler/types/ProcessEnv.d.ts"],
     "baseUrl": "./",
+    "noUnusedLocals": false,
   },
   "files": ["src/index.ts"],
   "include": ["./**/*.ts"],

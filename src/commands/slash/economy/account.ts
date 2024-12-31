@@ -129,15 +129,15 @@ export = {
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
-        .setCustomId(`accountRefresh-${member.id}`)
+        .setCustomId(`accountRefresh|${member.id}`)
         .setLabel("Refresh")
         .setStyle(ButtonStyle.Secondary),
       new ButtonBuilder()
-        .setCustomId(`accountInventory-${member.id}`)
+        .setCustomId(`accountInventory|${member.id}`)
         .setLabel("Inventory")
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
-        .setCustomId(`accountPrivacy-${member.id}`)
+        .setCustomId(`accountPrivacy|${member.id}`)
         .setLabel("Privacy")
         .setStyle(ButtonStyle.Danger)
     );

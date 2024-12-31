@@ -47,7 +47,7 @@ export = {
 
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
-          .setCustomId(`loggingBan-${member.id}`)
+          .setCustomId(`loggingBan|${member.id}`)
           .setLabel("Ban")
           .setStyle(ButtonStyle.Danger)
       );

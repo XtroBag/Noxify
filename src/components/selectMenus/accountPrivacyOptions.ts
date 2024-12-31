@@ -18,10 +18,10 @@ import {
   export = {
     id: "accountPrivacyOptions",
     type: ComponentTypes.SelectMenu,
-    async execute(client, menu: StringSelectMenuInteraction<"cached">): Promise<void> {
+    async execute(client, menu: StringSelectMenuInteraction<"cached">, extras): Promise<void> {
   
       // Extract userID from customId
-      const userId = menu.customId.split("-")[1];
+      const userId = extras[0];
       const economy = await getEconomy({ guildID: menu.guildId });
       const person = economy.users.find((user) => user.userID === userId);
   
@@ -49,7 +49,7 @@ import {
   
         const row = new ActionRowBuilder<StringSelectMenuBuilder>().setComponents(
           new StringSelectMenuBuilder()
-            .setCustomId(`accountPrivacyOptions-${userId}`)
+            .setCustomId(`accountPrivacyOptions|${userId}`)
             .setPlaceholder("Select permissions to enable")
             .setOptions([
               {
@@ -68,7 +68,7 @@ import {
   
         const backbutton = new ActionRowBuilder<ButtonBuilder>().setComponents(
           new ButtonBuilder()
-            .setCustomId(`accountBack-${userId}`)
+            .setCustomId(`accountBack|${userId}`)
             .setLabel("Back")
             .setStyle(ButtonStyle.Secondary)
         );

@@ -17,9 +17,9 @@ import { Emojis, Colors } from "../../config";
 export = {
   id: "accountPrivacy",
   type: ComponentTypes.Button,
-  async execute(client, button: ButtonInteraction<"cached">): Promise<void> {
+  async execute(client, button: ButtonInteraction<"cached">, extras): Promise<void> {
     // Extract userID from customId
-    const userId = button.customId.split("-")[1];
+    const userId = extras[0];
     const economy = await getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
@@ -41,7 +41,7 @@ export = {
 
       const row = new ActionRowBuilder<StringSelectMenuBuilder>().setComponents(
         new StringSelectMenuBuilder()
-          .setCustomId(`accountPrivacyOptions-${userId}`)
+          .setCustomId(`accountPrivacyOptions|${userId}`)
           .setPlaceholder("Select permissions to enable")
           .setOptions([
             {
@@ -60,7 +60,7 @@ export = {
 
       const backbutton = new ActionRowBuilder<ButtonBuilder>().setComponents(
         new ButtonBuilder()
-          .setCustomId(`accountBack-${userId}`)
+          .setCustomId(`accountBack|${userId}`)
           .setLabel("Back")
           .setStyle(ButtonStyle.Secondary)
       );

@@ -131,7 +131,10 @@ export = {
 
       const transactionDescription = `Transferred ${formatAmount(
         amount
-      )} from bank to wallet`;
+      )} ${economy.name.toLowerCase().replace(/s$/, "")}${
+        amount === 1 ? "" : "s"
+      } from bank to wallet`;
+
       await addTransaction({
         guildID: interaction.guildId,
         userID: interaction.member.id,

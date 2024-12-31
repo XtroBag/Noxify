@@ -12,8 +12,8 @@ import { Colors } from "../../config";
 export = {
   id: "accountInventory",
   type: ComponentTypes.Button,
-  async execute(client, button: ButtonInteraction<"cached">): Promise<void> {
-    const userId = button.customId.split("-")[1];
+  async execute(client, button: ButtonInteraction<"cached">, extras): Promise<void> {
+    const userId = extras[0];
 
     // const userData = await button.guild.members.fetch({ user: userId });
 
@@ -40,7 +40,7 @@ export = {
           components: [
             new ActionRowBuilder<ButtonBuilder>().setComponents(
               new ButtonBuilder()
-                .setCustomId(`accountBack-${userId}`)
+                .setCustomId(`accountBack|${userId}`)
                 .setLabel("Back")
                 .setStyle(ButtonStyle.Secondary)
             ),
@@ -58,7 +58,7 @@ export = {
         components: [
           new ActionRowBuilder<ButtonBuilder>().setComponents(
             new ButtonBuilder()
-              .setCustomId(`accountBack-${userId}`)
+              .setCustomId(`accountBack|${userId}`)
               .setLabel("Back")
               .setStyle(ButtonStyle.Secondary)
           ),

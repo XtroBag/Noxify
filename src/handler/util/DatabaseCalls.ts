@@ -205,7 +205,7 @@ export async function updateUserBalancesAndTransactions(
       },
       $push: {
         "users.$[sender].transactions": {
-          type: "paid",
+          type: "payment",
           description: `Paid ${options.updatedRecipient.displayName} ${
             options.amount
           } ${options.economy.name.replace(/s$/, "")}${

@@ -12,10 +12,8 @@ import { Colors } from "../../config";
 export = {
   id: "accountInventory",
   type: ComponentTypes.Button,
-  async execute(client, button: ButtonInteraction<"cached">, extras): Promise<void> {
+  async execute(client, button, extras) {
     const userId = extras[0];
-
-    // const userData = await button.guild.members.fetch({ user: userId });
 
     const economy = await getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
@@ -71,4 +69,4 @@ export = {
       });
     }
   },
-} as ComponentModule;
+} as ComponentModule<ButtonInteraction<'cached'>>;

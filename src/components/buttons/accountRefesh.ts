@@ -19,7 +19,7 @@ import { Colors, milestones } from "../../config";
 export = {
   id: "accountRefresh",
   type: ComponentTypes.Button,
-  async execute(client, button: ButtonInteraction<"cached">, extras): Promise<void> {
+  async execute(client, button, extras) {
     const userId = extras[0];
 
     const userData = await button.guild.members.fetch({ user: userId });
@@ -173,4 +173,4 @@ export = {
       }
     }
   },
-} as ComponentModule;
+} as ComponentModule<ButtonInteraction<'cached'>>;

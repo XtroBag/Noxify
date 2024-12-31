@@ -55,4 +55,4 @@ export = {
       });
     }
   },
-} as ComponentModule;
+} as ComponentModule<ButtonInteraction<'cached'>>;

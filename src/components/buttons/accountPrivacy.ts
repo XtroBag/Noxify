@@ -5,19 +5,17 @@ import {
   StringSelectMenuBuilder,
   ButtonBuilder,
   ButtonStyle,
-  ComponentType,
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
 import {
   getEconomy,
-  updateUserPermissions,
 } from "../../handler/util/DatabaseCalls";
 import { Emojis, Colors } from "../../config";
 
 export = {
   id: "accountPrivacy",
   type: ComponentTypes.Button,
-  async execute(client, button: ButtonInteraction<"cached">, extras): Promise<void> {
+  async execute(client, button, extras) {
     // Extract userID from customId
     const userId = extras[0];
     const economy = await getEconomy({ guildID: button.guildId });
@@ -85,4 +83,4 @@ export = {
       });
     }
   },
-} as ComponentModule;
+} as ComponentModule<ButtonInteraction<'cached'>>;

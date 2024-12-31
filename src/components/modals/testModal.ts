@@ -7,6 +7,7 @@ export = {
   type: ComponentTypes.Modal,
   async execute(
     client,
-    interaction: ModalSubmitInteraction<"cached">
+    interaction,
+    extras
   ): Promise<void> {},
-} as ComponentModule;
+} as ComponentModule<ModalSubmitInteraction<'cached'>>;

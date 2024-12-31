@@ -1,21 +1,31 @@
-import { Collection } from "discord.js";
+import {
+  AnySelectMenuInteraction,
+  ButtonInteraction,
+  Collection,
+  Interaction,
+  ModalSubmitInteraction,
+} from "discord.js";
 import { DiscordClient } from "../util/DiscordClient";
 
-export interface ComponentModule {
-    id?: string;
-    group?: string;
-    type: ComponentTypes;
-    execute: (client: DiscordClient, interaction: any, extras: string[]) => Promise<any>;
+export interface ComponentModule<T extends Interaction = Interaction<'cached'>> {
+  id?: string;
+  group?: string;
+  type: ComponentTypes;
+  execute: (
+    client: DiscordClient,
+    interaction: T,
+    extras: string[]
+  ) => Promise<any>;
 }
 
 export interface ComponentCollections {
-    buttons: Collection<string, ComponentModule>;
-    selectMenus: Collection<string, ComponentModule>;
-    modals: Collection<string, ComponentModule>;
+  buttons: Collection<string, ComponentModule<ButtonInteraction>>;
+  selectMenus: Collection<string, ComponentModule<AnySelectMenuInteraction>>;
+  modals: Collection<string, ComponentModule<ModalSubmitInteraction>>;
 }
 
 export enum ComponentTypes {
-    Button = "buttons",
-    SelectMenu = "selectMenus",
-    Modal = "modals"
+  Button = "buttons",
+  SelectMenu = "selectMenus",
+  Modal = "modals",
 }

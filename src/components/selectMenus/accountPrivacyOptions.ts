@@ -18,7 +18,7 @@ import {
   export = {
     id: "accountPrivacyOptions",
     type: ComponentTypes.SelectMenu,
-    async execute(client, menu: StringSelectMenuInteraction<"cached">, extras): Promise<void> {
+    async execute(client, menu, extras): Promise<void> {
   
       // Extract userID from customId
       const userId = extras[0];
@@ -97,5 +97,5 @@ import {
         });
       }
     },
-  } as ComponentModule;
+  } as ComponentModule<StringSelectMenuInteraction<"cached">>;
   

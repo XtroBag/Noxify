@@ -2,9 +2,9 @@ import Logger from "./Logger";
 import { Intent } from "../types/Intent";
 import { defaultIntents } from "../../config";
 import { registerEvents } from "./handleEvents";
-import { registerComponents } from "./handleComponents";
+import { registerComponents,  } from "./handleComponents";
 import { EventIntentMapping } from "../types/EventIntentMapping";
-import { Client, Collection, IntentsBitField } from "discord.js";
+import { AnySelectMenuInteraction, ButtonInteraction, Client, Collection, IntentsBitField, ModalSubmitInteraction } from "discord.js";
 import { ComponentCollections, ComponentModule } from "../types/Component";
 import {
   deleteAllCommands,
@@ -51,9 +51,9 @@ export class DiscordClient extends Client {
       },
     };
     this.components = {
-      buttons: new Collection<string, ComponentModule>(),
-      selectMenus: new Collection<string, ComponentModule>(),
-      modals: new Collection<string, ComponentModule>(),
+      buttons: new Collection<string, ComponentModule<ButtonInteraction<'cached'>>>(),
+      selectMenus: new Collection<string, ComponentModule<AnySelectMenuInteraction<'cached'>>>(),
+      modals: new Collection<string, ComponentModule<ModalSubmitInteraction<'cached'>>>(),
     };
     this.cooldowns = {
       user: new Collection<string, Collection<string, number>>(),

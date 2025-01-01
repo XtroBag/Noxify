@@ -125,6 +125,7 @@ export async function handleComponents(
         );
         break;
       case ComponentTypes.Modal:
+        // When handling modal interactions, pass extras along with other arguments
         await (
           component as ComponentModule<ModalSubmitInteraction<"cached">>
         ).execute(
@@ -162,8 +163,15 @@ function getIds(interaction: Interaction) {
 
     customId = interaction.customId;
   } else if (interaction.isModalSubmit()) {
-    componentId = interaction.customId;
+    // For modals, we allow extras to be passed in the customId as well
+    const [idPart, ...userParts] = interaction.customId.split("|");
+
+    componentId = idPart;
     customId = interaction.customId;
+
+    if (userParts.length > 0) {
+      extras = userParts;
+    }
   }
 
   return {

@@ -1,6 +1,7 @@
 import { EventModule } from "../handler";
 import { Server } from "../handler/schemas/models/Models";
 import { Events } from "discord.js";
+import { defaultPrefix } from "../config";
 
 export = {
   name: Events.GuildCreate,
@@ -8,6 +9,7 @@ export = {
     await Server.create({
       name: guild.name,
       guildID: guild.id,
+      prefix: defaultPrefix
     });
   },
 } as EventModule<'guildCreate'>;

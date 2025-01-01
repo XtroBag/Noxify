@@ -1,6 +1,7 @@
 export interface ServerData {
   name: string;
   guildID: string;
+  prefix: string;
   loggingChannel: string;
   loggingActive: boolean;
 }

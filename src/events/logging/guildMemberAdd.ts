@@ -10,12 +10,18 @@ import {
   inlineCode,
   userMention,
 } from "discord.js";
-import { Colors } from "../../config";
+import { Colors, defaultPrefix } from "../../config";
 
 export = {
   name: Events.GuildMemberAdd,
   async execute({ client, args: [member] }) {
     const guild = await Server.findOne({ guildID: member.guild.id });
+
+    if (!guild) return Server.create({
+      name: member.guild.name,
+      guildID: member.guild.id,
+      prefix: defaultPrefix
+    })
 
     const loggingChannel = guild.get("loggingChannel");
     const loggingActive = guild.get("loggingActive");

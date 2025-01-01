@@ -9,5 +9,5 @@ export = {
     client,
     interaction,
     extras
-  ): Promise<void> {},
+  ) {},
 } as ComponentModule<ModalSubmitInteraction<'cached'>>;

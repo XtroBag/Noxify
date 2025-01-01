@@ -17,6 +17,11 @@ export = {
 
       const guildData = await Server.findOne({ guildID: message.guild.id });
 
+      if (!guildData) return Server.create({
+        name: message.guild.name,
+        guildID: message.guild.id,
+      })
+
       if (!guildData || !guildData.loggingActive) {
         return;
       }

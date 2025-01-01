@@ -17,6 +17,11 @@ export = {
   async execute({ client, args: [member] }) {
     const guild = await Server.findOne({ guildID: member.guild.id });
 
+    if (!guild) return Server.create({
+      name: member.guild.name,
+      guildID: member.guild.id,
+    })
+
     const loggingChannel = guild.get("loggingChannel");
     const loggingActive = guild.get("loggingActive");
 

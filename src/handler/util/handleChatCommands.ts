@@ -1,21 +1,29 @@
 import { client } from "../../index";
 import { Message } from "discord.js";
 import { hasCooldown, isAllowedCommand } from "./handleCommands";
-import { getCommandOnCooldownEmbed, prefix } from "../../config";
+import { getCommandOnCooldownEmbed, defaultPrefix } from "../../config";
 import {
   CommandTypes,
   MessageCommandModule,
   PingCommandModule,
   PrefixCommandModule,
 } from "../types/Command";
+import { Server } from "../schemas/models/Models";
 
 export async function handleMessageCommands(message: Message): Promise<void> {
-  if (!client.user) return;
-  if (message.content.startsWith(prefix))
-    await handleCommand(CommandTypes.PrefixCommand, message);
-  else if (message.content.startsWith(`<@${client.user.id}>`))
-    await handleCommand(CommandTypes.PingCommand, message);
-  else await handleCommand(CommandTypes.MessageCommand, message);
+  if (!client.user || !message.guild) return;
+
+  const guildSettings = await Server.findOne({ guildID: message.guildId });
+
+  const guildPrefix = guildSettings && guildSettings.prefix ? guildSettings.prefix : defaultPrefix;
+
+  if (message.content.startsWith(guildPrefix)) {
+    await handleCommand(CommandTypes.PrefixCommand, message, guildPrefix);
+  } else if (message.content.startsWith(`<@${client.user.id}>`)) {
+    await handleCommand(CommandTypes.PingCommand, message, guildPrefix);
+  } else {
+    await handleCommand(CommandTypes.MessageCommand, message, guildPrefix);
+  }
 }
 
 async function handleCommand(
@@ -23,16 +31,17 @@ async function handleCommand(
     | CommandTypes.PrefixCommand
     | CommandTypes.PingCommand
     | CommandTypes.MessageCommand,
-  message: Message
+  message: Message,
+  guildPrefix: string
 ): Promise<void> {
   if (!client.user) return;
   let commandName: string = "";
   let args: string[] = [];
 
-  // Generate args
+  // Generate args based on the command type
   if (type === CommandTypes.PrefixCommand) {
     // Remove the prefix and extract the command name
-    const contentWithoutPrefix = message.content.slice(prefix.length).trim();
+    const contentWithoutPrefix = message.content.slice(guildPrefix.length).trim();
     const spaceIndex = contentWithoutPrefix.indexOf(" "); // Find where the command name ends
 
     // Extract command name and the rest of the arguments
@@ -52,7 +61,7 @@ async function handleCommand(
 
     args = message.content.trim().split(/\s+/); // Just in case, get args from message content
   } else if (type === CommandTypes.MessageCommand) {
-    // For message commands, command name is first word
+    // For message commands, command name is the first word
     commandName = message.content.split(" ")[0];
 
     // Generate the arguments (everything after command name)
@@ -73,6 +82,7 @@ async function handleCommand(
     commandModule = client.commands[type].get(commandModule);
 
   if (commandModule) {
+    // Check if the member has the required permissions
     if (
       commandModule.permissions &&
       !hasPermissions(message.member, commandModule.permissions)
@@ -80,6 +90,7 @@ async function handleCommand(
       return;
     }
 
+    // Check for cooldown
     const cooldown: number | boolean = hasCooldown(
       message.author.id,
       commandModule.name,
@@ -92,6 +103,7 @@ async function handleCommand(
       return;
     }
 
+    // Check if the command is allowed
     if (
       !(await isAllowedCommand(
         commandModule,

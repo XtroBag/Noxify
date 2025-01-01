@@ -2,7 +2,7 @@ import { Intent, ConsoleColor } from "./handler";
 import { ChatInputCommandInteraction, ContextMenuCommandInteraction, EmbedBuilder } from "discord.js";
 
 // Message command prefix.
-export const prefix: string = ".";
+export const defaultPrefix: string = ".";
 
 // Intents which will be enabled by default.
 export const defaultIntents: Intent[] = [
@@ -10,7 +10,7 @@ export const defaultIntents: Intent[] = [
   Intent.MessageContent,
   Intent.GuildMembers,
   Intent.GuildPresences,
-  Intent.GuildMessageReactions
+  Intent.GuildMessageReactions,
 ];
 
 // Default folder names.

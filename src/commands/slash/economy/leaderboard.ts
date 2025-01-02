@@ -1,5 +1,5 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { Colors } from "../../../config";
 import {
   getEconomy,
@@ -14,7 +14,8 @@ export = {
   register: RegisterTypes.Global,
   data: new SlashCommandBuilder()
     .setName("leaderboard")
-    .setDescription("Check the server's most top richest members."),
+    .setDescription("Check the server's most top richest members.")
+    .setContexts([InteractionContextType.Guild]),
 
   async execute({ client, interaction }) {
     const economyData = await getEconomy({ guildID: interaction.guildId });

@@ -6,6 +6,7 @@ import {
   ButtonStyle,
   ComponentType,
   EmbedBuilder,
+  InteractionContextType,
   SlashCommandBuilder,
 } from "discord.js";
 import {
@@ -30,7 +31,8 @@ export = {
         ])
         .setRequired(true)
     )
-    .setDescription("Setup an economy for the server"),
+    .setDescription("Setup an economy for the server")
+    .setContexts([InteractionContextType.Guild]),
   async execute({ client, interaction }) {
     const action = interaction.options.getString("action");
 

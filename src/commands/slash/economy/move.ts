@@ -1,5 +1,5 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
-import { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType } from "discord.js";
 import { Colors } from "../../../config";
 import { Economy } from "../../../handler/schemas/models/Models";
 import { getEconomy } from "../../../handler/util/DatabaseCalls";
@@ -10,6 +10,7 @@ export = {
   data: new SlashCommandBuilder()
     .setName("move")
     .setDescription("Swap your account data with another account")
+    .setContexts([InteractionContextType.Guild])
     .addUserOption((data) =>
       data
         .setName("to")

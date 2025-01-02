@@ -11,7 +11,6 @@ import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handle
 import {
   PermissionFlagsBits,
   SlashCommandBuilder,
-  ChatInputCommandInteraction,
   ActionRowBuilder,
   ActivityType,
   ButtonBuilder,

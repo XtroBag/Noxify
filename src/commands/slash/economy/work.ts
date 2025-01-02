@@ -1,5 +1,5 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
-import { SlashCommandBuilder } from "discord.js";
+import { InteractionContextType, SlashCommandBuilder } from "discord.js";
 import {
   formatAmount,
   getEconomy,
@@ -15,7 +15,8 @@ export = {
 
   data: new SlashCommandBuilder()
     .setName("work")
-    .setDescription("Work a job to earn some currency"),
+    .setDescription("Work a job to earn some currency")
+    .setContexts([InteractionContextType.Guild]),
 
   async execute({ client, interaction }) {
     const economy = await getEconomy({ guildID: interaction.guildId });

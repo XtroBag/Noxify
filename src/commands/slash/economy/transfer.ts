@@ -1,5 +1,5 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import {
   addEconomyUser,
   addTransaction,
@@ -18,6 +18,7 @@ export = {
     .setDescription(
       "Transfer an amount from your Bank to your Wallet, or vice versa. "
     )
+    .setContexts([InteractionContextType.Guild])
     .addStringOption((data) =>
       data
         .setName("from")

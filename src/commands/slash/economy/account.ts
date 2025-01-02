@@ -8,6 +8,7 @@ import {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
+  InteractionContextType,
   SlashCommandBuilder,
   userMention,
 } from "discord.js";
@@ -29,6 +30,7 @@ export = {
     .setDescription(
       "Check your personal banking information, such as the money in your bank account or in your wallet."
     )
+    .setContexts([InteractionContextType.Guild])
     .addUserOption((option) =>
       option
         .setName("member")

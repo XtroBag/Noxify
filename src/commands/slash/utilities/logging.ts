@@ -4,7 +4,7 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../../../handler";
-import { ChannelType, EmbedBuilder, PermissionOverwrites, SlashCommandBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { Colors } from "../../../config";
 
 export = {
@@ -13,6 +13,7 @@ export = {
   data: new SlashCommandBuilder()
     .setName("logging")
     .setDescription("Enabled the servers logging system")
+    .setContexts([InteractionContextType.Guild])
     .addBooleanOption((option) =>
       option
         .setName("status")

@@ -6,6 +6,7 @@ import {
 } from "../../../handler";
 import {
   ActionRowBuilder,
+  ApplicationIntegrationType,
   InteractionContextType,
   ModalBuilder,
   SlashCommandBuilder,
@@ -23,6 +24,7 @@ export = {
       "Server admins can use this command to repair a user's economy information."
     )
     .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
     .addUserOption((option) =>
       option
         .setName("member")

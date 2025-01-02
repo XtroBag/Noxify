@@ -1,4 +1,4 @@
-import { RenderCrops, RenderTypes } from "../types/StarlightSkinAPI";
+import { RenderCrops, RenderTypes, SkinRenderOptions } from "../types/StarlightSkinAPI";
 
 export async function getSkinRender(
   renderType: RenderTypes, // Using the RenderTypes enum
@@ -33,7 +33,135 @@ export async function getSkinRender(
     }
   }
 
-  // If the response is OK (status 200-299), retrieve the image data
-  const arrayBuffer = await response.arrayBuffer(); // Use arrayBuffer instead of buffer
-  return Buffer.from(arrayBuffer);  // Convert arrayBuffer to a Buffer
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
 }
+
+export function getRenderTypeCrops<T extends RenderTypes>(
+  renderType: T
+): SkinRenderOptions[T]["crop"] {
+  const renderTypeMapping: Record<RenderTypes, SkinRenderOptions[RenderTypes]> =
+    {
+      [RenderTypes.Default]: {
+        type: RenderTypes.Default,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Marching]: {
+        type: RenderTypes.Marching,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Walking]: {
+        type: RenderTypes.Walking,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Crouching]: {
+        type: RenderTypes.Crouching,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Crossed]: {
+        type: RenderTypes.Crossed,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.CrissCross]: {
+        type: RenderTypes.CrissCross,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Ultimate]: {
+        type: RenderTypes.Ultimate,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Isometric]: {
+        type: RenderTypes.Isometric,
+        crop: [
+          RenderCrops.Full,
+          RenderCrops.Bust,
+          RenderCrops.Face,
+          RenderCrops.Head,
+        ],
+      },
+      [RenderTypes.Head]: { type: RenderTypes.Head, crop: RenderCrops.Full },
+      [RenderTypes.Cheering]: {
+        type: RenderTypes.Cheering,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Relaxing]: {
+        type: RenderTypes.Relaxing,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Trudging]: {
+        type: RenderTypes.Trudging,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Cowering]: {
+        type: RenderTypes.Cowering,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Pointing]: {
+        type: RenderTypes.Pointing,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Lunging]: {
+        type: RenderTypes.Lunging,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Dungeons]: {
+        type: RenderTypes.Dungeons,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Facepalm]: {
+        type: RenderTypes.Facepalm,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Sleeping]: {
+        type: RenderTypes.Sleeping,
+        crop: [RenderCrops.Full, RenderCrops.Bust],
+      },
+      [RenderTypes.Dead]: {
+        type: RenderTypes.Dead,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Archer]: {
+        type: RenderTypes.Archer,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Kicking]: {
+        type: RenderTypes.Kicking,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Mojavatar]: {
+        type: RenderTypes.Mojavatar,
+        crop: [RenderCrops.Full, RenderCrops.Bust],
+      },
+      [RenderTypes.Reading]: {
+        type: RenderTypes.Reading,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.HighGround]: {
+        type: RenderTypes.HighGround,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Bitzel]: {
+        type: RenderTypes.Bitzel,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Pixel]: {
+        type: RenderTypes.Pixel,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+      [RenderTypes.Skin]: {
+        type: RenderTypes.Skin,
+        crop: [
+          RenderCrops.Default,
+          RenderCrops.Processed,
+          RenderCrops.BareBones,
+        ],
+      },
+      [RenderTypes.Profile]: {
+        type: RenderTypes.Profile,
+        crop: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+      },
+    };
+
+  return renderTypeMapping[renderType].crop;
+}
+

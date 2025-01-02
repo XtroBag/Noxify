@@ -1,5 +1,5 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
-import { EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
+import { ApplicationIntegrationType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import {
   addEconomyUser,
   getEconomy,
@@ -16,6 +16,7 @@ export = {
     .setName("pay")
     .setDescription("Pay or transfer money between users.")
     .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
     .addUserOption((data) =>
       data
         .setName("member")

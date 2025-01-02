@@ -4,7 +4,7 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../../../handler";
-import { ChannelType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
+import { ApplicationIntegrationType, ChannelType, EmbedBuilder, InteractionContextType, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { Colors } from "../../../config";
 
 export = {
@@ -14,6 +14,8 @@ export = {
     .setName("logging")
     .setDescription("Enabled the servers logging system")
     .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addBooleanOption((option) =>
       option
         .setName("status")
@@ -23,7 +25,6 @@ export = {
   async execute({ client, interaction }) {
     const status = interaction.options.getBoolean("status");
 
-    if (interaction.member.permissions.has("ManageGuild")) {
       try {
         const guildSettings = await Server.findOne(
           { guildID: interaction.guildId },
@@ -121,14 +122,6 @@ export = {
           content: "Failed to update logging settings. Please try again.",
         });
       }
-    } else {
-      await interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(Colors.Error)
-            .setDescription(`You are missing "ManageGuild" permissions`),
-        ],
-      });
-    }
+   
   },
 } as SlashCommandModule;

@@ -2,6 +2,7 @@ import { Colors, validCurrencySymbols } from "../../../config";
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
 import {
   ActionRowBuilder,
+  ApplicationIntegrationType,
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
@@ -32,7 +33,8 @@ export = {
         .setRequired(true)
     )
     .setDescription("Setup an economy for the server")
-    .setContexts([InteractionContextType.Guild]),
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
   async execute({ client, interaction }) {
     const action = interaction.options.getString("action");
 

@@ -5,6 +5,7 @@ import {
 } from "../../../handler";
 import {
   ActionRowBuilder,
+  ApplicationIntegrationType,
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
@@ -31,6 +32,7 @@ export = {
       "Check your personal banking information, such as the money in your bank account or in your wallet."
     )
     .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
     .addUserOption((option) =>
       option
         .setName("member")

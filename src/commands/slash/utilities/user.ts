@@ -41,7 +41,6 @@ export = {
       ApplicationIntegrationType.UserInstall,
       ApplicationIntegrationType.GuildInstall,
     ])
-    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
     .addUserOption((option) =>
       option
         .setName("member")

@@ -1,11 +1,4 @@
-export enum RenderCrops {
-  Full = "full",
-  Bust = "bust",
-  Face = "face",
-  Default = "default",
-  Processed = "processed",
-}
-
+// Define the RenderTypes Enum
 export enum RenderTypes {
   Default = "default",
   Marching = "marching",
@@ -26,164 +19,59 @@ export enum RenderTypes {
   Archer = "archer",
   Kicking = "kicking",
   Mojavatar = "mojavatar",
+  Reading = "reading",
+  HighGround = "high_ground",
   Ultimate = "ultimate",
   Isometric = "isometric",
   Head = "head",
   Bitzel = "bitzel",
   Pixel = "pixel",
   Skin = "skin",
-
-  // New render types
-  HighGround = "high_ground",  // high_ground render type
-  Reading = "reading",        // reading render type
-  Profile = "profile",        // profile render type
+  Profile = "profile",
 }
 
-type CommonRenderCrops = RenderCrops.Full | RenderCrops.Bust | RenderCrops.Face;
-
-interface DefaultRenderType {
-  type: RenderTypes.Default;
-  crop: CommonRenderCrops;
+export enum RenderCrops {
+  Full = "full",
+  Bust = "bust",
+  Face = "face",
+  Default = "default",
+  Processed = "processed",
+  BareBones = "barebones",
+  Head = "head",
 }
 
-interface HighGroundRenderType {
-  type: RenderTypes.HighGround;
-  crop: CommonRenderCrops;
+interface RenderTypeWithCrop<T extends RenderTypes> {
+  type: T;
+  crop: RenderCrops | RenderCrops[];
 }
 
-interface ReadingRenderType {
-  type: RenderTypes.Reading;
-  crop: CommonRenderCrops;
-}
-
-interface ProfileRenderType {
-  type: RenderTypes.Profile;
-  crop: CommonRenderCrops;
-}
-
-interface MarchingRenderType {
-  type: RenderTypes.Marching;
-  crop: CommonRenderCrops;
-}
-interface WalkingRenderType {
-  type: RenderTypes.Walking;
-  crop: CommonRenderCrops;
-}
-interface CrouchingRenderType {
-  type: RenderTypes.Crouching;
-  crop: CommonRenderCrops;
-}
-interface CrossedRenderType {
-  type: RenderTypes.Crossed;
-  crop: CommonRenderCrops;
-}
-interface CrissCrossRenderType {
-  type: RenderTypes.CrissCross;
-  crop: CommonRenderCrops;
-}
-interface CheeringRenderType {
-  type: RenderTypes.Cheering;
-  crop: CommonRenderCrops;
-}
-interface RelaxingRenderType {
-  type: RenderTypes.Relaxing;
-  crop: CommonRenderCrops;
-}
-interface TrudgingRenderType {
-  type: RenderTypes.Trudging;
-  crop: CommonRenderCrops;
-}
-interface CoweringRenderType {
-  type: RenderTypes.Cowering;
-  crop: CommonRenderCrops;
-}
-interface PointingRenderType {
-  type: RenderTypes.Pointing;
-  crop: CommonRenderCrops;
-}
-interface LungingRenderType {
-  type: RenderTypes.Lunging;
-  crop: CommonRenderCrops;
-}
-interface DungeonsRenderType {
-  type: RenderTypes.Dungeons;
-  crop: CommonRenderCrops;
-}
-interface FacepalmRenderType {
-  type: RenderTypes.Facepalm;
-  crop: CommonRenderCrops;
-}
-interface SleepingRenderType {
-  type: RenderTypes.Sleeping;
-  crop: RenderCrops.Full | RenderCrops.Bust;
-}
-interface DeadRenderType {
-  type: RenderTypes.Dead;
-  crop: CommonRenderCrops;
-}
-interface ArcherRenderType {
-  type: RenderTypes.Archer;
-  crop: CommonRenderCrops;
-}
-interface KickingRenderType {
-  type: RenderTypes.Kicking;
-  crop: CommonRenderCrops;
-}
-interface MojavatarRenderType {
-  type: RenderTypes.Mojavatar;
-  crop: RenderCrops.Full | RenderCrops.Bust;
-}
-interface UltimateRenderType {
-  type: RenderTypes.Ultimate;
-  crop: CommonRenderCrops;
-}
-interface IsometricRenderType {
-  type: RenderTypes.Isometric;
-  crop: CommonRenderCrops;
-}
-interface HeadRenderType {
-  type: RenderTypes.Head;
-  crop: RenderCrops.Full;
-}
-interface BitzelRenderType {
-  type: RenderTypes.Bitzel;
-  crop: CommonRenderCrops;
-}
-interface PixelRenderType {
-  type: RenderTypes.Pixel;
-  crop: CommonRenderCrops;
-}
-interface SkinRenderType {
-  type: RenderTypes.Skin;
-  crop: RenderCrops.Default | RenderCrops.Processed;
-}
-
-export type SkinRenderOptions =
-  | DefaultRenderType
-  | HighGroundRenderType
-  | ReadingRenderType
-  | ProfileRenderType
-  | MarchingRenderType
-  | WalkingRenderType
-  | CrouchingRenderType
-  | CrossedRenderType
-  | CrissCrossRenderType
-  | CheeringRenderType
-  | RelaxingRenderType
-  | TrudgingRenderType
-  | CoweringRenderType
-  | PointingRenderType
-  | LungingRenderType
-  | DungeonsRenderType
-  | FacepalmRenderType
-  | SleepingRenderType
-  | DeadRenderType
-  | ArcherRenderType
-  | KickingRenderType
-  | MojavatarRenderType
-  | UltimateRenderType
-  | IsometricRenderType
-  | HeadRenderType
-  | BitzelRenderType
-  | PixelRenderType
-  | SkinRenderType;
+export type SkinRenderOptions = {
+  [RenderTypes.Default]: RenderTypeWithCrop<RenderTypes.Default>;
+  [RenderTypes.Marching]: RenderTypeWithCrop<RenderTypes.Marching>;
+  [RenderTypes.Walking]: RenderTypeWithCrop<RenderTypes.Walking>;
+  [RenderTypes.Crouching]: RenderTypeWithCrop<RenderTypes.Crouching>;
+  [RenderTypes.Crossed]: RenderTypeWithCrop<RenderTypes.Crossed>;
+  [RenderTypes.CrissCross]: RenderTypeWithCrop<RenderTypes.CrissCross>;
+  [RenderTypes.Cheering]: RenderTypeWithCrop<RenderTypes.Cheering>;
+  [RenderTypes.Relaxing]: RenderTypeWithCrop<RenderTypes.Relaxing>;
+  [RenderTypes.Trudging]: RenderTypeWithCrop<RenderTypes.Trudging>;
+  [RenderTypes.Cowering]: RenderTypeWithCrop<RenderTypes.Cowering>;
+  [RenderTypes.Pointing]: RenderTypeWithCrop<RenderTypes.Pointing>;
+  [RenderTypes.Lunging]: RenderTypeWithCrop<RenderTypes.Lunging>;
+  [RenderTypes.Dungeons]: RenderTypeWithCrop<RenderTypes.Dungeons>;
+  [RenderTypes.Facepalm]: RenderTypeWithCrop<RenderTypes.Facepalm>;
+  [RenderTypes.Sleeping]: RenderTypeWithCrop<RenderTypes.Sleeping>;
+  [RenderTypes.Dead]: RenderTypeWithCrop<RenderTypes.Dead>;
+  [RenderTypes.Archer]: RenderTypeWithCrop<RenderTypes.Archer>;
+  [RenderTypes.Kicking]: RenderTypeWithCrop<RenderTypes.Kicking>;
+  [RenderTypes.Mojavatar]: RenderTypeWithCrop<RenderTypes.Mojavatar>;
+  [RenderTypes.Reading]: RenderTypeWithCrop<RenderTypes.Reading>;
+  [RenderTypes.HighGround]: RenderTypeWithCrop<RenderTypes.HighGround>;
+  [RenderTypes.Ultimate]: RenderTypeWithCrop<RenderTypes.Ultimate>;
+  [RenderTypes.Isometric]: RenderTypeWithCrop<RenderTypes.Isometric>;
+  [RenderTypes.Head]: RenderTypeWithCrop<RenderTypes.Head>;
+  [RenderTypes.Bitzel]: RenderTypeWithCrop<RenderTypes.Bitzel>;
+  [RenderTypes.Pixel]: RenderTypeWithCrop<RenderTypes.Pixel>;
+  [RenderTypes.Skin]: RenderTypeWithCrop<RenderTypes.Skin>;
+  [RenderTypes.Profile]: RenderTypeWithCrop<RenderTypes.Profile>;
+};

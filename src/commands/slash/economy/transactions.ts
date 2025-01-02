@@ -8,6 +8,7 @@ import {
   PermissionFlagsBits,
   ButtonInteraction,
   InteractionContextType,
+  ApplicationIntegrationType,
 } from "discord.js";
 import { Colors } from "../../../config";
 import { getEconomy, addEconomyUser, convertTimeToDiscordTimestamp } from "../../../handler/util/DatabaseCalls";
@@ -20,6 +21,7 @@ export = {
     .setName("transactions")
     .setDescription("Check personal transactions")
     .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
     .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages),
 
   async execute({ client, interaction }) {

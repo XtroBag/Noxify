@@ -20,13 +20,13 @@ export = {
   async execute({ client, interaction }) {
     const member = interaction.options.getMember("to");
 
-    // Ensure member is not a bot
-    if (member.user.bot) {
+    // Ensure member is a valid server member
+    if (!member || member.user.bot) {
       await interaction.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
-            .setDescription("You cannot swap data with a bot account."),
+            .setDescription("You cannot swap data with a bot account or a non-server member."),
         ],
         ephemeral: true,
       });
@@ -115,7 +115,5 @@ export = {
       components: [row],
       ephemeral: true,
     });
-
-    // No collector or interaction handling here; you can handle that part yourself
   },
 } as SlashCommandModule;

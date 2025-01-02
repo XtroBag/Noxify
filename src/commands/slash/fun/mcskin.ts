@@ -90,106 +90,109 @@ const renderCropsForType = {
   [RenderTypes.Bitzel]: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
   [RenderTypes.Pixel]: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
   [RenderTypes.Skin]: [RenderCrops.Default, RenderCrops.Processed],
+
+  // New render types
+  [RenderTypes.HighGround]: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+  [RenderTypes.Reading]: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
+  [RenderTypes.Profile]: [RenderCrops.Full, RenderCrops.Bust, RenderCrops.Face],
 };
 
 export = {
-    type: CommandTypes.SlashCommand,
-    register: RegisterTypes.Global,
-    disabled: false,
-    ownerOnly: false,
-    data: new SlashCommandBuilder()
-      .setName("mcskin")
-      .setDescription(
-        "Get some awesome minecraft avatar pictures!"
-      )
-      .setIntegrationTypes([ApplicationIntegrationType.GuildInstall, ApplicationIntegrationType.UserInstall])
-      .setContexts([InteractionContextType.Guild, InteractionContextType.PrivateChannel])
-      .addStringOption((option) =>
-        option
-          .setName("name")
-          .setDescription("Bedrock users need a . at the start of their names")
-          .setRequired(true)
-      )
-      .addStringOption((option) =>
-        option
-          .setName("type")
-          .setDescription("Choose a render type")
-          .setRequired(true)
-          .addChoices(
-            ...Object.values(RenderTypes).map((type) => ({
-              name: type,
-              value: type,
-            }))
-          )
-      )
-      // Remove addChoices for rendercrop, and handle autocomplete for it dynamically
-      .addStringOption((option) =>
-        option
-          .setName("crop")
-          .setDescription("Choose a render crop")
-          .setRequired(true)
-          .setAutocomplete(true)
-      ),
+  type: CommandTypes.SlashCommand,
+  register: RegisterTypes.Global,
+  disabled: false,
+  ownerOnly: false,
+  data: new SlashCommandBuilder()
+    .setName("mcskin")
+    .setDescription("Get some awesome Minecraft avatar pictures!")
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall, ApplicationIntegrationType.UserInstall])
+    .setContexts([InteractionContextType.Guild, InteractionContextType.PrivateChannel])
+    .addStringOption((option) =>
+      option
+        .setName("name")
+        .setDescription("Bedrock users need a . at the start of their names")
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("type")
+        .setDescription("Choose a render type")
+        .setRequired(true)
+        .setAutocomplete(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("crop")
+        .setDescription("Choose a render crop")
+        .setRequired(true)
+        .setAutocomplete(true)
+    ),
   
-    async execute({ client, interaction }) {
-      const playerName = interaction.options.getString("name");
-      const renderType = interaction.options.getString("type");
-      const renderCrop = interaction.options.getString("crop");
+  async execute({ client, interaction }) {
+    const playerName = interaction.options.getString("name");
+    const renderType = interaction.options.getString("type");
+    const renderCrop = interaction.options.getString("crop");
 
-      await interaction.deferReply();
-  
-      try {
-        // Fetch the skin render as a Buffer
-        const skinImageBuffer = await getSkinRender(
-          renderType as RenderTypes,
-          playerName,
-          renderCrop as RenderCrops
+    await interaction.deferReply();
+
+    try {
+      // Fetch the skin render as a Buffer
+      const skinImageBuffer = await getSkinRender(
+        renderType as RenderTypes,
+        playerName,
+        renderCrop as RenderCrops
+      );
+
+      // Send the skin render as an embed
+      await interaction.editReply({
+        embeds: [
+          new EmbedBuilder()
+            .setImage("attachment://skin.png")
+            .setColor(Colors.Normal)
+            .setFooter({ text: 'Starlight Skin API', iconURL: 'https://cdn.discordapp.com/emojis/1190158024833249310.webp?size=128' })
+        ],
+        files: [
+          {
+            attachment: skinImageBuffer,
+            name: "skin.png",
+          },
+        ],
+      });
+    } catch (error) {
+      // Directly show the error message received from the getSkinRender function
+      await interaction.editReply({
+        content: `${error.message}`,
+      });
+    }
+  },
+
+  async autocomplete(interaction) {
+    const focusedOption = interaction.options.getFocused(true);
+
+    if (focusedOption.name === "type") {
+      // Filter render types based on input
+      const choices = Object.values(RenderTypes)
+        .filter((type) =>
+          type.toLowerCase().includes(focusedOption.value.toLowerCase()) // Live filtering
         )
-  
-        // Send the skin render as an embed
-        await interaction.editReply({
-          embeds: [
-            new EmbedBuilder()
-              .setImage("attachment://skin.png")
-              .setColor(Colors.Normal)
-          ],
-          files: [
-            {
-              attachment: skinImageBuffer,
-              name: "skin.png",
-            },
-          ],
-        });
-      } catch (error) {
-        // Check if the error message contains 'Player not found' or a related error message
-        if (error.message.includes("Player not found")) {
-          await interaction.editReply({
-            content: `The Minecraft player "${playerName}" could not be found. Please check the username and try again.`,
-          });
-        } else {
-          await interaction.editReply({
-            content: "Failed to fetch skin render. Please try again later.",
-          });
-        }
-      }
-    },
-  
-    // Autocomplete for render crop based on render type
-    async autocomplete(interaction) {
+        .slice(0, 25) // Limit to top 25 choices
+        .map((type) => ({ name: type, value: type }));
+      await interaction.respond(choices);
+    }
+
+    if (focusedOption.name === "crop") {
       const renderType = interaction.options.getString("type");
       const allowedCrops = renderCropsForType[renderType as RenderTypes] || [];
-      const focusedOption = interaction.options.getFocused(true);
-  
-      if (focusedOption.name === "crop") {
-        // Filter crops based on the selected render type and match input
-        const choices = allowedCrops
-          .filter((crop) =>
-            crop.toLowerCase().includes(focusedOption.value.toLowerCase())
-          ) // Match input
-          .slice(0, 25) // Limit to 25 options
-          .map((crop) => ({ name: crop, value: crop }));
-  
-        await interaction.respond(choices);
-      }
-    },
-  } as SlashCommandModule;
+
+      // Filter crops based on input and selected render type
+      const filteredCrops = allowedCrops
+        .filter((crop) =>
+          crop.toLowerCase().includes(focusedOption.value.toLowerCase()) // Live filtering
+        )
+        .slice(0, 25) // Limit to top 25 choices
+        .map((crop) => ({ name: crop, value: crop }));
+
+      await interaction.respond(filteredCrops);
+    }
+  },
+} as SlashCommandModule;

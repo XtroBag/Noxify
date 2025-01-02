@@ -32,6 +32,11 @@ export enum RenderTypes {
   Bitzel = "bitzel",
   Pixel = "pixel",
   Skin = "skin",
+
+  // New render types
+  HighGround = "high_ground",  // high_ground render type
+  Reading = "reading",        // reading render type
+  Profile = "profile",        // profile render type
 }
 
 type CommonRenderCrops = RenderCrops.Full | RenderCrops.Bust | RenderCrops.Face;
@@ -40,6 +45,22 @@ interface DefaultRenderType {
   type: RenderTypes.Default;
   crop: CommonRenderCrops;
 }
+
+interface HighGroundRenderType {
+  type: RenderTypes.HighGround;
+  crop: CommonRenderCrops;
+}
+
+interface ReadingRenderType {
+  type: RenderTypes.Reading;
+  crop: CommonRenderCrops;
+}
+
+interface ProfileRenderType {
+  type: RenderTypes.Profile;
+  crop: CommonRenderCrops;
+}
+
 interface MarchingRenderType {
   type: RenderTypes.Marching;
   crop: CommonRenderCrops;
@@ -139,6 +160,9 @@ interface SkinRenderType {
 
 export type SkinRenderOptions =
   | DefaultRenderType
+  | HighGroundRenderType
+  | ReadingRenderType
+  | ProfileRenderType
   | MarchingRenderType
   | WalkingRenderType
   | CrouchingRenderType

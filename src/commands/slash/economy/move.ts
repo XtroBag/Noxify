@@ -103,8 +103,8 @@ export = {
 
     // Create the confirmation buttons
     const confirmButton = new ButtonBuilder()
-      .setCustomId(`confirm-swap|${fromUser.userID}|${toUser.userID}`)
-      .setLabel("Confirm Swap")
+      .setCustomId(`accept-swap|${fromUser.userID}|${toUser.userID}`)
+      .setLabel("Accept")
       .setStyle(ButtonStyle.Success);
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(confirmButton);

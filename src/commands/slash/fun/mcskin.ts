@@ -96,36 +96,54 @@ export = {
   },
 
   async autocomplete(interaction) {
-    const focusedOption = interaction.options.getFocused(true);
-
-    const renderType = interaction.options.getString("type");
-
-    if (focusedOption.name === "type") {
-      const choices = Object.values(RenderTypes)
-        .filter(
-          (type) =>
-            type.toLowerCase().includes(focusedOption.value.toLowerCase()) // Live filtering
-        )
-        .slice(0, 25)
-        .map((type) => ({ name: type, value: type }));
-      await interaction.respond(choices);
+    try {
+      // Get the focused option
+      const focusedOption = interaction.options.getFocused(true);
+  
+      // Get the value for the renderType option, if it exists
+      const renderType = interaction.options.getString("type");
+  
+      // Handle autocompletion for the 'type' option
+      if (focusedOption.name === "type") {
+        const choices = Object.values(RenderTypes)
+          .filter(
+            (type) =>
+              type.toLowerCase().includes(focusedOption.value.toLowerCase()) // Live filtering
+          )
+          .slice(0, 25)
+          .map((type) => ({ name: type, value: type }));
+  
+        // Respond with the filtered choices
+        await interaction.respond(choices);
+      }
+  
+      // Handle autocompletion for the 'crop' option
+      if (focusedOption.name === "crop") {
+        // Ensure that renderType is valid and is of type RenderTypes
+        if (!renderType || !Object.values(RenderTypes).includes(renderType as RenderTypes)) {
+          return await interaction.respond([]); // If renderType is invalid, return no choices
+        }
+  
+        const validCrops = getRenderTypeCrops(renderType as RenderTypes);
+  
+        // Ensure validCrops is an array
+        const cropsArray = Array.isArray(validCrops) ? validCrops : [validCrops];
+  
+        const filteredCrops = cropsArray
+          .filter((crop) =>
+            crop.toLowerCase().includes(focusedOption.value.toLowerCase()) // Live filtering
+          )
+          .slice(0, 25)
+          .map((crop) => ({ name: crop, value: crop }));
+  
+        // Respond with the filtered crops
+        await interaction.respond(filteredCrops);
+      }
+    } catch (error) {
+      console.error("Error in autocomplete:", error);
+      // Optionally, you could send a message back to the user or log the error
+      await interaction.respond([]);
     }
-
-    if (focusedOption.name === "crop") {
-      const renderTypeOption = renderType as RenderTypes;
-
-      const validCrops = getRenderTypeCrops(renderTypeOption);
-
-      const cropsArray = Array.isArray(validCrops) ? validCrops : [validCrops];
-
-      const filteredCrops = cropsArray
-        .filter((crop) =>
-          crop.toLowerCase().includes(focusedOption.value.toLowerCase())
-        )
-        .slice(0, 25)
-        .map((crop) => ({ name: crop, value: crop }));
-
-      await interaction.respond(filteredCrops);
-    }
-  },
+  }
+  
 } as SlashCommandModule;

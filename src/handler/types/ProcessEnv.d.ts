@@ -4,5 +4,6 @@ declare namespace NodeJS {
         CLIENT_ID: string;
         GUILD_ID: string;
         MONGOOSE_URI: string
+        SGDB_APIKEY: string
     }
 }

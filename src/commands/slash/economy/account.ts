@@ -41,7 +41,7 @@ export = {
         )
     ),
   async execute({ client, interaction }) {
-    const member = interaction.options.getMember("member");
+    const member = interaction.options.getMember("member") || interaction.member;
 
     if (!member) return await interaction.reply({ content: `Please pick a member that is inside this server`, ephemeral: true });
 

@@ -48,17 +48,17 @@ export function createEmbed(
     iconUrl instanceof AttachmentBuilder
       ? `attachment://${iconUrl.name}`
       : iconUrl;
+
   const embed = new EmbedBuilder()
     .setTitle(game.name)
     .setURL(image.url.toString())
-    .setDescription(
-      `Image ID: ${inlineCode(image.id.toString())}\nVerified: ${inlineCode(
-        game.verified ? "Yes" : "No"
-      )}\nLanguage: ${image.language}\nNotes: ${image.notes || "None"}`
-    )
     .setColor(Colors.Normal)
     .setImage(imageUrl)
     .setFooter({ text: `Image ${index + 1} of ${total}` });
+
+    if (image.notes) {
+      embed.setDescription(image.notes)
+    }
 
   if (image) {
     embed.setAuthor({

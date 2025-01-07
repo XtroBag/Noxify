@@ -206,7 +206,6 @@ export = {
 
     await interaction.respond(choices);
   } catch (error) {
-    console.error(error.data.errors[0]);
     await interaction.respond([
       { name: "Error occurred while searching. Try again later.", value: "" },
     ]);

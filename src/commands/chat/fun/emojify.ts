@@ -10,19 +10,19 @@ export = {
 
     // Check if no text is provided (empty or only spaces)
     if (!text) {
-      return message.reply("Please provide some text to emojify.");
+      return message.reply("Please provide a message for me to emojify. Add what you want me to emojify after the command and I'll emojify it.");
     }
 
     // Check if the text is too long (for example, over 200 characters)
     if (text.length > 30) {
       return message.reply(
-        "Sorry, the text is too long. Please keep it under 30 characters."
+        "Sorry, but the message you added is too long. Please keep it under 30 characters long."
       );
     }
 
     if (/[^a-zA-Z0-9\s!?€$¥]/.test(text)) {
       return message.reply(
-        "Please use only letters, numbers, and symbols like [!, ?, €, $, ¥]."
+        "Please use letters from the alphabet from [A - Z], numbers [0 - 9], and symbols like [!, ?, €, $, ¥]."
       );
     }
 

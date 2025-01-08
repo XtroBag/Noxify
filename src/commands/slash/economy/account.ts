@@ -73,9 +73,10 @@ export = {
         joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
         accountBalance: economy.defaultBalance,
         bankBalance: 0,
-        privacySettings: { receiveNotifications: false, viewInventory: false },
+        privacySettings: { receiveNotifications: true, viewInventory: false, purchaseWarnings: true },
         milestones: [],
         transactions: [],
+        inventory: { items: { foods: [], weapons: []}}
       });
     }
 

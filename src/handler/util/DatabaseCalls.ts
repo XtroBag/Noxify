@@ -247,7 +247,8 @@ export async function updateUserPermissions(
   options.selectedPermissions.forEach((permission) => {
     if (
       permission === "viewInventory" ||
-      permission === "receiveNotifications"
+      permission === "receiveNotifications" ||
+      permission === "purchaseWarnings"
     ) {
       updateFields[`users.$.privacySettings.${permission}`] =
         !user.privacySettings[permission];

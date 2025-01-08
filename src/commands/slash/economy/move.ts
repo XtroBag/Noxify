@@ -1,7 +1,6 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
 import { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, ApplicationIntegrationType } from "discord.js";
 import { Colors } from "../../../config";
-import { Economy } from "../../../handler/schemas/models/Models";
 import { getEconomy } from "../../../handler/util/DatabaseCalls";
 
 export = {

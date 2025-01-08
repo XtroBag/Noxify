@@ -1,3 +1,5 @@
+import { Effect, FoodShopItem, WeaponShopItem, WeaponType } from "./Item";
+
 export interface ServerData {
   name: string;
   guildID: string;
@@ -19,6 +21,29 @@ export interface Milestone {
   finished: boolean;
 }
 
+//--------------------------------------------------------------------------------
+
+export type Items = WeaponData | FoodData;
+
+export interface UserInventory {
+  items: {
+    weapons: WeaponData[],
+    foods: FoodData[]
+  }
+}
+
+export interface FoodData extends FoodShopItem {
+  uses: number;
+}
+
+export interface WeaponData extends WeaponShopItem {
+  uses: number;
+  level: number;
+  purchasedAt: string;
+}
+
+//--------------------------------------------------------------------------------
+
 export interface UserEconomy {
   displayName: string;
   userID: string;
@@ -28,11 +53,13 @@ export interface UserEconomy {
   privacySettings: UserPrivacy;
   milestones: Milestone[];
   transactions: Transaction[];
+  inventory: UserInventory;
 }
 
 export interface UserPrivacy {
   viewInventory: boolean;
   receiveNotifications: boolean;
+  purchaseWarnings: boolean;
 }
 
 export interface GuildEconomy {

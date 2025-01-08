@@ -181,7 +181,7 @@ export = {
     });
  },
 
- async autocomplete(interaction) {
+ async autocomplete(interaction, client) {
   const search = interaction.options.getFocused(false);
 
   if (!search || search.length === 0) {

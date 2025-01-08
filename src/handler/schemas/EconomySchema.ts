@@ -3,7 +3,10 @@ import {
   Transaction,
   UserEconomy,
   UserPrivacy,
-  Milestone
+  Milestone,
+  UserInventory,
+  FoodData,
+  WeaponData,
 } from "../types/Database";
 
 // Define the Transaction Schema
@@ -18,6 +21,7 @@ export const TransactionSchema = new Schema<Transaction>({
 export const EconomyUserPrivacy = new Schema<UserPrivacy>({
   viewInventory: { type: SchemaTypes.Boolean, default: false },
   receiveNotifications: { type: SchemaTypes.Boolean, default: true },
+  purchaseWarnings: { type: SchemaTypes.Boolean, default: true }
 });
 
 // Define the Milestone Schema
@@ -25,6 +29,40 @@ export const EconomyMilestone = new Schema<Milestone>({
   amount: { type: SchemaTypes.Number, required: true },
   reachedAt: { type: SchemaTypes.String, required: true },
   finished: { type: SchemaTypes.Boolean, default: false, required: true },
+});
+
+export const WeaponSchema = new Schema<WeaponData>({
+  name: { type: SchemaTypes.String, required: true },
+  description: { type: SchemaTypes.String, required: true },
+  type: { type: SchemaTypes.String, required: true },
+  icon: { type: SchemaTypes.String, required: true },
+  weaponType: { type: SchemaTypes.String, required: true },
+  purchasedAt: { type: SchemaTypes.String, required: true },
+  price: { type: SchemaTypes.Number, required: true },
+  level: { type: SchemaTypes.Number, required: true },
+  uses: { type: SchemaTypes.Number, required: true },
+  damage: { type: SchemaTypes.Number, required: true },
+  durability: { type: SchemaTypes.Mixed, required: true },
+  disabled: { type: SchemaTypes.Boolean, required: true },
+});
+
+export const FoodSchema = new Schema<FoodData>({
+  name: { type: SchemaTypes.String, required: true },
+  description: { type: SchemaTypes.String, required: true },
+  type: { type: SchemaTypes.String, required: true },
+  icon: { type: SchemaTypes.String, required: true },
+  price: { type: SchemaTypes.Number, required: true },
+  disabled: { type: SchemaTypes.Boolean, required: true },
+  drinkable: { type: SchemaTypes.Boolean, required: true },
+  effects: { type: SchemaTypes.Mixed, required: true },
+  uses: { type: SchemaTypes.Number, required: true },
+});
+
+export const EconomyUserInventory = new Schema<UserInventory>({
+  items: {
+    weapons: [WeaponSchema],
+    foods: [FoodSchema],
+  },
 });
 
 // Define the EconomyUser Schema
@@ -37,8 +75,8 @@ export const EconomyUserSchema = new Schema<UserEconomy>({
   privacySettings: { type: EconomyUserPrivacy, default: {} },
   milestones: { type: [EconomyMilestone], default: [] },
   transactions: { type: [TransactionSchema], default: [] },
+  inventory: { type: EconomyUserInventory, default: {} },
 });
-
 
 // Define the Guild Economy Schema
 export const EconomySchema = new Schema({

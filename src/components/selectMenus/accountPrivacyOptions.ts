@@ -62,6 +62,11 @@ import {
                 value: "receiveNotifications",
                 description: "Get Notifications of changes",
               },
+              {
+                label: "Purchase Warnings",
+                value: "purchaseWarnings",
+                description: "Get Warnings before buying items you already have"
+              }
             ])
             .setMaxValues(2)
         );
@@ -90,6 +95,10 @@ import {
                 updatedPerson.privacySettings.receiveNotifications
                     ? Emojis.Check
                     : Emojis.Cross
+                }\nPurchase Warnings ${
+                  updatedPerson.privacySettings.purchaseWarnings
+                  ? Emojis.Check
+                  : Emojis.Cross
                 }`
             )
               .setColor(Colors.Normal),

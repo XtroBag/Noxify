@@ -35,7 +35,7 @@ export async function handleInteractionCommands(
       interaction as ContextMenuCommandInteraction<"cached">
     );
   } else if (interaction.isAutocomplete()) {
-    await handleAutocomplete(interaction as AutocompleteInteraction);
+    await handleAutocomplete(interaction as AutocompleteInteraction, client as DiscordClient);
   }
 }
 
@@ -100,7 +100,8 @@ async function handleCommand(
 }
 
 async function handleAutocomplete(
-  interaction: AutocompleteInteraction
+  interaction: AutocompleteInteraction,
+  client: DiscordClient
 ): Promise<void> {
   const command = client.commands.slash.get(interaction.commandName);
   if (!command) {
@@ -116,7 +117,7 @@ async function handleAutocomplete(
   }
 
   try {
-    await command.autocomplete(interaction);
+    await command.autocomplete(interaction, client);
   } catch (err) {
     return Logger.error(`Error autocompleting ${interaction.commandName}`, err);
   }

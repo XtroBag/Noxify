@@ -17,6 +17,7 @@ export const defaultIntents: Intent[] = [
 export const eventsFolderName: string = "events";
 export const commandsFolderName: string = "commands";
 export const componentsFolderName: string = "components";
+export const itemsFolderName: string = 'items';
 
 export const milestones: number[] = [
   1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000,

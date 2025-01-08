@@ -95,7 +95,7 @@ export = {
     }
   },
 
-  async autocomplete(interaction) {
+  async autocomplete(interaction, client) {
     try {
       // Get the focused option
       const focusedOption = interaction.options.getFocused(true);

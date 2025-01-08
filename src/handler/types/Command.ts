@@ -8,6 +8,7 @@ import {
     Message,
     SlashCommandBuilder
 } from "discord.js";
+import { FoodData, WeaponData } from "./Database";
 
 export enum CommandTypes {
     SlashCommand = "slash",
@@ -43,6 +44,11 @@ export interface CooldownCollections {
     user: Collection<string, Collection<string, number>>; 
 }
 
+export interface ItemCollections {
+    weapon: Collection<string, WeaponData>
+    food: Collection<string, FoodData>
+}
+
 export type CommandModule = SlashCommandModule | PrefixCommandModule | MessageCommandModule | PingCommandModule | ContextMenuCommandModule;
 
 interface BaseCommandModule {
@@ -64,7 +70,7 @@ export interface SlashCommandModule extends BaseCommandModule {
     type: CommandTypes.SlashCommand;
     register: RegisterTypes;
     data: SlashCommandBuilder;
-    autocomplete?: (interaction: AutocompleteInteraction) => Promise<any>;
+    autocomplete?: (interaction: AutocompleteInteraction, client: DiscordClient) => Promise<any>;
     execute: (params: { client: DiscordClient, interaction: ChatInputCommandInteraction<'cached'> }) => Promise<any>;
 }
 

@@ -16,6 +16,7 @@ import {
   CommandCollections,
   ContextMenuCommandModule,
   CooldownCollections,
+  ItemCollections,
   MessageCommandModule,
   PingCommandModule,
   PrefixCommandModule,
@@ -23,14 +24,16 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../types/Command";
-import { DatabaseOptions } from "../types/Database";
+import { DatabaseOptions, FoodData, WeaponData } from "../types/Database";
 import { connectDatabase } from "./DatabaseCalls";
+import { registerItems } from "./handleItems";
 
 export class DiscordClient extends Client {
   public events: string[];
   public commands: CommandCollections;
   public components: ComponentCollections;
   public cooldowns: CooldownCollections;
+  public items: ItemCollections;
   public db: Mongoose;
 
   constructor(options: ConstructorParameters<typeof Client>[0]) {
@@ -57,6 +60,10 @@ export class DiscordClient extends Client {
     };
     this.cooldowns = {
       user: new Collection<string, Collection<string, number>>(),
+    };
+    this.items = {
+      weapon: new Collection<string, WeaponData>(),
+      food: new Collection<string, FoodData>()
     };
     this.db = mongoose;
   }
@@ -97,6 +104,10 @@ export class DiscordClient extends Client {
 
   public async registerComponents(): Promise<void> {
     await registerComponents(this);
+  }
+
+  public async registerItems(): Promise<void> {
+    await registerItems(this);
   }
 
   public async connect(token: string | undefined): Promise<void> {

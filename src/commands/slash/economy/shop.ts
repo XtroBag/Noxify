@@ -65,6 +65,8 @@ export = {
             "Browse the items available for purchase in the economy shop."
           );
 
+        let hasItems = false;
+
         if (client.items.weapon.size > 0) {
           const weaponItems = Array.from(client.items.weapon.values())
             .filter((item) => !item.disabled)
@@ -79,11 +81,7 @@ export = {
               name: "Weapons",
               value: weaponItems.join("\n"),
             });
-          } else {
-            embed.addFields({
-              name: "Weapons",
-              value: "No available items.",
-            });
+            hasItems = true;
           }
         }
 
@@ -101,18 +99,19 @@ export = {
               name: "Foods",
               value: foodItems.join("\n"),
             });
-          } else {
-            embed.addFields({
-              name: "Foods",
-              value: "No available items.",
-            });
+            hasItems = true;
           }
+        }
+
+        if (!hasItems) {
+          embed.setDescription("No available items to purchase.");
         }
 
         await interaction.reply({ embeds: [embed] });
       } else if (subcommand === "buy") {
         const buyingItem = interaction.options.getString("item");
 
+        // If i add new item categories i need to add the client to find it here
         let item: Items =
           client.items.food.find((food) => food.name === buyingItem) ||
           client.items.weapon.find((weapon) => weapon.name === buyingItem);
@@ -139,6 +138,26 @@ export = {
           });
         }
 
+        const maxAmount =
+          item.amountPerUser === "unlimited" ? Infinity : item.amountPerUser;
+        const currentAmount = user.inventory.items[`${item.type}s`].filter(
+          (existingItem) => existingItem.name === item.name
+        ).length;
+
+        if (currentAmount >= maxAmount) {
+          return await interaction.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setColor(Colors.Warning)
+                .setDescription(
+                  `You've reached the maximum limit of ${inlineCode(
+                    maxAmount.toString()
+                  )} ${item.name}'s`
+                ),
+            ],
+          });
+        }
+
         const itemExistsInInventory: Items = user.inventory.items[
           item.type + "s"
         ].some((existingItem) => existingItem.name === item.name);
@@ -162,7 +181,13 @@ export = {
               );
 
             const reply = await interaction.reply({
-              content: `Warning: You already own **${item.name}**. Are you sure you want to buy another one?`,
+              embeds: [
+                new EmbedBuilder()
+                  .setColor(Colors.Warning)
+                  .setDescription(
+                    `You already own a **${item.name}**. Are you sure you wanna buy another one?`
+                  ),
+              ],
               components: [actionRow],
             });
 
@@ -173,11 +198,17 @@ export = {
               time: 120000,
             });
 
+            const embed = new EmbedBuilder()
+              .setColor(Colors.Success)
+              .setDescription(
+                `Successfully purchased **${item.name}** and added it to your inventory.`
+              );
+
             collector.on("collect", async (buttonInteraction) => {
               if (buttonInteraction.customId === "confirm-purchase") {
                 await completePurchase(user, item, interaction);
                 return await buttonInteraction.update({
-                  content: `You have successfully purchased **${item.name}** and added it to your inventory.`,
+                  embeds: [embed],
                   components: [],
                 });
               } else if (
@@ -192,8 +223,8 @@ export = {
               }
             });
 
-            collector.on("end", () => {
-              interaction.editReply({ components: [] });
+            collector.on("end", async () => {
+              return await interaction.deleteReply().catch(() => {});
             });
 
             return;
@@ -202,7 +233,11 @@ export = {
 
         await completePurchase(user, item, interaction);
         return await interaction.reply({
-          content: `You have successfully purchased **${item.name}** and added it to your inventory.`,
+          embeds: [
+            new EmbedBuilder()
+              .setColor(Colors.Success)
+              .setDescription(`Successfully purchased **${item.name}**.`),
+          ],
         });
       }
     }
@@ -259,6 +294,7 @@ async function completePurchase(
             effects: foodItem.effects,
             disabled: foodItem.disabled,
             drinkable: foodItem.drinkable,
+            amountPerUser: foodItem.amountPerUser,
             uses: 0, // custom set
           },
         },
@@ -282,6 +318,7 @@ async function completePurchase(
             damage: weaponItem.damage,
             level: 0, // custom set
             uses: 0, // custom set
+            amountPerUser: weaponItem.amountPerUser,
             weaponType: weaponItem.weaponType,
             durability: weaponItem.durability,
             disabled: weaponItem.disabled,

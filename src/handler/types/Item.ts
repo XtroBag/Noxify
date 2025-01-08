@@ -33,6 +33,7 @@ export enum Effect {
     icon: string; // The icon for the item.
     disabled: boolean; // Whether the item is disabled.
     price: number;
+    amountPerUser: number | 'unlimited';
   }
   
   export interface WeaponShopItem extends DefaultItem {

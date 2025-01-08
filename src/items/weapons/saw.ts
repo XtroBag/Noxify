@@ -9,5 +9,6 @@ export = {
   price: 28,
   damage: 34,
   durability: 70,
-  weaponType: 'other'
+  weaponType: 'other',
+  amountPerUser: 1
 } as WeaponShopItem;

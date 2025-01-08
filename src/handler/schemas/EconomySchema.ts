@@ -44,6 +44,7 @@ export const WeaponSchema = new Schema<WeaponData>({
   damage: { type: SchemaTypes.Number, required: true },
   durability: { type: SchemaTypes.Mixed, required: true },
   disabled: { type: SchemaTypes.Boolean, required: true },
+  amountPerUser: { type: SchemaTypes.Mixed, required: true }
 });
 
 export const FoodSchema = new Schema<FoodData>({
@@ -56,6 +57,7 @@ export const FoodSchema = new Schema<FoodData>({
   drinkable: { type: SchemaTypes.Boolean, required: true },
   effects: { type: SchemaTypes.Mixed, required: true },
   uses: { type: SchemaTypes.Number, required: true },
+  amountPerUser: { type: SchemaTypes.Mixed, required: true }
 });
 
 export const EconomyUserInventory = new Schema<UserInventory>({

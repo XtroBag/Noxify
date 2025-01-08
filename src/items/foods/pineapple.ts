@@ -9,4 +9,5 @@ export = {
   type: "food",
   effects: [Effect.Healing, Effect.EnergyBoost],
   price: 9,
+  amountPerUser: 'unlimited'
 } as FoodShopItem;

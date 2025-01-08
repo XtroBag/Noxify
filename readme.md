@@ -2,7 +2,7 @@
   <img src="banner.png" alt="Noxify's Banner">
 </p>
 
-Noxify is a Discord bot currently under active development by XtroBag and BroBoiler. We're constantly adding new features and refining existing ones to create a versatile and enjoyable experience for your server.
+Noxify is a Discord bot currently under active development by XtroBag (Sean Gray), BroBoiler (Scott), and BSP2973 (Benjamin Price). We're constantly adding new features and refining existing ones to create a versatile and enjoyable experience for your server.
 
 **Key Features:**
 

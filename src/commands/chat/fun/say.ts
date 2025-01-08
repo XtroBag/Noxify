@@ -13,7 +13,7 @@ export = {
 
     if (!messageToSay) {
       await message.reply({
-        content: "Please provide a message for me to say!"
+        content: "Please provide a message for me to say. Add what you want me to say after the command and I'll say it."
       });
       return;
     }
@@ -22,7 +22,7 @@ export = {
     if (messageToSay.includes("@everyone") || messageToSay.includes("@here")) {
       try { 
         await message.reply({
-          content: "I cannot send messages that mention `@everyone` or `@here`."
+          content: "I cannot send messages that mention `@everyone` or `@here` because that would ping everyone on the server."
         });
       } catch (error) {
         console.error("Error trying to delete the message or send a reply:", error);

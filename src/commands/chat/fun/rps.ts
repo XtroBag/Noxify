@@ -20,14 +20,22 @@ export = {
     await msg.react("📃");
 
     const filter = (reaction: MessageReaction, user: User) => {
-      return ['🗻', '✂', '📃'].includes(reaction.emoji.name) && user.id === message.author.id;
+      return (
+        ["🗻", "✂", "📃"].includes(reaction.emoji.name) &&
+        user.id === message.author.id
+      );
     };
 
-    const choices = ['🗻', '✂', '📃'];
+    const choices = ["🗻", "✂", "📃"];
     const botChoice = choices[Math.floor(Math.random() * choices.length)];
 
     try {
-      const collected = await msg.awaitReactions({ max: 1, time: 60000, filter, errors: ["time"] });
+      const collected = await msg.awaitReactions({
+        max: 1,
+        time: 60000,
+        filter,
+        errors: ["time"],
+      });
       const userChoice = collected.first()?.emoji.name;
 
       if (!userChoice) return;
@@ -41,9 +49,11 @@ export = {
         .setColor(Colors.Normal);
 
       let resultMessage = "It's a tie.";
-      if ((botChoice === "🗻" && userChoice === "✂") ||
+      if (
+        (botChoice === "🗻" && userChoice === "✂") ||
         (botChoice === "✂" && userChoice === "📃") ||
-        (botChoice === "📃" && userChoice === "🗻")) {
+        (botChoice === "📃" && userChoice === "🗻")
+      ) {
         resultMessage = "You lost!";
       } else if (userChoice !== botChoice) {
         resultMessage = "You won!";
@@ -52,7 +62,9 @@ export = {
       await msg.edit({ embeds: [resultEmbed] });
       await message.channel.send({ content: resultMessage });
     } catch (error) {
-      await msg.edit({ content: "You took too long to respond.", embeds: [] });
+      (
+        await msg.edit({ content: "You took too long to respond.", embeds: [] })
+      ).reactions.removeAll();
     }
   },
 } as PrefixCommandModule;

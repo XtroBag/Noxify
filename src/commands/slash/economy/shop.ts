@@ -18,6 +18,7 @@ import {
   inlineCode,
   InteractionContextType,
   SlashCommandBuilder,
+  StringSelectMenuBuilder,
 } from "discord.js";
 import {
   Items,
@@ -65,53 +66,29 @@ export = {
             "Browse the items available for purchase in the economy shop."
           );
 
-        let hasItems = false;
+        const itemsPerPage = 10;
 
-        if (client.items.weapon.size > 0) {
-          const weaponItems = Array.from(client.items.weapon.values())
-            .filter((item) => !item.disabled)
-            .map((item) => {
-              return `${item.icon} **${item.name}** - Price: ${inlineCode(
-                item.price.toString()
-              )}\n-# ➜ ${item.description}`;
-            });
+        const menuRow =
+          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+            new StringSelectMenuBuilder()
+              .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
+              .setMaxValues(1)
+              .setMinValues(1)
+              .setPlaceholder("Pick a category")
+              .addOptions([
+                { label: "Foods", value: "food" },
+                { label: "Weapons", value: "weapon" },
+              ])
+          );
 
-          if (weaponItems.length > 0) {
-            embed.addFields({
-              name: "Weapons",
-              value: weaponItems.join("\n"),
-            });
-            hasItems = true;
-          }
-        }
-
-        if (client.items.food.size > 0) {
-          const foodItems = Array.from(client.items.food.values())
-            .filter((item) => !item.disabled)
-            .map((item) => {
-              return `${item.icon} **${item.name}** - Price: ${inlineCode(
-                item.price.toString()
-              )}\n-# ➜ ${item.description}`;
-            });
-
-          if (foodItems.length > 0) {
-            embed.addFields({
-              name: "Foods",
-              value: foodItems.join("\n"),
-            });
-            hasItems = true;
-          }
-        }
-
-        if (!hasItems) {
-          embed.setDescription("No available items to purchase.");
-        }
-
-        await interaction.reply({ embeds: [embed] });
+        await interaction.reply({
+          embeds: [embed],
+          components: [menuRow],
+        });
       } else if (subcommand === "buy") {
         const buyingItem = interaction.options.getString("item");
 
-        // If i add new item categories i need to add the client to find it here
+        // If I add new item categories, I need to add the client to find it here
         let item: Items =
           client.items.food.find((food) => food.name === buyingItem) ||
           client.items.weapon.find((weapon) => weapon.name === buyingItem);

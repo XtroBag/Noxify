@@ -10,7 +10,7 @@ export = {
     if (message.channel.type !== ChannelType.GuildText) return;
 
     const embed = new EmbedBuilder()
-      .setTitle("Rock, Paper, Scissors")
+      .setTitle("Let’s Play Rock, Paper, Scissors!")
       .setDescription("React with:\n🪨 for Rock\n✂ for Scissors\n📃 for Paper")
       .setColor(Colors.Normal);
 
@@ -33,26 +33,26 @@ export = {
       if (!userChoice) return;
 
       const resultEmbed = new EmbedBuilder()
-        .setTitle("Result")
+        .setTitle("Shoot!")
         .addFields(
           { name: "Your Choice", value: userChoice },
           { name: "Bot's Choice", value: botChoice }
         )
         .setColor(Colors.Normal);
 
-      let resultMessage = "It's a tie.";
+      let resultMessage = "It's a Tie! 🌀";
       if ((botChoice === "🪨" && userChoice === "✂") ||
         (botChoice === "✂" && userChoice === "📃") ||
         (botChoice === "📃" && userChoice === "🪨")) {
-        resultMessage = "You lost!";
+        resultMessage = "You Lost! 🎺";
       } else if (userChoice !== botChoice) {
-        resultMessage = "You won!";
+        resultMessage = "You Won! 🏅";
       }
 
       await msg.edit({ embeds: [resultEmbed] });
       await message.channel.send({ content: resultMessage });
     } catch (error) {
-      await msg.edit({ content: "You took too long to respond.", embeds: [] });
+      await msg.edit({ content: "You took too long to respond. Please try to react to one of the options to play.", embeds: [] });
     }
   },
 } as PrefixCommandModule;

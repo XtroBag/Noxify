@@ -11,19 +11,19 @@ export = {
 
     const embed = new EmbedBuilder()
       .setTitle("Rock, Paper, Scissors")
-      .setDescription("React with:\n🗻 for Rock\n✂ for Scissors\n📃 for Paper")
+      .setDescription("React with:\n🪨 for Rock\n✂ for Scissors\n📃 for Paper")
       .setColor(Colors.Normal);
 
     let msg = await message.channel.send({ embeds: [embed] });
-    await msg.react("🗻");
+    await msg.react("🪨");
     await msg.react("✂");
     await msg.react("📃");
 
     const filter = (reaction: MessageReaction, user: User) => {
-      return ['🗻', '✂', '📃'].includes(reaction.emoji.name) && user.id === message.author.id;
+      return ['🪨', '✂', '📃'].includes(reaction.emoji.name) && user.id === message.author.id;
     };
 
-    const choices = ['🗻', '✂', '📃'];
+    const choices = ['🪨', '✂', '📃'];
     const botChoice = choices[Math.floor(Math.random() * choices.length)];
 
     try {
@@ -41,9 +41,9 @@ export = {
         .setColor(Colors.Normal);
 
       let resultMessage = "It's a tie.";
-      if ((botChoice === "🗻" && userChoice === "✂") ||
+      if ((botChoice === "🪨" && userChoice === "✂") ||
         (botChoice === "✂" && userChoice === "📃") ||
-        (botChoice === "📃" && userChoice === "🗻")) {
+        (botChoice === "📃" && userChoice === "🪨")) {
         resultMessage = "You lost!";
       } else if (userChoice !== botChoice) {
         resultMessage = "You won!";

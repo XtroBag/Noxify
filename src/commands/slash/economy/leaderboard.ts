@@ -44,10 +44,10 @@ export = {
         joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
         accountBalance: economyData.defaultBalance,
         bankBalance: 0,
-        privacySettings: { receiveNotifications: true, viewInventory: false, purchaseWarnings: true },
+        privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { foods: [], weapons: []}}
+        inventory: { items: { food: [], weapon: []}}
       });
 
       const updatedEconomyData = await getEconomy({

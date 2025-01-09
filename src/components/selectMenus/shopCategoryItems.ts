@@ -36,7 +36,7 @@ export = {
 
       const weaponDescriptions = currentItems.map((item) => {
         let itemDescription = `${item.icon} **${
-          item.name
+          item.name.singular
         }** - Price: ${inlineCode(item.price.toString())}`;
 
         itemDescription += `\n› Damage: ${inlineCode(
@@ -45,7 +45,9 @@ export = {
           item.durability === "unlimited"
             ? "unlimited"
             : item.durability.toString()
-        )} ❘ Type: ${inlineCode(item.weaponType)}`;
+        )} ❘ Type: ${inlineCode(item.weaponType)} ❘ Requires: ${item.requires && item.requires.length > 0
+          ? item.requires.map((reqItem) => inlineCode(reqItem)).join(' ') 
+          : inlineCode("none")}`;
 
         itemDescription += `\n-# ➜ ${item.description}`;
 
@@ -107,7 +109,7 @@ export = {
 
       const foodDescriptions = currentItems.map((item) => {
         let itemDescription = `${item.icon} **${
-          item.name
+          item.name.singular
         }** - Price: ${inlineCode(item.price.toString())}`;
 
         itemDescription += `\n› Drinkable: ${inlineCode(
@@ -115,7 +117,7 @@ export = {
         )} ❘ Effects: ${
           item.effects && item.effects.length > 0
             ? item.effects.map((effect) => inlineCode(effect)).join(" ")
-            : "None"
+            : inlineCode("none")
         }`;
 
         itemDescription += `\n-# ➜ ${item.description}`;

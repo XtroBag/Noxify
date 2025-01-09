@@ -24,10 +24,15 @@ export enum Effect {
   }
 
   export type ItemType = "weapon" | "food"
-  export type WeaponType = "sword" | "knife" | "gun" | "lightsaber" | "other"
+  export type WeaponType = "sword" | "gun" | "lightsaber" | "other"
+
+  export interface NameStyles {
+    singular: string;
+    plural: string;
+  }
   
   export interface DefaultItem {
-    name: string; // The name of the item.
+    name: NameStyles;
     type: ItemType; // The type of item it is.
     description: string; // A short description of the item.
     icon: string; // The icon for the item.
@@ -40,6 +45,7 @@ export enum Effect {
     damage: number; // The damage the weapon can do.
     weaponType: WeaponType; // More specific weapon types (string literal type)
     durability: number | 'unlimited'; // How much the weapon can be used before it's gone or broken.
+    requires: string[]
   }
  
   export interface  FoodShopItem extends DefaultItem {

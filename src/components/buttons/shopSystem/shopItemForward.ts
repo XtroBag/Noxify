@@ -61,7 +61,9 @@ export = {
           item.damage.toString()
         )} ❘ Durability: ${inlineCode(
           item.durability.toString()
-        )} ❘ Type: ${inlineCode(item.weaponType)}`;
+        )} ❘ Type: ${inlineCode(item.weaponType)} ❘ Requires: ${item.requires && item.requires.length > 0
+          ? item.requires.map((reqItem) => inlineCode(reqItem)).join(' ') 
+          : inlineCode("none")}`;
       }
       if ("drinkable" in item) {
         itemDescription += `\n› Drinkable: ${inlineCode(
@@ -69,7 +71,7 @@ export = {
         )} ❘ Effects: ${
           item.effects && item.effects.length > 0
             ? item.effects.map((effect) => inlineCode(effect)).join(" ")
-            : "None"
+            : inlineCode("none")
         }`;
       }
 

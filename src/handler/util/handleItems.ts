@@ -33,9 +33,9 @@ async function getItemModules(client: DiscordClient): Promise<void> {
       totalItems++;
 
       if (module.type === "weapon") {
-        client.items[module.type].set(module.name, module as WeaponData);
+        client.items[module.type].set(module.name.singular, module as WeaponData);
       } else if (module.type === "food") {
-        client.items[module.type].set(module.name, module as FoodData);
+        client.items[module.type].set(module.name.singular, module as FoodData);
       }
     } catch (err) {
       Logger.error(`Failed to load item at ${importPath}`, err);

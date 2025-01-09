@@ -1,7 +1,10 @@
 import { Effect, FoodShopItem } from "../../handler/types/Item";
 
 export = {
-  name: "Strawberry",
+  name: {
+    singular: 'Strawberry',
+    plural: 'Strawberries'
+  },
   description: "A sweet fruit that boosts health and energy.",
   type: "food",
   icon: "🍓",

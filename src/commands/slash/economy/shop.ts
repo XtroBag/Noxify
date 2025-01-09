@@ -1,6 +1,6 @@
 import {
   getEconomy,
-  updateUserPermissions,
+  completePurchase,
 } from "../../../handler/util/DatabaseCalls";
 import { Colors } from "../../../config";
 import {
@@ -11,23 +11,13 @@ import {
 import {
   ActionRowBuilder,
   ApplicationIntegrationType,
-  ButtonBuilder,
-  ButtonStyle,
-  ChatInputCommandInteraction,
   EmbedBuilder,
   inlineCode,
   InteractionContextType,
   SlashCommandBuilder,
   StringSelectMenuBuilder,
 } from "discord.js";
-import {
-  Items,
-  FoodData,
-  WeaponData,
-  UserEconomy,
-} from "../../../handler/types/Database";
-import { Economy } from "../../../handler/schemas/models/Models";
-import { format } from "date-fns";
+import { Items } from "../../../handler/types/Database";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -50,6 +40,14 @@ export = {
             .setDescription("The item to buy")
             .setRequired(true)
             .setAutocomplete(true)
+        )
+        .addNumberOption((option) =>
+          option
+            .setName("amount")
+            .setDescription("The amount of this item you would like to buy")
+            .setMinValue(1)
+            .setMaxValue(10)
+            .setRequired(true)
         )
     ),
   async execute({ client, interaction }) {
@@ -87,11 +85,30 @@ export = {
         });
       } else if (subcommand === "buy") {
         const buyingItem = interaction.options.getString("item");
+        const amount = interaction.options.getNumber("amount");
 
-        // If I add new item categories, I need to add the client to find it here
+        const mentionPattern = /<@!?(\d+)>/;
+        const urlPattern = /https?:\/\/[^\s]+/;
+
+        if (buyingItem.includes("@everyone") || buyingItem.includes("@here")) {
+          return await interaction.reply({
+            content: "You cannot mention `@everyone` or `@here` as an item",
+          });
+        } else if (urlPattern.test(buyingItem)) {
+          return await interaction.reply({
+            content: "You cannot search a link as an item",
+          });
+        } else if (mentionPattern.test(buyingItem)) {
+          return await interaction.reply({
+            content: "You cannot mention users as an item",
+          });
+        }
+
         let item: Items =
-          client.items.food.find((food) => food.name === buyingItem) ||
-          client.items.weapon.find((weapon) => weapon.name === buyingItem);
+          client.items.food.find((food) => food.name.singular === buyingItem) ||
+          client.items.weapon.find(
+            (weapon) => weapon.name.singular === buyingItem
+          );
 
         if (!item) {
           return await interaction.reply({
@@ -109,111 +126,48 @@ export = {
           });
         }
 
-        if (user.accountBalance < item.price) {
+        if (user.accountBalance < item.price * amount) {
           return await interaction.reply({
-            content: `You don't have enough funds to buy **${buyingItem}**, Check your account balance.`,
+            content: `You don't have enough funds to buy **${amount} ${buyingItem}**. Check your account balance.`,
           });
         }
 
         const maxAmount =
           item.amountPerUser === "unlimited" ? Infinity : item.amountPerUser;
-        const currentAmount = user.inventory.items[`${item.type}s`].filter(
-          (existingItem) => existingItem.name === item.name
+
+        const currentAmount = user.inventory.items[item.type].filter(
+          (existingItem) => existingItem.name.singular === item.name.singular
         ).length;
 
-        if (currentAmount >= maxAmount) {
+        const itemName =
+          maxAmount === 1 ? item.name.singular : item.name.plural;
+
+        if (currentAmount + amount > maxAmount) {
           return await interaction.reply({
             embeds: [
               new EmbedBuilder()
-                .setColor(Colors.Warning)
+                .setColor(Colors.Error)
                 .setDescription(
-                  `You've reached the maximum limit of ${inlineCode(
+                  `You can't buy more than ${inlineCode(
                     maxAmount.toString()
-                  )} ${item.name}'s`
+                  )} ${itemName}.`
                 ),
             ],
           });
         }
 
-        const itemExistsInInventory: Items = user.inventory.items[
-          item.type + "s"
-        ].some((existingItem) => existingItem.name === item.name);
-
-        if (itemExistsInInventory) {
-          if (user.privacySettings.purchaseWarnings) {
-            const confirmButton = new ButtonBuilder()
-              .setCustomId("confirm-purchase")
-              .setLabel("Confirm")
-              .setStyle(ButtonStyle.Success);
-
-            const disableButton = new ButtonBuilder()
-              .setCustomId("disable-warning-perm")
-              .setLabel("Disable Warning")
-              .setStyle(ButtonStyle.Danger);
-
-            const actionRow =
-              new ActionRowBuilder<ButtonBuilder>().addComponents(
-                confirmButton,
-                disableButton
-              );
-
-            const reply = await interaction.reply({
-              embeds: [
-                new EmbedBuilder()
-                  .setColor(Colors.Warning)
-                  .setDescription(
-                    `You already own a **${item.name}**. Are you sure you wanna buy another one?`
-                  ),
-              ],
-              components: [actionRow],
-            });
-
-            // Collect button interaction
-            const filter = (i) => i.user.id === interaction.user.id;
-            const collector = reply.createMessageComponentCollector({
-              filter,
-              time: 120000,
-            });
-
-            const embed = new EmbedBuilder()
-              .setColor(Colors.Success)
-              .setDescription(
-                `Successfully purchased **${item.name}** and added it to your inventory.`
-              );
-
-            collector.on("collect", async (buttonInteraction) => {
-              if (buttonInteraction.customId === "confirm-purchase") {
-                await completePurchase(user, item, interaction);
-                return await buttonInteraction.update({
-                  embeds: [embed],
-                  components: [],
-                });
-              } else if (
-                buttonInteraction.customId === "disable-warning-perm"
-              ) {
-                await updateUserPermissions({
-                  guildID: interaction.guildId,
-                  userID: user.userID,
-                  selectedPermissions: ["purchaseWarnings"],
-                });
-                return await buttonInteraction.deferUpdate();
-              }
-            });
-
-            collector.on("end", async () => {
-              return await interaction.deleteReply().catch(() => {});
-            });
-
-            return;
-          }
-        }
-
-        await completePurchase(user, item, interaction);
+        await completePurchase(user, item, amount, interaction);
         return await interaction.reply({
           embeds: [
             new EmbedBuilder()
               .setColor(Colors.Success)
-              .setDescription(`Successfully purchased **${item.name}**.`),
+              .setDescription(
+                `You have successfully purchased ${inlineCode(
+                  amount.toString()
+                )} ${
+                  amount > 1 ? item.name.plural : item.name.singular
+                } and added it to your inventory.`
+              ),
           ],
         });
       }
@@ -229,7 +183,7 @@ export = {
 
     const filteredItems = allItems.filter(
       (item) =>
-        item.name.toLowerCase().includes(focusedValue.toLowerCase()) &&
+        item.name.singular.toLowerCase().includes(focusedValue.toLowerCase()) &&
         !item.disabled
     );
 
@@ -242,70 +196,11 @@ export = {
       ]);
     } else {
       const suggestions = filteredItems.map((item) => ({
-        name: item.name,
-        value: item.name,
+        name: item.name.singular,
+        value: item.name.singular,
       }));
 
       await interaction.respond(suggestions);
     }
   },
 } as SlashCommandModule;
-
-async function completePurchase(
-  user: UserEconomy,
-  item: Items,
-  interaction: ChatInputCommandInteraction<"cached">
-) {
-  if (item.type === "food") {
-    const foodItem = item as FoodData;
-    await Economy.updateOne(
-      { guildID: interaction.guildId, "users.userID": user.userID },
-      {
-        $push: {
-          [`users.$.inventory.items.${item.type}s`]: {
-            name: foodItem.name,
-            description: foodItem.description,
-            type: foodItem.type,
-            icon: foodItem.icon,
-            price: foodItem.price,
-            effects: foodItem.effects,
-            disabled: foodItem.disabled,
-            drinkable: foodItem.drinkable,
-            amountPerUser: foodItem.amountPerUser,
-            uses: 0, // custom set
-          },
-        },
-        $inc: {
-          "users.$.accountBalance": -foodItem.price,
-        },
-      }
-    );
-  } else if (item.type === "weapon") {
-    const weaponItem = item as WeaponData;
-    await Economy.updateOne(
-      { guildID: interaction.guildId, "users.userID": user.userID },
-      {
-        $push: {
-          [`users.$.inventory.items.${item.type}s`]: {
-            name: weaponItem.name,
-            description: weaponItem.description,
-            type: weaponItem.type,
-            icon: weaponItem.icon,
-            price: weaponItem.price,
-            damage: weaponItem.damage,
-            level: 0, // custom set
-            uses: 0, // custom set
-            amountPerUser: weaponItem.amountPerUser,
-            weaponType: weaponItem.weaponType,
-            durability: weaponItem.durability,
-            disabled: weaponItem.disabled,
-            purchasedAt: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"), // custom set
-          },
-        },
-        $inc: {
-          "users.$.accountBalance": -weaponItem.price,
-        },
-      }
-    );
-  }
-}

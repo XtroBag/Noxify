@@ -93,10 +93,10 @@ export = {
         displayName: interaction.member.displayName,
         accountBalance: economy.defaultBalance,
         bankBalance: 0,
-        privacySettings: { receiveNotifications: true, viewInventory: false, purchaseWarnings: true },
+        privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { foods: [], weapons: []}}
+        inventory: { items: { food: [], weapon: []}}
       });
       user = economy.users.find(
         (user) => user.userID === interaction.member.id

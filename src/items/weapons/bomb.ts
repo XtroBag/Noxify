@@ -2,17 +2,17 @@ import { WeaponShopItem } from "../../handler/types/Item";
 
 export = {
   name: {
-    singular: 'Saw',
-    plural: 'Saws'
+    singular: "Bomb",
+    plural: "Bombs",
   },
-  description: "A durable tool for slicing through tough opponents.",
-  icon: "🪚",
+  description: "A very explosive and dangerous weapon",
+  icon: "💣",
   disabled: false,
   type: "weapon",
-  price: 28,
-  damage: 34,
-  durability: 70,
+  price: 9,
+  amountPerUser: 15,
   weaponType: 'other',
-  amountPerUser: 1,
+  damage: 54,
+  durability: 1,
   requires: [] // enter NAMES of other items by their Sinular name to require them for this item to be used.
 } as WeaponShopItem;

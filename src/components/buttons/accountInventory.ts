@@ -8,6 +8,7 @@ import {
 import { ComponentModule, ComponentTypes } from "../../handler";
 import { getEconomy } from "../../handler/util/DatabaseCalls";
 import { Colors } from "../../config";
+import { Items, UserEconomy } from "../../handler/types/Database";
 
 export = {
   id: "accountInventory",
@@ -15,6 +16,7 @@ export = {
   async execute(client, button, extras) {
     const userId = extras[0];
 
+    // Fetch economy data
     const economy = await getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
@@ -33,40 +35,105 @@ export = {
           ephemeral: true,
         });
       } else if (canViewInventory === true) {
-        await button.deferUpdate();
-        await button.editReply({
-          components: [
-            new ActionRowBuilder<ButtonBuilder>().setComponents(
-              new ButtonBuilder()
-                .setCustomId(`accountBack|${userId}`)
-                .setLabel("Back")
-                .setStyle(ButtonStyle.Secondary)
-            ),
-          ],
-          embeds: [
-            new EmbedBuilder()
-              .setDescription("This is the inventory")
-              .setColor(Colors.Normal),
-          ],
-        });
+        await displayInventory(button, person, userId);
       }
     } else {
-      await button.deferUpdate();
-      await button.editReply({
-        components: [
-          new ActionRowBuilder<ButtonBuilder>().setComponents(
-            new ButtonBuilder()
-              .setCustomId(`accountBack|${userId}`)
-              .setLabel("Back")
-              .setStyle(ButtonStyle.Secondary)
-          ),
-        ],
-        embeds: [
-          new EmbedBuilder()
-            .setDescription("This is your inventory")
-            .setColor(Colors.Normal),
-        ],
-      });
+      await displayInventory(button, person, userId);
     }
   },
 } as ComponentModule<ButtonInteraction<'cached'>>;
+
+// Function to display the inventory in categories with item quantities
+async function displayInventory(button: ButtonInteraction<'cached'>, person: UserEconomy, userId: string) {
+  // Retrieve both weapon and food items from the user's inventory
+  const weapons = person.inventory.items.weapon.filter(item => item.type === "weapon");
+  const foods = person.inventory.items.food.filter(item => item.type === "food");
+
+  // Function to group items and count quantities
+  const groupItemsByName = (items: Items[]) => {
+    const groupedItems: { [key: string]: any[] } = {};
+    items.forEach(item => {
+      if (!groupedItems[item.name.singular]) {
+        groupedItems[item.name.singular] = [];
+      }
+      groupedItems[item.name.singular].push(item)
+    });
+    return groupedItems;
+  };
+
+  // Group weapons and food separately
+  const groupedWeapons = groupItemsByName(weapons);
+  const groupedFood = groupItemsByName(foods);
+
+  let inventoryDescription = "";
+
+  // Function to get the correct item name based on quantity
+  const getItemName = (itemName: string, itemPluralName: string, quantity: number): string => {
+    return quantity > 1 ? itemPluralName : itemName;
+  };
+
+  // Show weapons
+  if (Object.keys(groupedWeapons).length > 0) {
+    inventoryDescription += "**Weapons**:\n";
+    for (const [name, items] of Object.entries(groupedWeapons)) {
+      const quantity = items.length;
+      const item = items[0]; // Assuming the name is consistent for all items of this type
+      const itemName = item.name.singular;
+      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
+
+      // Get the correct item name based on quantity
+      const itemNamePluralized = getItemName(itemName, itemPluralName, quantity);
+
+      // If there's more than 1, show quantity
+      if (quantity > 1) {
+        inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
+      } else {
+        inventoryDescription += `› ${itemNamePluralized}\n`; // Just show name if only 1 item
+      }
+    }
+  } else {
+    inventoryDescription += "**Weapons**: None\n";
+  }
+
+  // Show food
+  if (Object.keys(groupedFood).length > 0) {
+    inventoryDescription += "\n**Food**:\n";
+    for (const [name, items] of Object.entries(groupedFood)) {
+      const quantity = items.length;
+      const item = items[0]; // Assuming the name is consistent for all items of this type
+      const itemName = item.name.singular;
+      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
+
+      // Get the correct item name based on quantity
+      const itemNamePluralized = getItemName(itemName, itemPluralName, quantity);
+
+      // If there's more than 1, show quantity
+      if (quantity > 1) {
+        inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
+      } else {
+        inventoryDescription += `› ${itemNamePluralized}\n`; // Just show name if only 1 item
+      }
+    }
+  } else {
+    inventoryDescription += "**Food**: None\n";
+  }
+
+  // Create the embed with the inventory
+  await button.deferUpdate();
+  await button.editReply({
+    components: [
+      new ActionRowBuilder<ButtonBuilder>().setComponents(
+        new ButtonBuilder()
+          .setCustomId(`accountBack|${userId}`)
+          .setLabel("Back")
+          .setStyle(ButtonStyle.Secondary)
+      ),
+    ],
+    embeds: [
+      new EmbedBuilder()
+        .setTitle(`${person.displayName}'s Inventory`)
+        .setDescription(inventoryDescription || "No items in inventory.")
+        .setColor(Colors.Normal),
+    ],
+  });
+}

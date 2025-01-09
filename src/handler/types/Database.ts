@@ -27,8 +27,8 @@ export type Items = WeaponData | FoodData;
 
 export interface UserInventory {
   items: {
-    weapons: WeaponData[],
-    foods: FoodData[]
+    weapon: WeaponData[],
+    food: FoodData[]
   }
 }
 
@@ -40,6 +40,7 @@ export interface WeaponData extends WeaponShopItem {
   uses: number;
   level: number;
   purchasedAt: string;
+  requires: string[] // the singular name of another item from the shop to require this item to also have to use the item it's delcared on.
 }
 
 //--------------------------------------------------------------------------------
@@ -59,7 +60,6 @@ export interface UserEconomy {
 export interface UserPrivacy {
   viewInventory: boolean;
   receiveNotifications: boolean;
-  purchaseWarnings: boolean;
 }
 
 export interface GuildEconomy {

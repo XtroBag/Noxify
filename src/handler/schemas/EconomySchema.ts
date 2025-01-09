@@ -8,6 +8,7 @@ import {
   FoodData,
   WeaponData,
 } from "../types/Database";
+import { NameStyles } from "../types/Item";
 
 // Define the Transaction Schema
 export const TransactionSchema = new Schema<Transaction>({
@@ -21,7 +22,6 @@ export const TransactionSchema = new Schema<Transaction>({
 export const EconomyUserPrivacy = new Schema<UserPrivacy>({
   viewInventory: { type: SchemaTypes.Boolean, default: false },
   receiveNotifications: { type: SchemaTypes.Boolean, default: true },
-  purchaseWarnings: { type: SchemaTypes.Boolean, default: true }
 });
 
 // Define the Milestone Schema
@@ -31,8 +31,13 @@ export const EconomyMilestone = new Schema<Milestone>({
   finished: { type: SchemaTypes.Boolean, default: false, required: true },
 });
 
+export const ItemName = new Schema<NameStyles>({
+  singular: { type: SchemaTypes.String, required: true },
+  plural: { type: SchemaTypes.String, required: true }
+})
+
 export const WeaponSchema = new Schema<WeaponData>({
-  name: { type: SchemaTypes.String, required: true },
+  name: { type: ItemName, required: true }, // name is now plural and singular
   description: { type: SchemaTypes.String, required: true },
   type: { type: SchemaTypes.String, required: true },
   icon: { type: SchemaTypes.String, required: true },
@@ -44,11 +49,12 @@ export const WeaponSchema = new Schema<WeaponData>({
   damage: { type: SchemaTypes.Number, required: true },
   durability: { type: SchemaTypes.Mixed, required: true },
   disabled: { type: SchemaTypes.Boolean, required: true },
-  amountPerUser: { type: SchemaTypes.Mixed, required: true }
+  amountPerUser: { type: SchemaTypes.Mixed, required: true },
+  requires: { type: SchemaTypes.Mixed, required: true }
 });
 
 export const FoodSchema = new Schema<FoodData>({
-  name: { type: SchemaTypes.String, required: true },
+  name: { type: ItemName, required: true },
   description: { type: SchemaTypes.String, required: true },
   type: { type: SchemaTypes.String, required: true },
   icon: { type: SchemaTypes.String, required: true },
@@ -62,8 +68,8 @@ export const FoodSchema = new Schema<FoodData>({
 
 export const EconomyUserInventory = new Schema<UserInventory>({
   items: {
-    weapons: [WeaponSchema],
-    foods: [FoodSchema],
+    weapon: [WeaponSchema],
+    food: [FoodSchema],
   },
 });
 

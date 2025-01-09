@@ -32,7 +32,7 @@ export = {
 
     try {
       // Delete the user's command message
-      await message.delete();
+      await message.delete()
 
       // Check if the channel is a text channel and send the message
       if (message.channel.type === ChannelType.GuildText) {

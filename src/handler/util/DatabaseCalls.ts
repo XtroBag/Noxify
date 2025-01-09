@@ -11,11 +11,14 @@ import {
   UserTransactionsParams,
   GuildEconomy,
   Transaction,
-  Milestone,
   UpdateUserBankBalance,
   UpdateUserAccountBalance,
   UpdateUserPrivacyPermissions,
   UpdateUserMilestones,
+  UserEconomy,
+  Items,
+  FoodData,
+  WeaponData,
 } from "../types/Database";
 import { format, parse } from "date-fns";
 import { ChatInputCommandInteraction } from "discord.js";
@@ -247,8 +250,7 @@ export async function updateUserPermissions(
   options.selectedPermissions.forEach((permission) => {
     if (
       permission === "viewInventory" ||
-      permission === "receiveNotifications" ||
-      permission === "purchaseWarnings"
+      permission === "receiveNotifications"
     ) {
       updateFields[`users.$.privacySettings.${permission}`] =
         !user.privacySettings[permission];
@@ -274,4 +276,72 @@ export async function updateUserMilestones(
       },
     }
   );
+}
+
+export async function completePurchase(
+  user: UserEconomy,
+  item: Items,
+  amount: number,
+  interaction: ChatInputCommandInteraction<"cached">
+) {
+  if (item.type === "food") {
+    const foodItem = item as FoodData;
+    const itemsToAdd = Array(amount).fill({
+      name: { singular: foodItem.name.singular, plural: foodItem.name.plural },
+      description: foodItem.description || "No Description",
+      type: foodItem.type,
+      icon: foodItem.icon || "❌",
+      price: foodItem.price || 0,
+      effects: foodItem.effects || [],
+      disabled: foodItem.disabled || false,
+      drinkable: foodItem.drinkable || false,
+      amountPerUser: foodItem.amountPerUser || "unlimited",
+      uses: 0,
+    });
+
+    await Economy.updateOne(
+      { guildID: interaction.guildId, "users.userID": user.userID },
+      {
+        $push: {
+          [`users.$.inventory.items.${item.type}`]: { $each: itemsToAdd },
+        },
+        $inc: {
+          "users.$.accountBalance": -foodItem.price * amount,
+        },
+      }
+    );
+  } else if (item.type === "weapon") {
+    const weaponItem = item as WeaponData;
+    const itemsToAdd = Array(amount).fill({
+      name: {
+        singular: weaponItem.name.singular,
+        plural: weaponItem.name.plural,
+      },
+      description: weaponItem.description,
+      type: weaponItem.type,
+      icon: weaponItem.icon || "❌",
+      price: weaponItem.price || 0,
+      damage: weaponItem.damage || 10,
+      level: 0,
+      uses: 0,
+      amountPerUser: weaponItem.amountPerUser || 'unlimited',
+      weaponType: weaponItem.weaponType || 'other',
+      durability: weaponItem.durability || 'unlimited',
+      disabled: weaponItem.disabled || false,
+      purchasedAt: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"), // custom set
+      requires: weaponItem.requires || []
+    });
+
+    await Economy.updateOne(
+      { guildID: interaction.guildId, "users.userID": user.userID },
+      {
+        $push: {
+          [`users.$.inventory.items.${item.type}`]: { $each: itemsToAdd },
+        },
+        $inc: {
+          "users.$.accountBalance": -weaponItem.price * amount,
+        },
+      }
+    );
+  }
 }

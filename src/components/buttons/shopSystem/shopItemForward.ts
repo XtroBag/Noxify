@@ -11,6 +11,7 @@ import { ComponentModule, ComponentTypes } from "../../../handler";
 import { Items } from "../../../handler/types/Database";
 import { ItemType } from "../../../handler/types/Item";
 import { Colors } from "../../../config";
+import { getItemsByType } from "../../../handler/util/Items";
 
 export = {
   id: `shopItemForward`,
@@ -28,15 +29,11 @@ export = {
     let selectedItems: Items[];
 
     if (selectedType === "weapon") {
-      selectedItems = Array.from(client.items.weapon.values()).filter(
-        (item) => !item.disabled
-      );
+        selectedItems = getItemsByType(client, 'weapon');
     } else if (selectedType === "food") {
-      selectedItems = Array.from(client.items.food.values()).filter(
-        (item) => !item.disabled
-      );
+        selectedItems = getItemsByType(client, 'food');
     } else {
-      selectedItems = [];
+        selectedItems = [];
     }
 
     const totalPages = Math.ceil(selectedItems.length / itemsPerPage);

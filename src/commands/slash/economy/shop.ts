@@ -17,7 +17,11 @@ import {
   SlashCommandBuilder,
   StringSelectMenuBuilder,
 } from "discord.js";
-import { Items } from "../../../handler/types/Database";
+import {
+  findItemByName,
+  getAllItems,
+  getInventoryItemAmount,
+} from "../../../handler/util/Items";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -51,8 +55,9 @@ export = {
         )
     ),
   async execute({ client, interaction }) {
-    const economy = await getEconomy({ guildID: interaction.guildId });
     const subcommand = interaction.options.getSubcommand();
+
+    const economy = await getEconomy({ guildID: interaction.guildId });
 
     if (economy) {
       const embed = new EmbedBuilder().setColor(Colors.Normal);
@@ -104,11 +109,7 @@ export = {
           });
         }
 
-        let item: Items =
-          client.items.food.find((food) => food.name.singular === buyingItem) ||
-          client.items.weapon.find(
-            (weapon) => weapon.name.singular === buyingItem
-          );
+        const item = findItemByName(client, buyingItem);
 
         if (!item) {
           return await interaction.reply({
@@ -135,9 +136,11 @@ export = {
         const maxAmount =
           item.amountPerUser === "unlimited" ? Infinity : item.amountPerUser;
 
-        const currentAmount = user.inventory.items[item.type].filter(
-          (existingItem) => existingItem.name.singular === item.name.singular
-        ).length;
+        const currentAmount = getInventoryItemAmount(
+          user,
+          item.type,
+          item.name.singular
+        );
 
         const itemName =
           maxAmount === 1 ? item.name.singular : item.name.plural;
@@ -176,12 +179,10 @@ export = {
 
   async autocomplete(interaction, client) {
     const focusedValue = interaction.options.getFocused();
-    const allItems = [
-      ...Array.from(client.items.weapon.values()),
-      ...Array.from(client.items.food.values()),
-    ];
 
-    const filteredItems = allItems.filter(
+    const items = getAllItems(client);
+
+    const filteredItems = items.filter(
       (item) =>
         item.name.singular.toLowerCase().includes(focusedValue.toLowerCase()) &&
         !item.disabled

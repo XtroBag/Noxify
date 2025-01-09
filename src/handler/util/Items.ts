@@ -79,3 +79,5 @@ export function findItemByName(
 
   return weaponItem;
 }
+
+// maybe make a "hasItemInInvetory" function

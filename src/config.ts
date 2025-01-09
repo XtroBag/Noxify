@@ -142,6 +142,9 @@ export enum Emojis {
   WebDnd = "<:WebDnd:1225372400947040346>",
   Check = "<:Check:1248112241249882133>",
   Cross = "<:Cross:1248112240452964482>",
+  XtroBag = "<:XtroBag:1327053059179810999>",
+  BroBoiler = "<:BroBoiler:1327053036912119890>",
+  Noxify = "<:Noxify:1327053875286638624>"
 }
 
 export enum Colors {

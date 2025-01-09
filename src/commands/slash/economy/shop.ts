@@ -1,6 +1,7 @@
 import {
   getEconomy,
   completePurchase,
+  addEconomyUser,
 } from "../../../handler/util/DatabaseCalls";
 import { Colors } from "../../../config";
 import {
@@ -22,6 +23,7 @@ import {
   getAllItems,
   getInventoryItemAmount,
 } from "../../../handler/util/Items";
+import { format } from "date-fns";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -121,13 +123,25 @@ export = {
           (user) => user.userID === interaction.member.id
         );
 
-        if (!user) {
-          return await interaction.reply({
-            content: "User not found in the economy system.",
-          });
-        }
+           if (!user) {
+              await addEconomyUser({
+                guildID: interaction.guildId,
+                userID: interaction.member.id,
+                displayName: interaction.member.displayName,
+                joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
+                accountBalance: economy.defaultBalance,
+                bankBalance: 0,
+                privacySettings: { receiveNotifications: true, viewInventory: false },
+                milestones: [],
+                transactions: [],
+                inventory: { items: { food: [], weapon: []}}
+              });
+            }
+        const updatedEcononmy = await getEconomy({ guildID: interaction.guildId });
 
-        if (user.accountBalance < item.price * amount) {
+        const newUser = updatedEcononmy.users.find((user) => user.userID === interaction.member.id)
+
+        if (newUser.accountBalance < item.price * amount) {
           return await interaction.reply({
             content: `You don't have enough funds to buy **${amount} ${buyingItem}**. Check your account balance.`,
           });
@@ -137,7 +151,7 @@ export = {
           item.amountPerUser === "unlimited" ? Infinity : item.amountPerUser;
 
         const currentAmount = getInventoryItemAmount(
-          user,
+          newUser,
           item.type,
           item.name.singular
         );
@@ -159,7 +173,7 @@ export = {
           });
         }
 
-        await completePurchase(user, item, amount, interaction);
+        await completePurchase(newUser, item, amount, interaction);
         return await interaction.reply({
           embeds: [
             new EmbedBuilder()

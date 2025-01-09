@@ -8,7 +8,7 @@ export = {
   description: "A sweet fruit that boosts health and energy.",
   type: "food",
   icon: "🍓",
-  drinkable: false, //set to false
+  drinkable: false,
   disabled: false,
   effects: [Effect.Healing],
   price: 7,

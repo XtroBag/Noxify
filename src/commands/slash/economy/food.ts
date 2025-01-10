@@ -186,6 +186,13 @@ export = {
       const randomMessage =
         messages[Math.floor(Math.random() * messages.length)];
 
+      //----------------------------------------------------------------------------------------------------------------------
+      // You might also want to remove the item from inventory after consumption
+
+      
+
+
+
       await interaction.reply({
         embeds: [
           new EmbedBuilder()
@@ -193,13 +200,6 @@ export = {
             .setDescription(randomMessage),
         ],
       });
-
-      //----------------------------------------------------------------------------------------------------------------------
-      // You might also want to remove the item from inventory after consumption
-
-
-
-
 
     } else if (subcommand === "drink") {
       // Handle the "drink" subcommand here, similar to "eat"

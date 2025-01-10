@@ -8,7 +8,7 @@ import {
   FoodData,
   WeaponData,
 } from "../types/Database";
-import { NameStyles } from "../types/Item";
+import { Effect, NameStyles } from "../types/Item";
 
 // Define the Transaction Schema
 export const TransactionSchema = new Schema<Transaction>({
@@ -36,6 +36,11 @@ export const ItemName = new Schema<NameStyles>({
   plural: { type: SchemaTypes.String, required: true }
 })
 
+export const FoodEffect = new Schema<Effect>({
+  name: { type: SchemaTypes.String, required: true },
+  lasts: { type: SchemaTypes.Number, required: true }
+})
+
 export const WeaponSchema = new Schema<WeaponData>({
   name: { type: ItemName, required: true }, // name is now plural and singular
   description: { type: SchemaTypes.String, required: true },
@@ -61,7 +66,7 @@ export const FoodSchema = new Schema<FoodData>({
   price: { type: SchemaTypes.Number, required: true },
   disabled: { type: SchemaTypes.Boolean, required: true },
   drinkable: { type: SchemaTypes.Boolean, required: true },
-  effects: { type: SchemaTypes.Mixed, required: true },
+  effects: { type: [FoodEffect], required: true },
   uses: { type: SchemaTypes.Number, required: true },
   amountPerUser: { type: SchemaTypes.Mixed, required: true }
 });

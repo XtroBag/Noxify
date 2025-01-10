@@ -78,15 +78,14 @@ export = {
             .setDescription(
               `**XtroBag** is the main developer behind Noxify. They are responsible for the majority of the bot's backend development and features.`
             )
-            .setColor(Colors.Normal);
+            .setColor("#B63B3B");
         } else if (menu.values[0] === "broboiler") {
           personEmbed = new EmbedBuilder()
             .setTitle(`${Emojis.BroBoiler} BroBoiler - Main Artist`)
             .setDescription(
-              `**BroBoiler** is the main artist of Noxify. They designed the bot's logo, artwork, and the overall visual theme.
-             "Hello, I am BroBoiler, also known as Brody, I do art as well as music, I have been making art in 2018 and have been making art ever since!"`
+              `**BroBoiler** is the main artist of Noxify. They designed the bot's logo, artwork, and the overall visual theme.\n\n"Hello, I am BroBoiler, also known as Brody, I do art as well as music, I have been making art since 2018 and have been making art ever since!"`
             )
-            .setColor(Colors.Normal);
+            .setColor("#2D8300");
         }
 
         // Update the message with the selected person's embed

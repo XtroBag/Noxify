@@ -1,16 +1,19 @@
-import { Effect, FoodShopItem } from "../../handler/types/Item";
+import { EffectType, FoodShopItem } from "../../handler/types/Item";
 
 export = {
   name: {
-    singular: 'Strawberry',
-    plural: 'Strawberries'
+    singular: "Strawberry",
+    plural: "Strawberries",
   },
   description: "A sweet fruit that boosts health and energy.",
   type: "food",
   icon: "🍓",
   drinkable: false,
   disabled: false,
-  effects: [Effect.Healing],
-  price: 7,
-  amountPerUser: 'unlimited'
+  effects: [
+    { name: EffectType.Healing, lasts: 12000 },
+    { name: EffectType.Luck, lasts: 80000 },
+  ],
+  price: 5,
+  amountPerUser: "unlimited",
 } as FoodShopItem;

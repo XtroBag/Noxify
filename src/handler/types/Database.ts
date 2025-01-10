@@ -1,4 +1,4 @@
-import { Effect, FoodShopItem, WeaponShopItem, WeaponType } from "./Item";
+import { Effect, FoodShopItem, WeaponShopItem } from "./Item";
 
 export interface ServerData {
   name: string;
@@ -34,6 +34,7 @@ export interface UserInventory {
 
 export interface FoodData extends FoodShopItem {
   uses: number;
+  effects: Effect[]
 }
 
 export interface WeaponData extends WeaponShopItem {

@@ -1,4 +1,4 @@
-import { Effect, FoodShopItem } from "../../handler/types/Item";
+import { EffectType, FoodShopItem } from "../../handler/types/Item";
 
 export = {
   name: {
@@ -10,7 +10,7 @@ export = {
   drinkable: false,
   disabled: false,
   type: "food",
-  effects: [Effect.Healing, Effect.EnergyBoost],
+  effects: [{ name: EffectType.Healing, lasts: 12000 }],
   price: 9,
   amountPerUser: "unlimited",
 } as FoodShopItem;

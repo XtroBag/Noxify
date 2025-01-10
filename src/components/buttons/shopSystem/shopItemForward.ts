@@ -67,7 +67,7 @@ export = {
           item.drinkable ? "yes" : "no"
         )} ❘ Effects: ${
           item.effects && item.effects.length > 0
-            ? item.effects.map((effect) => inlineCode(effect)).join(" ")
+            ? item.effects.map((effect) => inlineCode(effect.name)).join(" ")
             : inlineCode("none")
         }`;
       }

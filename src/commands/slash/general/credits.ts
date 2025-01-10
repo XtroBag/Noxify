@@ -84,7 +84,7 @@ export = {
             .setTitle(`${Emojis.BroBoiler} BroBoiler - Main Artist`)
             .setDescription(
               `**BroBoiler** is the main artist of Noxify. They designed the bot's logo, artwork, and the overall visual theme.
-             "Hello, I am BroBoiler, also known as Brody, I do art as well as music, I have been making art in 2018 and have been making art ever since."`
+             "Hello, I am BroBoiler, also known as Brody, I do art as well as music, I have been making art in 2018 and have been making art ever since!"`
             )
             .setColor(Colors.Normal);
         }

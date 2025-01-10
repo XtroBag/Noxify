@@ -93,6 +93,7 @@ export const EconomyUserSchema = new Schema<UserEconomy>({
   milestones: { type: [EconomyMilestone], default: [] },
   transactions: { type: [TransactionSchema], default: [] },
   inventory: { type: EconomyUserInventory, default: {} },
+  activeEffects: { type: [FoodEffect], required: true, default: [] }
 });
 
 // Define the Guild Economy Schema

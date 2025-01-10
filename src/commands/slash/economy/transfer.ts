@@ -96,7 +96,8 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { food: [], weapon: []}}
+        inventory: { items: { food: [], weapon: []}},
+        activeEffects: []
       });
       user = economy.users.find(
         (user) => user.userID === interaction.member.id

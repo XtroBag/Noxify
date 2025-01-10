@@ -12,6 +12,7 @@ import {
 import {
   addEconomyUser,
   getEconomy,
+  useFoodItem,
 } from "../../../handler/util/DatabaseCalls";
 import { format } from "date-fns";
 import { getInventoryItems, getItemsByType } from "../../../handler/util/Items";
@@ -83,6 +84,7 @@ export = {
         milestones: [],
         transactions: [],
         inventory: { items: { food: [], weapon: [] } },
+        activeEffects: [],
       });
     }
 
@@ -147,7 +149,7 @@ export = {
       let effectDescriptions = [];
 
       if (effects && effects.length > 0) {
-        const effectNames = effects.map((effect) => effect);
+        const effectNames = effects.map((effect) => effect.name);
         effectDescriptions.push(`-# effects: ${effectNames.join(", ")}`);
       } else {
         effectDescriptions.push("");
@@ -182,10 +184,17 @@ export = {
         messages[Math.floor(Math.random() * messages.length)];
 
       //----------------------------------------------------------------------------------------------------------------------
-      // You might also want to remove the item from inventory after consumption
+      // Remove the item from the inventory after consumption
+      const updatedItems = newUser.inventory.items.food.filter(
+        (item) => item.name.singular !== pickedItem
+      );
 
-      // check if the user already has effects on if they do remove them and then reinstate the new one when eating a new food.
-      // because if the bot shut down the timer would stop and it wouldn't be able to delete the time when it should or smth.
+      await useFoodItem(
+        interaction.guildId,
+        interaction.member.id,
+        pickedItem,
+        effects
+      );
 
       await interaction.reply({
         embeds: [

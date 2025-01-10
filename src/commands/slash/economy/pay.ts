@@ -108,7 +108,8 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { food: [], weapon: []}}
+        inventory: { items: { food: [], weapon: []}},
+        activeEffects: []
       });
 
       const updatedEconomyData = await getEconomy({
@@ -133,7 +134,8 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { food: [], weapon: []}}
+        inventory: { items: { food: [], weapon: []}},
+        activeEffects: []
       });
     }
 

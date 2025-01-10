@@ -56,6 +56,7 @@ export interface UserEconomy {
   milestones: Milestone[];
   transactions: Transaction[];
   inventory: UserInventory;
+  activeEffects: Effect[]
 }
 
 export interface UserPrivacy {

@@ -23,6 +23,7 @@ import {
 import { format, parse } from "date-fns";
 import { ChatInputCommandInteraction } from "discord.js";
 import { Mongoose, UpdateResult } from "mongoose";
+import { Effect } from "../types/Item";
 
 export async function connectDatabase(
   client: DiscordClient,
@@ -329,7 +330,7 @@ export async function completePurchase(
       durability: weaponItem.durability,
       disabled: weaponItem.disabled,
       purchasedAt: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"), // custom set
-      requires: weaponItem.requires
+      requires: weaponItem.requires,
     });
 
     await Economy.updateOne(
@@ -343,5 +344,32 @@ export async function completePurchase(
         },
       }
     );
+  }
+}
+
+export async function useFoodItem(
+  guildID: string,
+  userID: string,
+  itemName: string,
+  effects: Effect[]
+) {
+  try {
+    const economy = await Economy.findOne({ guildID, "users.userID": userID });
+
+    const user = economy.users.find((user) => user.userID === userID);
+
+    const itemIndex = user.inventory.items.food.findIndex(
+      (item) => item.name.singular === itemName
+    );
+
+    user.inventory.items.food.splice(itemIndex, 1);
+    user.activeEffects = effects;
+
+    await economy.save();
+
+    return true;
+  } catch (error) {
+    console.error("Error using food item:", error);
+    return false;
   }
 }

@@ -11,6 +11,7 @@ import { ComponentModule, ComponentTypes } from "../../handler";
 import { ItemType } from "../../handler/types/Item";
 import { WeaponData, FoodData, Items } from "../../handler/types/Database";
 import { Colors } from "../../config";
+import { getEconomy } from "../../handler/util/DatabaseCalls";
 
 export = {
   id: "shopCategoryItems",
@@ -18,6 +19,8 @@ export = {
   async execute(client, menu, extras) {
     const itemsPerPage = Number(extras[0]);
     const pageIndex = Number(extras[1]);
+
+    const economy = await getEconomy({ guildID: menu.guildId });
 
     const selectedType = menu.values[0] as ItemType;
 
@@ -28,6 +31,8 @@ export = {
         (item) => !item.disabled
       );
 
+      selectedItems.sort((a, b) => a.name.singular.localeCompare(b.name.singular));
+
       const totalPages = Math.ceil(selectedItems.length / itemsPerPage);
       const currentItems = selectedItems.slice(
         pageIndex * itemsPerPage,
@@ -35,9 +40,9 @@ export = {
       ) as WeaponData[];
 
       const weaponDescriptions = currentItems.map((item) => {
-        let itemDescription = `${item.icon} **${
+        let itemDescription = `\n${item.icon} **${
           item.name.singular
-        }** - Price: ${inlineCode(item.price.toString())}`;
+        }** - Price: ${inlineCode(item.price.toString())} ${economy.icon}`;
 
         itemDescription += `\n› Damage: ${inlineCode(
           item.damage.toString()
@@ -57,7 +62,9 @@ export = {
       const embed = new EmbedBuilder()
         .setColor(Colors.Normal)
         .setTitle("Weapons")
-        .setDescription(weaponDescriptions.join("\n"));
+        .setDescription(
+          weaponDescriptions.length ? weaponDescriptions.join("\n") : "No items available"
+        );
 
       const row = new ActionRowBuilder<ButtonBuilder>();
 
@@ -96,10 +103,14 @@ export = {
         embeds: [embed],
         components: [menuRow, row],
       });
-    } else if (selectedType === "food") {
+    }
+
+    else if (selectedType === "food") {
       selectedItems = Array.from(client.items.food.values()).filter(
         (item) => !item.disabled
       );
+
+      selectedItems.sort((a, b) => a.name.singular.localeCompare(b.name.singular));
 
       const totalPages = Math.ceil(selectedItems.length / itemsPerPage);
       const currentItems = selectedItems.slice(
@@ -108,9 +119,9 @@ export = {
       ) as FoodData[];
 
       const foodDescriptions = currentItems.map((item) => {
-        let itemDescription = `${item.icon} **${
+        let itemDescription = `\n${item.icon} **${
           item.name.singular
-        }** - Price: ${inlineCode(item.price.toString())}`;
+        }** - Price: ${inlineCode(item.price.toString())} ${economy.icon}`;
 
         itemDescription += `\n› Drinkable: ${inlineCode(
           item.drinkable ? "yes" : "no"
@@ -128,7 +139,9 @@ export = {
       const embed = new EmbedBuilder()
         .setColor(Colors.Normal)
         .setTitle("Foods")
-        .setDescription(foodDescriptions.join("\n"));
+        .setDescription(
+          foodDescriptions.length ? foodDescriptions.join("\n") : "No items available"
+        );
 
       const row = new ActionRowBuilder<ButtonBuilder>();
 
@@ -167,7 +180,9 @@ export = {
         embeds: [embed],
         components: [menuRow, row],
       });
-    } else {
+    }
+
+    else {
       await menu.update({ embeds: [], components: [] });
     }
   },

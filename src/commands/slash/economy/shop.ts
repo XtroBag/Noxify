@@ -115,7 +115,7 @@ export = {
 
         if (!item) {
           return await interaction.reply({
-            content: `Item "${buyingItem}" not found in the shop.`,
+            embeds: [new EmbedBuilder().setColor(Colors.Error).setDescription(`Item "${buyingItem}" not found in the shop.`)]
           });
         }
 

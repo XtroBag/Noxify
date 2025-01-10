@@ -12,6 +12,7 @@ import { Items } from "../../../handler/types/Database";
 import { ItemType } from "../../../handler/types/Item";
 import { Colors } from "../../../config";
 import { getItemsByType } from "../../../handler/util/Items";
+import { getEconomy } from "../../../handler/util/DatabaseCalls";
 
 export = {
   id: `shopItemForward`,
@@ -21,20 +22,25 @@ export = {
     const itemsPerPage = Number(extras[1]);
     const selectedType = extras[2] as ItemType;
 
-    pageIndex = Math.min(
-      pageIndex + 1,
-      Math.ceil(client.items.weapon.size / itemsPerPage) - 1
-    );
+    const economy = await getEconomy({ guildID: interaction.guildId });
 
     let selectedItems: Items[];
 
     if (selectedType === "weapon") {
-        selectedItems = getItemsByType(client, 'weapon');
+      selectedItems = getItemsByType(client, 'weapon');
     } else if (selectedType === "food") {
-        selectedItems = getItemsByType(client, 'food');
+      selectedItems = getItemsByType(client, 'food');
     } else {
-        selectedItems = [];
+      selectedItems = [];
     }
+
+    // Sort items alphabetically by name
+    selectedItems.sort((a, b) => a.name.singular.localeCompare(b.name.singular));
+
+    pageIndex = Math.min(
+      pageIndex + 1,
+      Math.ceil(selectedItems.length / itemsPerPage) - 1
+    );
 
     const totalPages = Math.ceil(selectedItems.length / itemsPerPage);
     const currentItems = selectedItems.slice(
@@ -49,9 +55,9 @@ export = {
       );
 
     const itemDescriptions = currentItems.map((item) => {
-      let itemDescription = `${item.icon} **${
-        item.name
-      }** - Price: ${inlineCode(item.price.toString())}`;
+      let itemDescription = `\n${item.icon} **${
+        item.name.singular
+      }** - Price: ${inlineCode(item.price.toString())} ${economy.icon}`;
 
       if ("damage" in item) {
         itemDescription += `\n› Damage: ${inlineCode(

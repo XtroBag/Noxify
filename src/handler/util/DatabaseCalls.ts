@@ -288,14 +288,14 @@ export async function completePurchase(
     const foodItem = item as FoodData;
     const itemsToAdd = Array(amount).fill({
       name: { singular: foodItem.name.singular, plural: foodItem.name.plural },
-      description: foodItem.description || "No Description",
+      description: foodItem.description,
       type: foodItem.type,
-      icon: foodItem.icon || "❌",
-      price: foodItem.price || 0,
-      effects: foodItem.effects || [],
-      disabled: foodItem.disabled || false,
-      drinkable: foodItem.drinkable || false,
-      amountPerUser: foodItem.amountPerUser || "unlimited",
+      icon: foodItem.icon,
+      price: foodItem.price,
+      effects: foodItem.effects,
+      disabled: foodItem.disabled,
+      drinkable: foodItem.drinkable,
+      amountPerUser: foodItem.amountPerUser,
       uses: 0,
     });
 
@@ -319,17 +319,17 @@ export async function completePurchase(
       },
       description: weaponItem.description,
       type: weaponItem.type,
-      icon: weaponItem.icon || "❌",
-      price: weaponItem.price || 0,
-      damage: weaponItem.damage || 10,
+      icon: weaponItem.icon,
+      price: weaponItem.price,
+      damage: weaponItem.damage,
       level: 0,
       uses: 0,
-      amountPerUser: weaponItem.amountPerUser || 'unlimited',
-      weaponType: weaponItem.weaponType || 'other',
-      durability: weaponItem.durability || 'unlimited',
-      disabled: weaponItem.disabled || false,
+      amountPerUser: weaponItem.amountPerUser,
+      weaponType: weaponItem.weaponType,
+      durability: weaponItem.durability,
+      disabled: weaponItem.disabled,
       purchasedAt: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"), // custom set
-      requires: weaponItem.requires || []
+      requires: weaponItem.requires
     });
 
     await Economy.updateOne(

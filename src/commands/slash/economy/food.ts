@@ -126,7 +126,6 @@ export = {
         });
       }
 
-      // Find the item and check if it's drinkable
       const item = userItems.find(
         (item) => item.name.singular === pickedItem && item.type === "food"
       ) as FoodData;
@@ -145,18 +144,15 @@ export = {
         });
       }
 
-      // Now, handle the effects and generate a response based on them
       let effectDescriptions = [];
 
-      // Process each effect and generate a response
       if (effects && effects.length > 0) {
-        const effectNames = effects.map((effect) => effect); // Assuming each effect has a 'name'
+        const effectNames = effects.map((effect) => effect);
         effectDescriptions.push(`-# effects: ${effectNames.join(", ")}`);
       } else {
         effectDescriptions.push("");
       }
 
-      // Construct the message to show the effects
       const effectsMessage = effectDescriptions.join("\n");
 
       const messages = [
@@ -182,16 +178,14 @@ export = {
         `You just enjoyed the **${pickedItem}** to the fullest!\n${effectsMessage}`,
       ];
 
-      // Select a random message from the list
       const randomMessage =
         messages[Math.floor(Math.random() * messages.length)];
 
       //----------------------------------------------------------------------------------------------------------------------
       // You might also want to remove the item from inventory after consumption
 
-      
-
-
+      // check if the user already has effects on if they do remove them and then reinstate the new one when eating a new food.
+      // because if the bot shut down the timer would stop and it wouldn't be able to delete the time when it should or smth.
 
       await interaction.reply({
         embeds: [
@@ -200,7 +194,6 @@ export = {
             .setDescription(randomMessage),
         ],
       });
-
     } else if (subcommand === "drink") {
       // Handle the "drink" subcommand here, similar to "eat"
     }

@@ -71,7 +71,6 @@ export = {
 
     collector.on("collect", async (menu) => {
       if (menu.customId === "credits-menu") {
-        // Check the selected value and generate the appropriate embed
         let personEmbed: EmbedBuilder;
 
         if (menu.values[0] === "xtrobag") {
@@ -90,16 +89,14 @@ export = {
             .setColor("#2D8300");
         }
 
-        // Update the message with the selected person's embed
         await menu.update({
           embeds: [personEmbed],
-          components: [row], // Keep the select menu active so they can view the other person
+          components: [row],
         });
       }
     });
 
     collector.on("end", async () => {
-      // You can disable the select menu after 3 minutes or when the collector ends
       await interaction.editReply({
         components: [],
       });

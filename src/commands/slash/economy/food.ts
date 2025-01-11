@@ -175,19 +175,12 @@ export = {
         `You scarfed down the **${pickedItem}**! Now that was tasty!\n${effectsMessage}`,
         `You savored every bite of the **${pickedItem}**! Delicious!\n${effectsMessage}`,
         `The **${pickedItem}** is gone, and you loved every bite!\n${effectsMessage}`,
-        `You polished off the **${pickedItem}**! Now you’re good to go!\n${effectsMessage}`,
         `Yum! The **${pickedItem}** was a perfect choice!\n${effectsMessage}`,
         `You just enjoyed the **${pickedItem}** to the fullest!\n${effectsMessage}`,
       ];
 
       const randomMessage =
         messages[Math.floor(Math.random() * messages.length)];
-
-      //----------------------------------------------------------------------------------------------------------------------
-      // Remove the item from the inventory after consumption
-      const updatedItems = newUser.inventory.items.food.filter(
-        (item) => item.name.singular !== pickedItem
-      );
 
       await useFoodItem(
         interaction.guildId,

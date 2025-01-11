@@ -116,6 +116,8 @@ export = {
               bankBalance: fromUserInDb.bankBalance,
               milestones: fromUserInDb.milestones,
               transactions: fromUserInDb.transactions,
+              privacySettings: fromUserInDb.privacySettings,
+              inventory: fromUserInDb.inventory
             };
 
             const toUserBackup = {
@@ -123,6 +125,8 @@ export = {
               bankBalance: toUserInDb.bankBalance,
               milestones: toUserInDb.milestones,
               transactions: toUserInDb.transactions,
+              privacySettings: toUserInDb.privacySettings,
+              inventory: toUserInDb.inventory
             };
 
             // Swap data
@@ -137,6 +141,8 @@ export = {
                   "users.$.bankBalance": fromUserBackup.bankBalance,
                   "users.$.milestones": fromUserBackup.milestones,
                   "users.$.transactions": fromUserBackup.transactions,
+                  "users.$.privacySettings": fromUserBackup.privacySettings,
+                  "users.$.inventory:": fromUserBackup.inventory,
                 },
               }
             );
@@ -152,6 +158,8 @@ export = {
                   "users.$.bankBalance": toUserBackup.bankBalance,
                   "users.$.milestones": toUserBackup.milestones,
                   "users.$.transactions": toUserBackup.transactions,
+                  "users.$.privacySettings": toUserBackup.privacySettings,
+                  "users.$.inventory:": toUserBackup.inventory
                 },
               }
             );

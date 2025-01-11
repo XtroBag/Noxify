@@ -27,15 +27,16 @@ export = {
     let selectedItems: Items[];
 
     if (selectedType === "weapon") {
-      selectedItems = getItemsByType(client, 'weapon');
+      selectedItems = getItemsByType(client, "weapon");
     } else if (selectedType === "food") {
-      selectedItems = getItemsByType(client, 'food');
+      selectedItems = getItemsByType(client, "food");
     } else {
       selectedItems = [];
     }
 
-    // Sort items alphabetically by name
-    selectedItems.sort((a, b) => a.name.singular.localeCompare(b.name.singular));
+    selectedItems.sort((a, b) =>
+      a.name.singular.localeCompare(b.name.singular)
+    );
 
     pageIndex = Math.min(
       pageIndex + 1,
@@ -64,9 +65,11 @@ export = {
           item.damage.toString()
         )} ❘ Durability: ${inlineCode(
           item.durability.toString()
-        )} ❘ Type: ${inlineCode(item.weaponType)} ❘ Requires: ${item.requires && item.requires.length > 0
-          ? item.requires.map((reqItem) => inlineCode(reqItem)).join(' ') 
-          : inlineCode("none")}`;
+        )} ❘ Type: ${inlineCode(item.weaponType)} ❘ Requires: ${
+          item.requires && item.requires.length > 0
+            ? item.requires.map((reqItem) => inlineCode(reqItem)).join(" ")
+            : inlineCode("none")
+        }`;
       }
       if ("drinkable" in item) {
         itemDescription += `\n› Drinkable: ${inlineCode(
@@ -91,40 +94,37 @@ export = {
       embed.setDescription(itemDescriptions.join("\n"));
     }
 
-    const row = new ActionRowBuilder<ButtonBuilder>();
-
-    const previousButton = new ButtonBuilder()
-      .setCustomId(`shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`)
-      .setLabel("«")
-      .setStyle(ButtonStyle.Secondary)
-      .setDisabled(pageIndex === 0);
-
-    const nextButton = new ButtonBuilder()
-      .setCustomId(
-        `shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`
-      )
-      .setLabel("»")
-      .setStyle(ButtonStyle.Secondary)
-      .setDisabled(pageIndex >= totalPages - 1);
-
-    row.addComponents(previousButton, nextButton);
-
-    const menuRow =
-      new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-        new StringSelectMenuBuilder()
-          .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
-          .setMaxValues(1)
-          .setMinValues(1)
-          .setPlaceholder("Pick a category")
-          .addOptions([
-            { label: "Foods", value: "food" },
-            { label: "Weapons", value: "weapon" },
-          ])
-      );
-
     await interaction.update({
       embeds: [embed],
-      components: [menuRow, row],
+      components: [
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+          new StringSelectMenuBuilder()
+            .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
+            .setMaxValues(1)
+            .setMinValues(1)
+            .setPlaceholder("Pick a category")
+            .addOptions([
+              { label: "Foods", value: "food" },
+              { label: "Weapons", value: "weapon" },
+            ])
+        ),
+        new ActionRowBuilder<ButtonBuilder>().addComponents(
+          new ButtonBuilder()
+            .setCustomId(
+              `shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`
+            )
+            .setLabel("«")
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(pageIndex === 0),
+          new ButtonBuilder()
+            .setCustomId(
+              `shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`
+            )
+            .setLabel("»")
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(pageIndex >= totalPages - 1)
+        ),
+      ],
     });
   },
 } as ComponentModule<ButtonInteraction<"cached">>;

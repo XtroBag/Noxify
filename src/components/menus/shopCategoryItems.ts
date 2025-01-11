@@ -11,7 +11,7 @@ import { ComponentModule, ComponentTypes } from "../../handler";
 import { ItemType } from "../../handler/types/Item";
 import { WeaponData, FoodData, Items } from "../../handler/types/Database";
 import { Colors } from "../../config";
-import { getEconomy } from "../../handler/util/DatabaseCalls";
+import { formatAmount, getEconomy } from "../../handler/util/DatabaseCalls";
 import { getItemsByType } from "../../handler/util/Items";
 
 export = {
@@ -42,7 +42,7 @@ export = {
       const weaponDescriptions = currentItems.map((item) => {
         let itemDescription = `\n${item.icon} **${
           item.name.singular
-        }** - Price: ${inlineCode(item.price.toString())} ${economy.icon}`;
+        }** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
 
         itemDescription += `\n› Damage: ${inlineCode(
           item.damage.toString()
@@ -118,7 +118,7 @@ export = {
       const foodDescriptions = currentItems.map((item) => {
         let itemDescription = `\n${item.icon} **${
           item.name.singular
-        }** - Price: ${inlineCode(item.price.toString())} ${economy.icon}`;
+        }** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
 
         itemDescription += `\n› Drinkable: ${inlineCode(
           item.drinkable ? "yes" : "no"

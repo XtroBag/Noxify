@@ -12,9 +12,8 @@ import {
   getEconomy,
   formatAmount,
   updateUserMilestones,
-  isEmojiFormatValid,
 } from "../../handler/util/DatabaseCalls";
-import { Colors, milestones } from "../../config";
+import { Colors, Emojis, milestones } from "../../config";
 
 export = {
   id: "accountRefresh",
@@ -64,35 +63,48 @@ export = {
       const timestampInSeconds = Math.floor(parsedDate.getTime() / 1000);
       const discordTimestamp = `<t:${timestampInSeconds}:D>`;
 
-      const bankBalanceFormatted = isEmojiFormatValid(economy.icon)
-        ? `${economy.icon} ${formatAmount(person.bankBalance)}`
-        : `${economy.icon}${formatAmount(person.bankBalance)}`;
+      const leaderboard = economy.users.sort(
+        (a, b) =>
+          b.accountBalance + b.bankBalance - (a.accountBalance + a.bankBalance)
+      );
 
-      const walletBalanceFormatted = isEmojiFormatValid(economy.icon)
-        ? `${economy.icon} ${formatAmount(person.accountBalance)}`
-        : `${economy.icon}${formatAmount(person.accountBalance)}`;
+      const searchedUserIndex = leaderboard.findIndex(
+        (user) => user.displayName === person.displayName
+      );
+
+      const rank =
+        searchedUserIndex !== -1 ? searchedUserIndex + 1 : "Not found";
+
 
       const bankingInformation = new EmbedBuilder()
-        .setDescription(
-          `Joined: ${discordTimestamp}\nTransactions: ${person.transactions.length}`
-        )
         .setAuthor({
-          name: userData.user.username,
+          name: `${userData.user.username}'s Profile`,
           iconURL: userData.displayAvatarURL({ extension: "png" }),
         })
+        .setDescription(
+          `${Emojis.Joined} Joined: ${discordTimestamp}\n` +
+            `${Emojis.Transactions} Transactions: ${person.transactions.length}\n` +
+            `${Emojis.ActiveEffects} Active Effects: ${person.activeEffects.length}\n` +
+            `${Emojis.Leaderboard} Leaderboard Rank: #${rank}\n`
+        )
         .setFields([
           {
-            name: "Bank",
-            value: bankBalanceFormatted,
+            name: `${Emojis.Bank} **Bank Balance**`,
+            value: `${formatAmount(person.bankBalance)} ${economy.icon}`,
             inline: true,
           },
           {
-            name: "Wallet",
-            value: walletBalanceFormatted,
+            name: `${Emojis.Wallet} **Wallet Balance**`,
+            value: `${formatAmount(person.accountBalance)} ${economy.icon}`,
             inline: true,
           },
         ])
-        .setColor(Colors.Normal);
+        .setColor(Colors.Normal)
+        .setFooter({
+          text: `Noxify`,
+          iconURL: client.user.displayAvatarURL(),
+        })
+        .setTimestamp();
 
       const isSearchingOwnAccount = button.user.id === userId;
 
@@ -173,4 +185,4 @@ export = {
       }
     }
   },
-} as ComponentModule<ButtonInteraction<'cached'>>;
+} as ComponentModule<ButtonInteraction<"cached">>;

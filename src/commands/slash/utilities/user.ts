@@ -30,6 +30,7 @@ import {
 export = {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
+  disabled: true,
   data: new SlashCommandBuilder()
     .setName("user")
     .setDescription("Checkout a users information!")

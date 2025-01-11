@@ -144,7 +144,14 @@ export enum Emojis {
   Cross = "<:Cross:1248112240452964482>",
   XtroBag = "<:XtroBag:1327053059179810999>",
   BroBoiler = "<:BroBoiler:1327053036912119890>",
-  Noxify = "<:Noxify:1327053875286638624>"
+  Noxify = "<:Noxify:1327053875286638624>",
+//---------------------------------------------------------
+  Wallet = "<:Wallet:1327502002061574197>",
+  Bank = "<:Bank:1327501979328708732>",
+  Leaderboard = "<:Leaderboard:1327501954674327653>",
+  ActiveEffects = "<:ActiveEffects:1327501929613627396>",
+  Transactions = "<:Transactions:1327501878350577675>",
+  Joined = "<:Joined:1327501855198154774>",
 }
 
 export enum Colors {

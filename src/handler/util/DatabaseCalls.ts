@@ -46,21 +46,6 @@ export function formatAmount(amount: number): string {
   return amount.toLocaleString();
 }
 
-export function isEmojiFormatValid(input: string): boolean {
-  const customEmojiRegex = /^<:[a-zA-Z0-9_]+:[0-9]+>$/;
-  if (customEmojiRegex.test(input)) {
-    return true;
-  }
-
-  const unicodeEmojiRegex =
-    /^(?:\p{Emoji_Presentation}|\p{Emoji_Modifier_Base})(?:\uFE0F?)$/u;
-  if (unicodeEmojiRegex.test(input)) {
-    return true;
-  }
-
-  return false;
-}
-
 export function generateRandomCode(): string {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let code = "";

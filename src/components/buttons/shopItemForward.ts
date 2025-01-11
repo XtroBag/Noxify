@@ -7,12 +7,12 @@ import {
   inlineCode,
   StringSelectMenuBuilder,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../../handler";
-import { Items } from "../../../handler/types/Database";
-import { ItemType } from "../../../handler/types/Item";
-import { Colors } from "../../../config";
-import { getItemsByType } from "../../../handler/util/Items";
-import { getEconomy } from "../../../handler/util/DatabaseCalls";
+import { ComponentModule, ComponentTypes } from "../../handler";
+import { Items } from "../../handler/types/Database";
+import { ItemType } from "../../handler/types/Item";
+import { Colors } from "../../config";
+import { getItemsByType } from "../../handler/util/Items";
+import { formatAmount, getEconomy } from "../../handler/util/DatabaseCalls";
 
 export = {
   id: `shopItemForward`,
@@ -58,7 +58,7 @@ export = {
     const itemDescriptions = currentItems.map((item) => {
       let itemDescription = `\n${item.icon} **${
         item.name.singular
-      }** - Price: ${inlineCode(item.price.toString())} ${economy.icon}`;
+      }** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
 
       if ("damage" in item) {
         itemDescription += `\n› Damage: ${inlineCode(

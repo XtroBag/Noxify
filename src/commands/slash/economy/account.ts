@@ -13,13 +13,12 @@ import {
   SlashCommandBuilder,
   userMention,
 } from "discord.js";
-import { Colors, milestones } from "../../../config";
+import { Colors, Emojis, milestones } from "../../../config";
 import {
   formatAmount,
   addEconomyUser,
   getEconomy,
   updateUserMilestones,
-  isEmojiFormatValid,
 } from "../../../handler/util/DatabaseCalls";
 import { format, parse } from "date-fns";
 
@@ -41,9 +40,14 @@ export = {
         )
     ),
   async execute({ client, interaction }) {
-    const member = interaction.options.getMember("member") || interaction.member;
+    const member =
+      interaction.options.getMember("member") || interaction.member;
 
-    if (!member) return await interaction.reply({ content: `Please pick a member that is inside this server`, ephemeral: true });
+    if (!member)
+      return await interaction.reply({
+        content: `Please pick a member that is inside this server`,
+        ephemeral: true,
+      });
 
     if (member.user.bot) {
       await interaction.reply({
@@ -76,8 +80,8 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { food: [], weapon: []}},
-        activeEffects: []
+        inventory: { items: { food: [], weapon: [] } },
+        activeEffects: [],
       });
     }
 
@@ -104,35 +108,45 @@ export = {
     const timestampInSeconds = Math.floor(parsedDate.getTime() / 1000);
     const discordTimestamp = `<t:${timestampInSeconds}:D>`;
 
-    const bankBalanceFormatted = isEmojiFormatValid(economy.icon)
-      ? `${economy.icon} ${formatAmount(person.bankBalance)}`
-      : `${economy.icon}${formatAmount(person.bankBalance)}`;
+    const leaderboard = updatedEconomy.users.sort(
+      (a, b) =>
+        b.accountBalance + b.bankBalance - (a.accountBalance + a.bankBalance)
+    );
 
-    const walletBalanceFormatted = isEmojiFormatValid(economy.icon)
-      ? `${economy.icon} ${formatAmount(person.accountBalance)}`
-      : `${economy.icon}${formatAmount(person.accountBalance)}`;
+    const searchedUserIndex = leaderboard.findIndex(
+      (user) => user.displayName === person.displayName
+    );
+
+    const rank = searchedUserIndex !== -1 ? searchedUserIndex + 1 : "Not found";
 
     const bankingInformation = new EmbedBuilder()
-      .setDescription(
-        `Joined: ${discordTimestamp}\nTransactions: ${person.transactions.length}`
-      )
-      .setAuthor({
-        name: member.user.username,
-        iconURL: member.displayAvatarURL({ extension: "png" }),
-      })
-      .setFields([
-        {
-          name: "Bank",
-          value: bankBalanceFormatted,
-          inline: true,
-        },
-        {
-          name: "Wallet",
-          value: walletBalanceFormatted,
-          inline: true,
-        },
-      ])
-      .setColor(Colors.Normal);
+    .setAuthor({
+      name: `${member.user.username}'s Profile`,  // More descriptive title
+      iconURL: member.displayAvatarURL({ extension: "png" }),
+    })
+    .setDescription(
+      `${Emojis.Joined} Joined: ${discordTimestamp}\n` +
+      `${Emojis.Transactions} Transactions: ${person.transactions.length}\n` +
+      `${Emojis.ActiveEffects} Active Effects: ${person.activeEffects.length}\n` +
+      `${Emojis.Leaderboard} Leaderboard Rank: #${rank}\n`
+    )
+    .setFields([
+      {
+        name: `${Emojis.Bank} **Bank Balance**`,
+        value: `${formatAmount(person.bankBalance)} ${economy.icon}`,
+        inline: true,
+      },
+      {
+        name: `${Emojis.Wallet} **Wallet Balance**`,
+        value: `${formatAmount(person.accountBalance)} ${economy.icon}`,
+        inline: true,
+      },
+    ])
+    .setColor(Colors.Normal)
+    .setFooter({
+      text: `Noxify`, iconURL: client.user.displayAvatarURL()
+    })
+    .setTimestamp();  
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()

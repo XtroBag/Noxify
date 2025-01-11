@@ -5,7 +5,6 @@ import {
   getEconomy,
   addEconomyUser,
   formatAmount,
-  isEmojiFormatValid,
 } from "../../../handler/util/DatabaseCalls";
 import { format } from "date-fns";
 
@@ -62,43 +61,33 @@ export = {
     }
 
     const leaderboard = economyUsers
-      .sort(
-        (a, b) =>
-          b.accountBalance + b.bankBalance - (a.accountBalance + a.bankBalance)
-      )
-      .slice(0, 10);
+    .sort(
+      (a, b) =>
+        b.accountBalance + b.bankBalance - (a.accountBalance + a.bankBalance)
+    )
+    .slice(0, 10);
+  
+  if (leaderboard.length === 0) {
+    await interaction.reply({
+      content: "No users found on the leaderboard.",
+      ephemeral: true,
+    });
+    return;
+  }
 
-    if (leaderboard.length === 0) {
-      await interaction.reply({
-        content: "No users found on the leaderboard.",
-        ephemeral: true,
-      });
-      return;
-    }
+  const leaderboardDescription = leaderboard
+  .map((user, index) => {
+    const icon = economyData.icon;
+    const formattedAmount = formatAmount(user.accountBalance + user.bankBalance);
 
-    const leaderboardDescription = leaderboard
-      .map((user, index) => {
-        const icon = economyData.icon;
-        const formattedAmount = formatAmount(
-          user.accountBalance + user.bankBalance
-        );
-
-        if (isEmojiFormatValid(icon)) {
-          return `${index + 1}. **${
-            user.displayName
-          }** ${icon} ${formattedAmount}`;
-        } else {
-          return `${index + 1}. **${
-            user.displayName
-          }** ${icon}${formattedAmount}`;
-        }
-      })
-      .join("\n");
-
-    const leaderboardEmbed = new EmbedBuilder()
-      .setTitle("Leaderboard - Top Members")
-      .setDescription(leaderboardDescription)
-      .setColor(Colors.Normal);
+    return `${index + 1}. **${user.displayName}** ${formattedAmount} ${icon}`;
+  })
+  .join("\n");
+  
+  const leaderboardEmbed = new EmbedBuilder()
+    .setTitle("Leaderboard - Top Members")
+    .setDescription(leaderboardDescription)
+    .setColor(Colors.Normal);
 
     await interaction.reply({
       embeds: [leaderboardEmbed],

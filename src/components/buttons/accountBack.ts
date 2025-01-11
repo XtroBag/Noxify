@@ -4,6 +4,7 @@ import {
   ButtonInteraction,
   ButtonStyle,
   EmbedBuilder,
+  inlineCode,
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
 import {
@@ -51,9 +52,9 @@ export = {
       })
       .setDescription(
         `${Emojis.Joined} Joined: ${discordTimestamp}\n` +
-          `${Emojis.Transactions} Transactions: ${person.transactions.length}\n` +
-          `${Emojis.ActiveEffects} Active Effects: ${person.activeEffects.length}\n` +
-          `${Emojis.Leaderboard} Leaderboard Rank: #${rank}\n`
+        `${Emojis.Transactions} Transactions: ${inlineCode(person.transactions.length.toString())}\n` +
+        `${Emojis.ActiveEffects} Active Effects: ${inlineCode(person.activeEffects.length.toString())}\n` +
+        `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n`
       )
       .setFields([
         {
@@ -68,11 +69,6 @@ export = {
         },
       ])
       .setColor(Colors.Normal)
-      .setFooter({
-        text: `Noxify`,
-        iconURL: client.user.displayAvatarURL(),
-      })
-      .setTimestamp();
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()

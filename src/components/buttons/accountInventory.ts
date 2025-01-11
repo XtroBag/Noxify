@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
 import { getEconomy } from "../../handler/util/DatabaseCalls";
-import { Colors } from "../../config";
+import { Colors, Emojis } from "../../config";
 import { Items, UserEconomy } from "../../handler/types/Database";
 
 export = {
@@ -16,7 +16,6 @@ export = {
   async execute(client, button, extras) {
     const userId = extras[0];
 
-    // Fetch economy data
     const economy = await getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
@@ -74,7 +73,7 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
 
   // Show weapons
   if (Object.keys(groupedWeapons).length > 0) {
-    inventoryDescription += "**Weapons**:\n";
+    inventoryDescription += `${Emojis.Weapons} **Weapons**:\n`;
     for (const [name, items] of Object.entries(groupedWeapons)) {
       const quantity = items.length;
       const item = items[0]; // Assuming the name is consistent for all items of this type
@@ -92,12 +91,12 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
       }
     }
   } else {
-    inventoryDescription += "**Weapons**: None\n";
+    inventoryDescription += `${Emojis.Weapons} **Weapons**: None\n`;
   }
 
   // Show food
   if (Object.keys(groupedFood).length > 0) {
-    inventoryDescription += "\n**Food**:\n";
+    inventoryDescription += `\n${Emojis.FoodsDrinks} **Food & Drinks**:\n`;
     for (const [name, items] of Object.entries(groupedFood)) {
       const quantity = items.length;
       const item = items[0]; // Assuming the name is consistent for all items of this type
@@ -115,7 +114,7 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
       }
     }
   } else {
-    inventoryDescription += "**Food**: None\n";
+    inventoryDescription += `${Emojis.FoodsDrinks} **Food & Drinks**: None\n`;
   }
 
   // Create the embed with the inventory

@@ -5,6 +5,7 @@ import {
   StringSelectMenuBuilder,
   ButtonBuilder,
   ButtonStyle,
+  EmojiResolvable
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
 import {
@@ -16,12 +17,10 @@ export = {
   id: "accountPrivacy",
   type: ComponentTypes.Button,
   async execute(client, button, extras) {
-    // Extract userID from customId
     const userId = extras[0];
     const economy = await getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
-    // Ensure the member ID matches the userID for permissions
     if (button.member.id !== person.userID) {
       button.reply({
         embeds: [
@@ -34,7 +33,6 @@ export = {
         ephemeral: true,
       });
     } else {
-      // Defer the update immediately
       await button.deferUpdate();
 
       const row = new ActionRowBuilder<StringSelectMenuBuilder>().setComponents(
@@ -43,14 +41,16 @@ export = {
           .setPlaceholder("Select permissions to enable")
           .setOptions([
             {
-              label: "View Inventory",
-              value: "viewInventory",
+              label: `View Inventory`,
+              value: `viewInventory`,
               description: "Allow users to check your inventory",
+              emoji: Emojis.ViewInventory
             },
             {
-              label: "Receive Notifications",
-              value: "receiveNotifications",
+              label: `Receive Notifications`,
+              value: `receiveNotifications`,
               description: "Get Notifications of changes",
+              emoji: Emojis.ReceiveNotifications
             },
           ])
           .setMaxValues(2)
@@ -68,11 +68,11 @@ export = {
         embeds: [
           new EmbedBuilder()
             .setTitle("Edit Permissions")
-            .setDescription(`View Inventory ${
+            .setDescription(`${Emojis.ViewInventory} View Inventory ${
                 person.privacySettings.viewInventory
                   ? Emojis.Check
                   : Emojis.Cross
-              }\nReceive Notifications ${
+              }\n${Emojis.ReceiveNotifications} Receive Notifications ${
                   person.privacySettings.receiveNotifications
                     ? Emojis.Check
                     : Emojis.Cross

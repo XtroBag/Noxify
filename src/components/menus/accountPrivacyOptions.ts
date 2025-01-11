@@ -56,11 +56,13 @@ import {
                 label: "View Inventory",
                 value: "viewInventory",
                 description: "Allow users to check your inventory",
+                emoji: Emojis.ViewInventory
               },
               {
                 label: "Receive Notifications",
                 value: "receiveNotifications",
                 description: "Get Notifications of changes",
+                emoji: Emojis.ReceiveNotifications
               },
             ])
             .setMaxValues(2)
@@ -82,11 +84,11 @@ import {
           embeds: [
             new EmbedBuilder()
               .setTitle("Edit Permissions")
-              .setDescription(`View Inventory ${
+              .setDescription(`${Emojis.ViewInventory} View Inventory ${
                 updatedPerson.privacySettings.viewInventory
                   ? Emojis.Check
                   : Emojis.Cross
-              }\nReceive Notifications ${
+              }\n${Emojis.ReceiveNotifications} Receive Notifications ${
                 updatedPerson.privacySettings.receiveNotifications
                     ? Emojis.Check
                     : Emojis.Cross

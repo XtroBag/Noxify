@@ -25,7 +25,7 @@ import {
 import { format, parse } from "date-fns";
 import { ChatInputCommandInteraction } from "discord.js";
 import { Mongoose, UpdateResult } from "mongoose";
-import { Effect } from "../types/Item";
+import { Effect, ItemType } from "../types/Item";
 
 export async function connectDatabase(
   client: DiscordClient,
@@ -340,6 +340,7 @@ export async function completePurchase(
     );
   } else if (item.type === 'meal') {
     const mealItem = item as MealData;
+
     const itemstoAdd = Array(amount).fill({
       name: { singular: mealItem.name.singular, plural: mealItem.name.plural },
       description:  mealItem.description,
@@ -368,9 +369,10 @@ export async function completePurchase(
 
   } else if (item.type === 'drink') {
     const drinkItem = item as DrinkData;
+
     const itemstoAdd = Array(amount).fill({
       name: { singular: drinkItem.name.singular, plural: drinkItem.name.plural },
-      description:  drinkItem.description,
+      description:  drinkItem.description, // might not need this now
       type:  drinkItem.type,
       icon:  drinkItem.icon,
       price:  drinkItem.price,
@@ -397,28 +399,55 @@ export async function useFoodItem(
   guildID: string,
   userID: string,
   itemName: string,
-  effects: Effect[]
+  effects: Effect[],
+  itemType: ItemType
 ) {
   try {
     const economy = await Economy.findOne({ guildID, "users.userID": userID });
 
+    if (!economy) {
+      console.error("No economy found for this guild.");
+      return false;
+    }
+
     const user = economy.users.find((user) => user.userID === userID);
 
-    const itemIndex = user.inventory.items.food.findIndex(
+    if (!user) {
+      console.error("User not found.");
+      return false;
+    }
+
+    const itemIndex = user.inventory.items[itemType].findIndex(
       (item) => item.name.singular === itemName
     );
 
-    user.inventory.items.food.splice(itemIndex, 1);
+    if (itemIndex === -1) {
+      console.error("Item not found in user's inventory.");
+      return false;
+    }
+
+    const item = user.inventory.items[itemType][itemIndex];
+
+    // Check if the item has a valid description, if not, set a default description
+    if (!item.description || item.description.trim() === "") {
+      console.warn(`Item "${itemName}" is missing a description. Setting default description.`);
+      item.description = "No description available.";
+    }
+
+    // Remove the item from the inventory
+    user.inventory.items[itemType].splice(itemIndex, 1);
+    
+    // Apply the effects
     user.activeEffects = effects;
 
     await economy.save();
-
     return true;
   } catch (error) {
     console.error("Error using food item:", error);
     return false;
   }
 }
+
 
 
 export async function deleteEconomy(guildID: string): Promise<boolean> {

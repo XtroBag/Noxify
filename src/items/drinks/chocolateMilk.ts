@@ -6,7 +6,7 @@ export = {
         singular: 'Chocolate Milk',
         plural: 'Chocolate Milks'
     },
-    description: '',
+  // description: "",
     icon: Emojis.ChocolateMilk,
     type: 'drink',
     price: 90,

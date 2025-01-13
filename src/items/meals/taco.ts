@@ -5,7 +5,7 @@ export = {
     singular: "Taco",
     plural: "Tacos",
   },
-  description: "",
+  // description: "",
   icon: "🌮",
   disabled: false,
   type: "meal",

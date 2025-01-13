@@ -7,7 +7,7 @@ export = {
     plural: "Flours",
   },
   type: 'ingredient',
-  description: "",
+  // description: "",
   icon: Emojis.Flour,
   disabled: false,
   amountPerUser: 'unlimited',

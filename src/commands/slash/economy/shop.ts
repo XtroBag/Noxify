@@ -140,11 +140,9 @@ export = {
         const allItems = getAllItems(client);
         const itemType = allItems.find(
           (item) => item.name.singular === buyingItem
-        ).type;
+        );
 
-        const item = allItems.find((item) => item.type === itemType);
-
-        //  const item = findItemByName(client, buyingItem, itemType);
+        const item = allItems.find((item) => item.type === itemType.type && item.name.singular === buyingItem);
 
         if (!item) {
           return await interaction.reply({
@@ -177,7 +175,7 @@ export = {
             milestones: [],
             transactions: [],
             inventory: {
-              items: { food: [], weapon: [], drink: [], ingredient: [] },
+              items: { meal: [], weapon: [], drink: [], ingredient: [] },
             },
             activeEffects: [],
           });

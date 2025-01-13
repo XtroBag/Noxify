@@ -96,7 +96,7 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { food: [], weapon: [], drink: [], ingredient: [] }},
+        inventory: { items: { meal: [], weapon: [], drink: [], ingredient: [] }},
         activeEffects: []
       });
       user = economy.users.find(

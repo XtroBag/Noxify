@@ -28,7 +28,7 @@ export type Items = WeaponData | MealData | IngredientData | DrinkData;
 export interface UserInventory {
   items: {
     weapon: WeaponData[],
-    food: MealData[]
+    meal: MealData[]
     ingredient: IngredientData[]
     drink: DrinkData[]
   }

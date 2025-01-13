@@ -5,7 +5,7 @@ export = {
     singular: "Fry",
     plural: "Fries",
   },
-  description: "",
+  // description: "",
   icon: "🍟",
   disabled: false,
   type: "meal",

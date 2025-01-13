@@ -6,7 +6,7 @@ export = {
     plural: "Potatoes",
   },
   type: 'ingredient',
-  description: "",
+  // description: "",
   icon: "🥔",
   disabled: false,
   amountPerUser: 'unlimited',

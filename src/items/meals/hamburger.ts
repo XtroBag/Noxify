@@ -2,10 +2,10 @@ import { MealShopItem } from "../../handler/types/Item";
 
 export = {
   name: {
-    singular: "Hambuger",
+    singular: "Hamburger",
     plural: "Hamburgers",
   },
-  description: "",
+  // description: "",
   icon: "🍔",
   disabled: false,
   type: "meal",

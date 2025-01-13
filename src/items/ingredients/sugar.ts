@@ -7,7 +7,7 @@ export = {
     plural: "Sugars",
   },
   type: 'ingredient',
-  description: "",
+  // description: "",
   icon: Emojis.Sugar,
   disabled: false,
   amountPerUser: 'unlimited',

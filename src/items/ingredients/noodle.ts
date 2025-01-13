@@ -6,7 +6,7 @@ export = {
     plural: "Noodles",
   },
   type: 'ingredient',
-  description: "",
+  // description: "",
   icon: "🍜",
   disabled: false,
   amountPerUser: 'unlimited',

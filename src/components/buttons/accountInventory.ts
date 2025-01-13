@@ -45,7 +45,7 @@ export = {
 async function displayInventory(button: ButtonInteraction<'cached'>, person: UserEconomy, userId: string) {
   // Retrieve weapon, meal, ingredient, and drink items from the user's inventory
   const weapons = person.inventory.items.weapon.filter(item => item.type === "weapon");
-  const meals = person.inventory.items.food.filter(item => item.type === "meal");
+  const meals = person.inventory.items.meal.filter(item => item.type === "meal");
   const ingredients = person.inventory.items.ingredient.filter(item => item.type === "ingredient");
   const drinks = person.inventory.items.drink.filter(item => item.type === "drink");
 
@@ -76,7 +76,7 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
 
   // Show weapons
   if (Object.keys(groupedWeapons).length > 0) {
-    inventoryDescription += `${Emojis.Weapons} **Weapons**:\n`;
+    inventoryDescription += `\n${Emojis.Weapons} **Weapons**:\n`;
     for (const [name, items] of Object.entries(groupedWeapons)) {
       const quantity = items.length;
       const item = items[0]; // Assuming the name is consistent for all items of this type

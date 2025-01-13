@@ -78,7 +78,7 @@ export const MealSchema = new Schema<MealData>({
 
 export const ingredientSchema = new Schema<IngredientData>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true },
+  description: { type: SchemaTypes.String, required: true, default: "None" },
   type: { type: SchemaTypes.String, required: true },
   icon: { type: SchemaTypes.String, required: true, default: "" },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
@@ -92,7 +92,7 @@ export const ingredientSchema = new Schema<IngredientData>({
 
 export const drinkSchema = new Schema<DrinkData>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true },
+  description: { type: SchemaTypes.String, required: true, default: 'None' },
   type: { type: SchemaTypes.String, required: true },
   icon: { type: SchemaTypes.String, required: true, default: "" },
   price: { type: SchemaTypes.Number, required: true, default: 0 },

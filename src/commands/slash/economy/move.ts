@@ -1,7 +1,6 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
 import { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, ApplicationIntegrationType } from "discord.js";
 import { Colors } from "../../../config";
-import { getEconomy } from "../../../handler/util/DatabaseCalls";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -48,7 +47,7 @@ export = {
     }
 
     // Retrieve the economy data for both users
-    const economy = await getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
     if (!economy) {
       await interaction.reply({
         embeds: [

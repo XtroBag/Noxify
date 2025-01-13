@@ -6,7 +6,6 @@ import {
   EmbedBuilder,
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
-import { getEconomy } from "../../handler/util/DatabaseCalls";
 import { Colors, Emojis } from "../../config";
 import { Items, UserEconomy } from "../../handler/types/Database";
 
@@ -16,7 +15,7 @@ export = {
   async execute(client, button, extras) {
     const userId = extras[0];
 
-    const economy = await getEconomy({ guildID: button.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
     const canViewInventory = person?.privacySettings.viewInventory;

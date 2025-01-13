@@ -1,11 +1,5 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
 import { ApplicationIntegrationType, InteractionContextType, SlashCommandBuilder } from "discord.js";
-import {
-  formatAmount,
-  getEconomy,
-  addEconomyUser,
-  updateUserBankBalance,
-} from "../../../handler/util/DatabaseCalls";
 import { format } from "date-fns";
 
 export = {
@@ -20,7 +14,7 @@ export = {
     .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
 
   async execute({ client, interaction }) {
-    const economy = await getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
 
     if (!economy) {
       await interaction.reply({
@@ -35,7 +29,7 @@ export = {
     );
 
     if (!exists) {
-      await addEconomyUser({
+      await client.utils.calls.addEconomyUser({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
@@ -50,7 +44,7 @@ export = {
       });
     }
 
-    const updatedEconomy = await getEconomy({ guildID: interaction.guildId });
+    const updatedEconomy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
     const user = updatedEconomy.users.find(
       (user) => user.userID === interaction.member.id
     );
@@ -259,7 +253,7 @@ export = {
 
     const newBankBalance = user.bankBalance + gained;
 
-    await updateUserBankBalance({
+    await client.utils.calls.updateUserBankBalance({
       guildID: interaction.guildId,
       userID: interaction.member.id,
       bankBalance: newBankBalance,
@@ -276,7 +270,7 @@ export = {
         job.name
       }**, where you were in charge of ${
         job.description
-      }. You've earned ${formatAmount(gained)} ${updatedEconomy.name
+      }. You've earned ${client.utils.extras.formatAmount(gained)} ${updatedEconomy.name
         .toLowerCase()
         .replace(/s$/, "")}${gained === 1 ? "" : "s"}!`,
     });

@@ -1,8 +1,3 @@
-import {
-  getEconomy,
-  completePurchase,
-  addEconomyUser,
-} from "../../../handler/util/DatabaseCalls";
 import { Colors, Emojis } from "../../../config";
 import {
   CommandTypes,
@@ -18,10 +13,6 @@ import {
   SlashCommandBuilder,
   StringSelectMenuBuilder,
 } from "discord.js";
-import {
-  getAllItems,
-  getInventoryItemAmount,
-} from "../../../handler/util/Items";
 import { format } from "date-fns";
 
 export = {
@@ -58,7 +49,7 @@ export = {
   async execute({ client, interaction }) {
     const subcommand = interaction.options.getSubcommand();
 
-    const economy = await getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
 
     if (!economy)
       return await interaction.reply({
@@ -137,7 +128,7 @@ export = {
           });
         }
 
-        const allItems = getAllItems(client);
+        const allItems = client.utils.items.getAllItems();
         const itemType = allItems.find(
           (item) => item.name.singular === buyingItem
         );
@@ -161,7 +152,7 @@ export = {
         );
 
         if (!user) {
-          await addEconomyUser({
+          await client.utils.calls.addEconomyUser({
             guildID: interaction.guildId,
             userID: interaction.member.id,
             displayName: interaction.member.displayName,
@@ -180,7 +171,7 @@ export = {
             activeEffects: [],
           });
         }
-        const updatedEcononmy = await getEconomy({
+        const updatedEcononmy = await client.utils.calls.getEconomy({
           guildID: interaction.guildId,
         });
 
@@ -191,7 +182,7 @@ export = {
         const maxAmount =
           item.amountPerUser === "unlimited" ? Infinity : item.amountPerUser;
 
-        const currentAmount = getInventoryItemAmount(
+        const currentAmount = client.utils.items.getInventoryItemAmount(
           newUser,
           item.type,
           item.name.singular
@@ -228,7 +219,7 @@ export = {
           });
         }
 
-        await completePurchase(newUser, item, amount, interaction);
+        await client.utils.calls.completePurchase(newUser, item, amount, interaction);
         return await interaction.reply({
           embeds: [
             new EmbedBuilder()
@@ -249,7 +240,7 @@ export = {
   async autocomplete(interaction, client) {
     const focusedValue = interaction.options.getFocused();
 
-    const items = getAllItems(client);
+    const items = client.utils.items.getAllItems();
 
     const filteredItems = items.filter(
       (item) =>

@@ -11,8 +11,6 @@ import { ComponentModule, ComponentTypes } from "../../handler";
 import { ItemType } from "../../handler/types/Item";
 import { WeaponData, Items, IngredientData, MealData, DrinkData } from "../../handler/types/Database";
 import { Colors } from "../../config";
-import { formatAmount, getEconomy } from "../../handler/util/DatabaseCalls";
-import { getItemsByType } from "../../handler/util/Items";
 
 // Add a generic type parameter to getPaginatedItems
 const getPaginatedItems = <T extends Items>(items: T[], pageIndex: number, itemsPerPage: number) => {
@@ -30,15 +28,15 @@ export = {
     const pageIndex = Number(extras[1]);
     const selectedType = menu.values[0] as ItemType;
 
-    const economy = await getEconomy({ guildID: menu.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: menu.guildId });
 
     // Handle weapon items
     if (selectedType === "weapon") {
-      const selectedItems = getItemsByType(client, "weapon") as WeaponData[];
+      const selectedItems = client.utils.items.getItemsByType("weapon") as WeaponData[];
       const { currentItems: weaponItems, totalPages } = getPaginatedItems(selectedItems, pageIndex, itemsPerPage);
 
       const weaponDescriptions = weaponItems.map((item) => {
-        let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
+        let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(client.utils.extras.formatAmount(item.price))} ${economy.icon}`;
 
         itemDescription += `\n› Damage: ${inlineCode(item.damage.toString())} ❘ Durability: ${inlineCode(
           item.durability === "unlimited" ? "unlimited" : item.durability.toString()
@@ -92,18 +90,17 @@ export = {
     }
     // Handle meal items
     else if (selectedType === "meal") {
-      const selectedItems = getItemsByType(client, "meal") as MealData[];
+      const selectedItems = client.utils.items.getItemsByType("meal") as MealData[];
       const { currentItems: mealItems, totalPages } = getPaginatedItems(selectedItems, pageIndex, itemsPerPage);
 
       const mealDescriptions = mealItems.map((item) => {
-        let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
+        let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(client.utils.extras.formatAmount(item.price))} ${economy.icon}`;
 
         itemDescription += `\n› Ingredients: ${item.ingredientsRequired && item.ingredientsRequired.length > 0
           ? item.ingredientsRequired.map((ingredient) => inlineCode(ingredient)).join(" ")
           : inlineCode("none")
         }`;
 
-        // Check if description exists, if not set it to "No description available."
         itemDescription += `\n-# ➜ ${item.description || "No description available."}`;
 
         return itemDescription;
@@ -147,13 +144,12 @@ export = {
     }
     // Handle drink items
     else if (selectedType === "drink") {
-      const selectedItems = getItemsByType(client, "drink") as DrinkData[];
+      const selectedItems = client.utils.items.getItemsByType("drink") as DrinkData[];
       const { currentItems: drinkItems, totalPages } = getPaginatedItems(selectedItems, pageIndex, itemsPerPage);
 
       const drinkDescriptions = drinkItems.map((item) => {
-        let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
+        let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(client.utils.extras.formatAmount(item.price))} ${economy.icon}`;
 
-        // Check if description exists, if not set it to "No description available."
         itemDescription += `\n-# ➜ ${item.description || "No description available."}`;
 
         return itemDescription;
@@ -197,13 +193,12 @@ export = {
     }
     // Handle ingredient items
     else if (selectedType === "ingredient") {
-      const selectedItems = getItemsByType(client, "ingredient") as IngredientData[];
+      const selectedItems = client.utils.items.getItemsByType("ingredient") as IngredientData[];
       const { currentItems: ingredientItems, totalPages } = getPaginatedItems(selectedItems, pageIndex, itemsPerPage);
 
       const ingredientDescriptions = ingredientItems.map((item) => {
-        let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
+        let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(client.utils.extras.formatAmount(item.price))} ${economy.icon}`;
 
-        // Check if description exists, if not set it to "No description available."
         itemDescription += `\n-# ➜ ${item.description || "No description available."}`;
 
         return itemDescription;

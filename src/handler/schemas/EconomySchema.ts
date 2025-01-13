@@ -34,8 +34,8 @@ export const EconomyMilestone = new Schema<Milestone>({
 });
 
 export const ItemName = new Schema<NameStyles>({
-  singular: { type: SchemaTypes.String, required: true },
-  plural: { type: SchemaTypes.String, required: true },
+  singular: { type: SchemaTypes.String, required: true, default: "No name available" },
+  plural: { type: SchemaTypes.String, required: true, default: "No name available" },
 });
 
 export const FoodEffect = new Schema<Effect>({
@@ -45,11 +45,11 @@ export const FoodEffect = new Schema<Effect>({
 
 export const WeaponSchema = new Schema<WeaponData>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true, default: "None" },
-  type: { type: SchemaTypes.String, required: true },
-  icon: { type: SchemaTypes.String, required: true, default: "" },
+  description: { type: SchemaTypes.String, required: true, default: "No description available" },
+  type: { type: SchemaTypes.String, required: true, default: 'weapon' },
+  icon: { type: SchemaTypes.String, required: true, default: "No icon available" },
   weaponType: { type: SchemaTypes.String, required: true, default: "other" },
-  purchasedAt: { type: SchemaTypes.String, required: true, default: "" },
+  purchasedAt: { type: SchemaTypes.String, required: true, default: "no purchasedAt available" },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
   level: { type: SchemaTypes.Number, required: true, default: 0 },
   uses: { type: SchemaTypes.Number, required: true, default: 0 },
@@ -66,9 +66,9 @@ export const WeaponSchema = new Schema<WeaponData>({
 
 export const MealSchema = new Schema<MealData>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true, default: "None" },
-  type: { type: SchemaTypes.String, required: true },
-  icon: { type: SchemaTypes.String, required: true, default: "" },
+  description: { type: SchemaTypes.String, required: true, default: "No description available" },
+  type: { type: SchemaTypes.String, required: true, default: 'meal' },
+  icon: { type: SchemaTypes.String, required: true, default: "No icon available" },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
   disabled: { type: SchemaTypes.Boolean, required: true, default: false },
   effects: { type: [FoodEffect], required: true, default: [] },
@@ -78,9 +78,9 @@ export const MealSchema = new Schema<MealData>({
 
 export const ingredientSchema = new Schema<IngredientData>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true, default: "None" },
-  type: { type: SchemaTypes.String, required: true },
-  icon: { type: SchemaTypes.String, required: true, default: "" },
+  description: { type: SchemaTypes.String, required: true, default: "No description available" },
+  type: { type: SchemaTypes.String, required: true, default: 'ingredient' },
+  icon: { type: SchemaTypes.String, required: true, default: "No icon available" },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
   disabled: { type: SchemaTypes.Boolean, required: true, default: false },
   amountPerUser: {
@@ -92,9 +92,9 @@ export const ingredientSchema = new Schema<IngredientData>({
 
 export const drinkSchema = new Schema<DrinkData>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true, default: 'None' },
-  type: { type: SchemaTypes.String, required: true },
-  icon: { type: SchemaTypes.String, required: true, default: "" },
+  description: { type: SchemaTypes.String, required: true, default: 'No description available' },
+  type: { type: SchemaTypes.String, required: true, default: 'drink' },
+  icon: { type: SchemaTypes.String, required: true, default: "No icon available" },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
   disabled: { type: SchemaTypes.Boolean, required: true, default: false },
   amountPerUser: { type: SchemaTypes.Mixed, required: true, default: "unlimited" },

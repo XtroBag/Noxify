@@ -1,11 +1,14 @@
-import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
-import { ApplicationIntegrationType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import {
-  addEconomyUser,
-  getEconomy,
-  formatAmount,
-  updateUserBalancesAndTransactions,
-} from "../../../handler/util/DatabaseCalls";
+  CommandTypes,
+  RegisterTypes,
+  SlashCommandModule,
+} from "../../../handler";
+import {
+  ApplicationIntegrationType,
+  EmbedBuilder,
+  InteractionContextType,
+  SlashCommandBuilder,
+} from "discord.js";
 import { format } from "date-fns";
 import { Colors } from "../../../config";
 
@@ -62,7 +65,9 @@ export = {
       return;
     }
 
-    const economyData = await getEconomy({ guildID: interaction.guildId });
+    const economyData = await client.utils.calls.getEconomy({
+      guildID: interaction.guildId,
+    });
 
     if (member.id === interaction.member.id) {
       await interaction.reply({
@@ -98,7 +103,7 @@ export = {
       (economyUser) => economyUser.userID === interaction.member.id
     );
     if (!user) {
-      await addEconomyUser({
+      await client.utils.calls.addEconomyUser({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
@@ -108,11 +113,13 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { meal: [], weapon: [], drink: [], ingredient: []}},
-        activeEffects: []
+        inventory: {
+          items: { meal: [], weapon: [], drink: [], ingredient: [] },
+        },
+        activeEffects: [],
       });
 
-      const updatedEconomyData = await getEconomy({
+      const updatedEconomyData = await client.utils.calls.getEconomy({
         guildID: interaction.guildId,
       });
 
@@ -124,7 +131,7 @@ export = {
 
     const recipient = economyUsers.find((user) => user.userID === member.id);
     if (!recipient) {
-      await addEconomyUser({
+      await client.utils.calls.addEconomyUser({
         guildID: interaction.guildId,
         userID: member.id,
         joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
@@ -134,12 +141,16 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { meal: [], weapon: [], drink: [], ingredient: []}},
-        activeEffects: []
+        inventory: {
+          items: { meal: [], weapon: [], drink: [], ingredient: [] },
+        },
+        activeEffects: [],
       });
     }
 
-    const updatedEconomy = await getEconomy({ guildID: interaction.guildId });
+    const updatedEconomy = await client.utils.calls.getEconomy({
+      guildID: interaction.guildId,
+    });
 
     let updatedUsers = updatedEconomy.users;
 
@@ -179,7 +190,7 @@ export = {
     updatedSender.accountBalance -= amount;
     updatedRecipient.accountBalance += amount;
 
-    await updateUserBalancesAndTransactions({
+    await client.utils.calls.updateUserBalancesAndTransactions({
       guildID: interaction.guildId,
       amount: amount,
       economy: economyData,
@@ -192,7 +203,7 @@ export = {
         new EmbedBuilder()
           .setColor(Colors.Success)
           .setDescription(
-            `Successfully transferred ${formatAmount(
+            `Successfully transferred ${client.utils.extras.formatAmount(
               amount
             )} ${economyData.name.toLowerCase().replace(/s$/, "")}${
               amount === 1 ? "" : "s"

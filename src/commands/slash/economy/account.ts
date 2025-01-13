@@ -15,12 +15,6 @@ import {
   userMention,
 } from "discord.js";
 import { Colors, Emojis, milestones } from "../../../config";
-import {
-  formatAmount,
-  addEconomyUser,
-  getEconomy,
-  updateUserMilestones,
-} from "../../../handler/util/DatabaseCalls";
 import { format, parse } from "date-fns";
 
 export = {
@@ -57,7 +51,7 @@ export = {
       return;
     }
 
-    const economy = await getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
 
     if (!economy) {
       await interaction.reply({
@@ -76,7 +70,7 @@ export = {
     const exists = economy.users.find((user) => user.userID === member.id);
 
     if (!exists) {
-      await addEconomyUser({
+      await client.utils.calls.addEconomyUser({
         guildID: interaction.guildId,
         userID: member.id,
         displayName: member.displayName,
@@ -91,7 +85,7 @@ export = {
       });
     }
 
-    const updatedEconomy = await getEconomy({ guildID: interaction.guildId });
+    const updatedEconomy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
 
     const person = updatedEconomy.users.find(
       (user) => user.userID === member.id
@@ -147,12 +141,12 @@ export = {
       .setFields([
         {
           name: `${Emojis.Bank} **Bank Balance**`,
-          value: `${formatAmount(person.bankBalance)} ${economy.icon}`,
+          value: `${client.utils.extras.formatAmount(person.bankBalance)} ${economy.icon}`,
           inline: true,
         },
         {
           name: `${Emojis.Wallet} **Wallet Balance**`,
-          value: `${formatAmount(person.accountBalance)} ${economy.icon}`,
+          value: `${client.utils.extras.formatAmount(person.accountBalance)} ${economy.icon}`,
           inline: true,
         },
       ])
@@ -189,7 +183,7 @@ export = {
       ) {
         milestone = m;
 
-        await updateUserMilestones({
+        await client.utils.calls.updateUserMilestones({
           guildID: interaction.guildId,
           userID: member.id,
           milestone: {
@@ -197,7 +191,7 @@ export = {
             finished: true,
             reachedAt: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
           },
-        });
+        })
 
         milestoneReached = true;
         break;
@@ -222,7 +216,7 @@ export = {
             .setDescription(
               `${userMention(
                 person.userID
-              )} you reached a milestone of **${formatAmount(
+              )} you reached a milestone of **${client.utils.extras.formatAmount(
                 milestone
               )}** ${economy.name.toLowerCase().replace(/s$/, "")}${
                 milestone !== 1 || economy.name.toLowerCase().endsWith("s")

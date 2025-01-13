@@ -7,10 +7,6 @@ import {
   inlineCode,
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
-import {
-  formatAmount,
-  getEconomy,
-} from "../../handler/util/DatabaseCalls";
 import { Colors, Emojis } from "../../config";
 import { parse } from "date-fns";
 
@@ -22,7 +18,7 @@ export = {
 
     const userData = await button.guild.members.fetch({ user: userId });
 
-    const economy = await getEconomy({ guildID: button.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
     const canViewInventory = person?.privacySettings.viewInventory;
 
@@ -59,12 +55,12 @@ export = {
       .setFields([
         {
           name: `${Emojis.Bank} **Bank Balance**`,
-          value: `${formatAmount(person.bankBalance)} ${economy.icon}`,
+          value: `${client.utils.extras.formatAmount(person.bankBalance)} ${economy.icon}`,
           inline: true,
         },
         {
           name: `${Emojis.Wallet} **Wallet Balance**`,
-          value: `${formatAmount(person.accountBalance)} ${economy.icon}`,
+          value: `${client.utils.extras.formatAmount(person.accountBalance)} ${economy.icon}`,
           inline: true,
         },
       ])

@@ -11,7 +11,6 @@ import {
   ApplicationIntegrationType,
 } from "discord.js";
 import { Colors } from "../../../config";
-import { getEconomy, addEconomyUser, convertTimeToDiscordTimestamp } from "../../../handler/util/DatabaseCalls";
 import { format } from "date-fns";
 
 export = {
@@ -27,7 +26,7 @@ export = {
   async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
 
-    const economyData = await getEconomy({ guildID: interaction.guildId });
+    const economyData = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
 
     if (!economyData) {
       await interaction.reply({
@@ -43,7 +42,7 @@ export = {
     );
 
     if (!user) {
-      await addEconomyUser({
+      await client.utils.calls.addEconomyUser({
         guildID: interaction.guildId,
         displayName: interaction.member.displayName,
         userID: interaction.member.id,
@@ -57,7 +56,7 @@ export = {
         activeEffects: []
       });
 
-      const updatedEconomyData = await getEconomy({
+      const updatedEconomyData = await client.utils.calls.getEconomy({
         guildID: interaction.guildId,
       });
       user = updatedEconomyData?.users.find(
@@ -93,7 +92,7 @@ export = {
         return `**Description:** ${transaction.description || "No description"}
         **Type:** ${transaction.type}
         **Amount:** ${transaction.amount || "No amount"}
-        **Time:** ${convertTimeToDiscordTimestamp(transaction.time)}`;
+        **Time:** ${client.utils.extras.convertTimeToDiscordTimestamp(transaction.time)}`;
       })
       .join("\n\n");
 
@@ -157,7 +156,7 @@ export = {
           }
           **Type:** ${transaction.type}
           **Amount:** ${transaction.amount || "No amount"}
-          **Time:** ${convertTimeToDiscordTimestamp(transaction.time)}`;
+          **Time:** ${client.utils.extras.convertTimeToDiscordTimestamp(transaction.time)}`;
         })
         .join("\n\n");
 

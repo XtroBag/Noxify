@@ -10,12 +10,6 @@ import {
   InteractionContextType,
   SlashCommandBuilder,
 } from "discord.js";
-import {
-  getEconomy,
-  createEconomy,
-  isServerEmojiValid,
-  deleteEconomy,
-} from "../../../handler/util/DatabaseCalls";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -69,7 +63,7 @@ export = {
       const defaultBalance = interaction.options.getNumber("default");
 
       // Fetch the current economy setup for the server
-      const existingEconomy = await getEconomy({
+      const existingEconomy = await client.utils.calls.getEconomy({
         guildID: interaction.guildId,
       });
 
@@ -87,10 +81,9 @@ export = {
       }
 
       if (
-        validCurrencySymbols.includes(economySymbol) ||
-        isServerEmojiValid(economySymbol, interaction)
+        validCurrencySymbols.includes(economySymbol) || client.utils.extras.isServerEmojiValid(economySymbol, interaction)
       ) {
-        const newEconomy = await createEconomy({
+        const newEconomy = await client.utils.calls.createEconomy({
           guildID: interaction.guildId,
           name: economyName.charAt(0).toUpperCase() + economyName.slice(1),
           icon: economySymbol,
@@ -133,7 +126,7 @@ export = {
         });
       }
     } else if (subcommand === "delete") {
-      const deleted = await deleteEconomy(interaction.guildId);
+      const deleted = await client.utils.calls.deleteEconomy(interaction.guildId);
 
       if (deleted) {
         return await interaction.reply({

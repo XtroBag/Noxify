@@ -9,7 +9,6 @@ import {
 import { ComponentModule, ComponentTypes } from "../../handler";
 import { Economy } from "../../handler/schemas/models/Models";
 import { Colors } from "../../config";
-import { getEconomy } from "../../handler/util/DatabaseCalls";
 
 export = {
   id: "accept-swap",

@@ -1,4 +1,3 @@
-import { getEconomy } from "../../../handler/util/DatabaseCalls";
 import {
   CommandTypes,
   RegisterTypes,
@@ -68,7 +67,7 @@ export = {
           ephemeral: true,
         });
 
-      const economy = await getEconomy({ guildID: interaction.guildId });
+      const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
       if (!economy)
         return await interaction.reply({
           content: `This server doesn't have an economy system set up.`,

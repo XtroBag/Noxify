@@ -1,11 +1,6 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
 import { ApplicationIntegrationType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { Colors } from "../../../config";
-import {
-  getEconomy,
-  addEconomyUser,
-  formatAmount,
-} from "../../../handler/util/DatabaseCalls";
 import { format } from "date-fns";
 
 export = {
@@ -18,7 +13,7 @@ export = {
     .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
 
   async execute({ client, interaction }) {
-    const economyData = await getEconomy({ guildID: interaction.guildId });
+    const economyData = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
 
     if (!economyData) {
       await interaction.reply({
@@ -36,7 +31,7 @@ export = {
     );
 
     if (!user) {
-      await addEconomyUser({
+      await client.utils.calls.addEconomyUser({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
@@ -50,7 +45,7 @@ export = {
         activeEffects: []
       });
 
-      const updatedEconomyData = await getEconomy({
+      const updatedEconomyData = await client.utils.calls.getEconomy({
         guildID: interaction.guildId,
       });
 
@@ -78,7 +73,7 @@ export = {
   const leaderboardDescription = leaderboard
   .map((user, index) => {
     const icon = economyData.icon;
-    const formattedAmount = formatAmount(user.accountBalance + user.bankBalance);
+    const formattedAmount = client.utils.extras.formatAmount(user.accountBalance + user.bankBalance);
 
     return `${index + 1}. **${user.displayName}** ${formattedAmount} ${icon}`;
   })

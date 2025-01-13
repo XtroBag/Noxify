@@ -11,8 +11,6 @@ import { ComponentModule, ComponentTypes } from "../../handler";
 import { Items } from "../../handler/types/Database";
 import { ItemType } from "../../handler/types/Item";
 import { Colors } from "../../config";
-import { getItemsByType } from "../../handler/util/Items";
-import { formatAmount, getEconomy } from "../../handler/util/DatabaseCalls";
 
 export = {
   id: `shopItemForward`,
@@ -22,19 +20,19 @@ export = {
     const itemsPerPage = Number(extras[1]);
     const selectedType = extras[2] as ItemType;
 
-    const economy = await getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
 
     let selectedItems: Items[];
 
     // Updated item type filtering to include meals, drinks, and ingredients
     if (selectedType === "weapon") {
-      selectedItems = getItemsByType(client, "weapon");
+      selectedItems = client.utils.items.getItemsByType("weapon");
     } else if (selectedType === "meal") {
-      selectedItems = getItemsByType(client, "meal");
+      selectedItems = client.utils.items.getItemsByType("meal");
     } else if (selectedType === "drink") {
-      selectedItems = getItemsByType(client, "drink");
+      selectedItems = client.utils.items.getItemsByType("drink");
     } else if (selectedType === "ingredient") {
-      selectedItems = getItemsByType(client, "ingredient");
+      selectedItems = client.utils.items.getItemsByType("ingredient");
     } else {
       selectedItems = [];
     }
@@ -58,7 +56,7 @@ export = {
       );
 
     const itemDescriptions = currentItems.map((item) => {
-      let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
+      let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(client.utils.extras.formatAmount(item.price))} ${economy.icon}`;
 
       // Additional checks for items based on their type
       if (selectedType === "weapon" && "damage" in item) {

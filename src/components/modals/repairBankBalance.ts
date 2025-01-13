@@ -1,7 +1,6 @@
 import { inlineCode, ModalSubmitInteraction } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
 import { Economy } from "../../handler/schemas/models/Models";
-import { formatAmount } from "../../handler/util/DatabaseCalls";
 
 export = {
   id: "repair-bank-balance",
@@ -32,7 +31,7 @@ export = {
     );
 
     await interaction.reply({
-      content: `Bank balance updated to ${inlineCode(formatAmount(Number(newBalance)))}`,
+      content: `Bank balance updated to ${inlineCode(client.utils.extras.formatAmount(Number(newBalance)))}`,
     });
   },
 } as ComponentModule<ModalSubmitInteraction<"cached">>;

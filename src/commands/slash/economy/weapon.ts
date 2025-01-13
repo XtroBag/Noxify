@@ -8,7 +8,6 @@ import {
     InteractionContextType,
     SlashCommandBuilder,
   } from "discord.js";
-  import { getEconomy } from "../../../handler/util/DatabaseCalls";
   
   export = {
     type: CommandTypes.SlashCommand,
@@ -63,7 +62,7 @@ import {
     async execute({ client, interaction }) {
 
 
-      const economy = await getEconomy({ guildID: interaction.guildId });
+      const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
   
       if (!economy) {
         await interaction.reply({

@@ -1,12 +1,5 @@
 import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
 import { ApplicationIntegrationType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
-import {
-  addEconomyUser,
-  addTransaction,
-  getEconomy,
-  updateBalances,
-  formatAmount,
-} from "../../../handler/util/DatabaseCalls";
 import { format } from "date-fns";
 import { Colors } from "../../../config";
 
@@ -52,7 +45,7 @@ export = {
     const from = interaction.options.getString("from");
     const to = interaction.options.getString("to");
 
-    const economy = await getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
 
     if (from === to) {
       await interaction.reply({
@@ -86,7 +79,7 @@ export = {
       (user) => user.userID === interaction.member.id
     );
     if (!user) {
-      await addEconomyUser({
+      await client.utils.calls.addEconomyUser({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
@@ -115,7 +108,7 @@ export = {
               .setDescription(
                 `You do not have enough ${
                   economy.name
-                } in your bank account to transfer ${formatAmount(amount)}.`
+                } in your bank account to transfer ${client.utils.extras.formatAmount(amount)}.`
               ),
           ],
           ephemeral: true,
@@ -126,20 +119,20 @@ export = {
       user.bankBalance -= amount;
       user.accountBalance += amount;
 
-      await updateBalances({
+      await client.utils.calls.updateBalances({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         accountBalance: user.accountBalance,
         bankBalance: user.bankBalance,
       });
 
-      const transactionDescription = `Transferred ${formatAmount(
+      const transactionDescription = `Transferred ${client.utils.extras.formatAmount(
         amount
       )} ${economy.name.toLowerCase().replace(/s$/, "")}${
         amount === 1 ? "" : "s"
       } from bank to wallet`;
 
-      await addTransaction({
+      await client.utils.calls.addTransaction({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         transaction: {
@@ -155,7 +148,7 @@ export = {
           new EmbedBuilder()
             .setColor(Colors.Success)
             .setDescription(
-              `Sent ${formatAmount(amount)} ${economy.name
+              `Sent ${client.utils.extras.formatAmount(amount)} ${economy.name
                 .toLowerCase()
                 .replace(/s$/, "")}${
                 amount === 1 ? "" : "s"
@@ -172,7 +165,7 @@ export = {
               .setDescription(
                 `You do not have enough ${
                   economy.name
-                } in your wallet to transfer ${formatAmount(amount)}.`
+                } in your wallet to transfer ${client.utils.extras.formatAmount(amount)}.`
               ),
           ],
           ephemeral: true,
@@ -183,17 +176,17 @@ export = {
       user.accountBalance -= amount;
       user.bankBalance += amount;
 
-      await updateBalances({
+      await client.utils.calls.updateBalances({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         accountBalance: user.accountBalance,
         bankBalance: user.bankBalance,
       });
 
-      const transactionDescription = `Transferred ${formatAmount(
+      const transactionDescription = `Transferred ${client.utils.extras.formatAmount(
         amount
       )} from wallet to bank`;
-      await addTransaction({
+      await client.utils.calls.addTransaction({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         transaction: {
@@ -209,7 +202,7 @@ export = {
           new EmbedBuilder()
             .setColor(Colors.Success)
             .setDescription(
-              `Sent ${formatAmount(amount)} ${economy.name
+              `Sent ${client.utils.extras.formatAmount(amount)} ${economy.name
                 .toLowerCase()
                 .replace(/s$/, "")}${
                 amount === 1 ? "" : "s"

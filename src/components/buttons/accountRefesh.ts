@@ -9,11 +9,6 @@ import {
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
 import { format, parse } from "date-fns";
-import {
-  getEconomy,
-  formatAmount,
-  updateUserMilestones,
-} from "../../handler/util/DatabaseCalls";
 import { Colors, Emojis, milestones } from "../../config";
 
 export = {
@@ -24,7 +19,7 @@ export = {
 
     const userData = await button.guild.members.fetch({ user: userId });
 
-    const economy = await getEconomy({ guildID: button.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
     if (button.member.id !== userId) {
@@ -91,12 +86,12 @@ export = {
         .setFields([
           {
             name: `${Emojis.Bank} **Bank Balance**`,
-            value: `${formatAmount(person.bankBalance)} ${economy.icon}`,
+            value: `${client.utils.extras.formatAmount(person.bankBalance)} ${economy.icon}`,
             inline: true,
           },
           {
             name: `${Emojis.Wallet} **Wallet Balance**`,
-            value: `${formatAmount(person.accountBalance)} ${economy.icon}`,
+            value: `${client.utils.extras.formatAmount(person.accountBalance)} ${economy.icon}`,
             inline: true,
           },
         ])
@@ -135,7 +130,7 @@ export = {
         ) {
           milestone = m;
 
-          await updateUserMilestones({
+          await client.utils.calls.updateUserMilestones({
             guildID: button.guildId,
             userID: userId,
             milestone: {
@@ -168,7 +163,7 @@ export = {
               .setDescription(
                 `${userMention(
                   person.userID
-                )} you reached a milestone of **${formatAmount(
+                )} you reached a milestone of **${client.utils.extras.formatAmount(
                   milestone
                 )}** ${economy.name.toLowerCase().replace(/s$/, "")}${
                   milestone !== 1 || economy.name.toLowerCase().endsWith("s")

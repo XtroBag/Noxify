@@ -5,12 +5,8 @@ import {
   StringSelectMenuBuilder,
   ButtonBuilder,
   ButtonStyle,
-  EmojiResolvable
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler";
-import {
-  getEconomy,
-} from "../../handler/util/DatabaseCalls";
 import { Emojis, Colors } from "../../config";
 
 export = {
@@ -18,7 +14,7 @@ export = {
   type: ComponentTypes.Button,
   async execute(client, button, extras) {
     const userId = extras[0];
-    const economy = await getEconomy({ guildID: button.guildId });
+    const economy = await client.utils.calls.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
     if (button.member.id !== person.userID) {

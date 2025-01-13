@@ -9,13 +9,7 @@ import {
     InteractionContextType,
     SlashCommandBuilder,
   } from "discord.js";
-  import {
-    addEconomyUser,
-    getEconomy,
-    useFoodItem,
-  } from "../../../handler/util/DatabaseCalls";
   import { format } from "date-fns";
-  import { getInventoryItems, getItemsByType } from "../../../handler/util/Items";
   import { Colors, Emojis } from "../../../config";
   import { DrinkData } from "../../../handler/types/Database";
 
@@ -39,7 +33,7 @@ export = {
       ),
   
     async execute({ client, interaction }) {
-      const economy = await getEconomy({ guildID: interaction.guildId });
+      const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
   
       const pickedItem = interaction.options.getString("item");
   
@@ -56,7 +50,7 @@ export = {
       );
   
       if (!user) {
-        await addEconomyUser({
+        await client.utils.calls.addEconomyUser({
           guildID: interaction.guildId,
           userID: interaction.member.id,
           displayName: interaction.member.displayName,
@@ -71,7 +65,7 @@ export = {
         });
       }
   
-      const updatedEconomy = await getEconomy({
+      const updatedEconomy = await client.utils.calls.getEconomy({
         guildID: interaction.guildId,
       });
   
@@ -79,8 +73,8 @@ export = {
         (user) => user.userID === interaction.member.id
       );
   
-        const userItems = getInventoryItems(newUser, "drink");
-        const validItems = getItemsByType(client, "drink");
+        const userItems = client.utils.items.getInventoryItems(newUser, "drink");
+        const validItems = client.utils.items.getItemsByType("drink");
   
         const isValid = validItems.some(
           (item) => item.name.singular === pickedItem
@@ -152,7 +146,7 @@ export = {
         const randomMessage =
           messages[Math.floor(Math.random() * messages.length)];
   
-        await useFoodItem(
+        await client.utils.calls.useFoodItem(
           interaction.guildId,
           interaction.member.id,
           pickedItem,
@@ -173,10 +167,10 @@ export = {
     async autocomplete(interaction, client) {
       const focusedValue = interaction.options.getFocused();
 
-      const economy = await getEconomy({ guildID: interaction.guildId })
+      const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId })
       const user = economy.users.find((user) => user.userID === interaction.user.id);
   
-      const items = getInventoryItems(user, 'drink');
+      const items = client.utils.items.getInventoryItems(user, 'drink');
   
       const filteredItems = items.filter(
         (item) =>

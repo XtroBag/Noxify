@@ -25,8 +25,9 @@ import {
   SlashCommandModule,
 } from "../types/Command";
 import { DatabaseOptions, DrinkData, IngredientData, MealData, WeaponData } from "../types/Database";
-import { connectDatabase } from "./DatabaseCalls";
 import { registerItems } from "./handleItems";
+import { ClientUtils } from "../types/Item";
+import { DatabaseCalls, DatabaseExtras, DatabaseItems } from "./DatabaseUtils";
 
 export class DiscordClient extends Client {
   public events: string[];
@@ -35,6 +36,7 @@ export class DiscordClient extends Client {
   public cooldowns: CooldownCollections;
   public items: ItemCollections;
   public db: Mongoose;
+  public utils: ClientUtils
 
   constructor(options: ConstructorParameters<typeof Client>[0]) {
     super(options);
@@ -68,13 +70,18 @@ export class DiscordClient extends Client {
       meal: new Collection<string, MealData>()
 
     };
+    this.utils = {
+      items: new DatabaseItems(this),
+      calls: new DatabaseCalls(this),
+      extras: new DatabaseExtras(this)
+    };
     this.db = mongoose;
   }
 
   public async registerDatabase(
     options: DatabaseOptions
   ): Promise<void> {
-    await connectDatabase(this, options);
+    this.utils.extras.connectDatabase(options)
   }
 
   public async registerEvents(): Promise<void> {

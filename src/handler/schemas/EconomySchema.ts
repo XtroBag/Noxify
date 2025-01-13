@@ -5,8 +5,10 @@ import {
   UserPrivacy,
   Milestone,
   UserInventory,
-  FoodData,
+  MealData,
+  DrinkData,
   WeaponData,
+  IngredientData,
 } from "../types/Database";
 import { Effect, NameStyles } from "../types/Item";
 
@@ -62,23 +64,50 @@ export const WeaponSchema = new Schema<WeaponData>({
   requires: { type: SchemaTypes.Mixed, required: true, default: [] },
 });
 
-export const FoodSchema = new Schema<FoodData>({
+export const MealSchema = new Schema<MealData>({
   name: { type: ItemName, required: true },
   description: { type: SchemaTypes.String, required: true, default: "None" },
   type: { type: SchemaTypes.String, required: true },
   icon: { type: SchemaTypes.String, required: true, default: "" },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
   disabled: { type: SchemaTypes.Boolean, required: true, default: false },
-  drinkable: { type: SchemaTypes.Boolean, required: true, default: false },
   effects: { type: [FoodEffect], required: true, default: [] },
-  uses: { type: SchemaTypes.Number, required: true, default: 0 },
+  ingredientsRequired: { type: [SchemaTypes.String], required: true, default: [] },
   amountPerUser: { type: SchemaTypes.Mixed, required: true, default: 0 },
+});
+
+export const ingredientSchema = new Schema<IngredientData>({
+  name: { type: ItemName, required: true },
+  description: { type: SchemaTypes.String, required: true },
+  type: { type: SchemaTypes.String, required: true },
+  icon: { type: SchemaTypes.String, required: true, default: "" },
+  price: { type: SchemaTypes.Number, required: true, default: 0 },
+  disabled: { type: SchemaTypes.Boolean, required: true, default: false },
+  amountPerUser: {
+    type: SchemaTypes.Mixed,
+    required: true,
+    default: "unlimited",
+  }
+});
+
+export const drinkSchema = new Schema<DrinkData>({
+  name: { type: ItemName, required: true },
+  description: { type: SchemaTypes.String, required: true },
+  type: { type: SchemaTypes.String, required: true },
+  icon: { type: SchemaTypes.String, required: true, default: "" },
+  price: { type: SchemaTypes.Number, required: true, default: 0 },
+  disabled: { type: SchemaTypes.Boolean, required: true, default: false },
+  amountPerUser: { type: SchemaTypes.Mixed, required: true, default: "unlimited" },
+  effects: { type: [FoodEffect], required: true, default: [] },
 });
 
 export const EconomyUserInventory = new Schema<UserInventory>({
   items: {
     weapon: [WeaponSchema],
-    food: [FoodSchema],
+    meal: [MealSchema],
+    ingredient: [ingredientSchema],
+    drink: [drinkSchema]
+    
   },
 });
 

@@ -24,7 +24,7 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../types/Command";
-import { DatabaseOptions, FoodData, WeaponData } from "../types/Database";
+import { DatabaseOptions, DrinkData, IngredientData, MealData, WeaponData } from "../types/Database";
 import { connectDatabase } from "./DatabaseCalls";
 import { registerItems } from "./handleItems";
 
@@ -63,7 +63,10 @@ export class DiscordClient extends Client {
     };
     this.items = {
       weapon: new Collection<string, WeaponData>(),
-      food: new Collection<string, FoodData>()
+      ingredient: new Collection<string, IngredientData>(),
+      drink: new Collection<string, DrinkData>(),
+      meal: new Collection<string, MealData>()
+
     };
     this.db = mongoose;
   }

@@ -17,8 +17,10 @@ import {
   UpdateUserMilestones,
   UserEconomy,
   Items,
-  FoodData,
   WeaponData,
+  IngredientData,
+  MealData,
+  DrinkData,
 } from "../types/Database";
 import { format, parse } from "date-fns";
 import { ChatInputCommandInteraction } from "discord.js";
@@ -280,19 +282,16 @@ export async function completePurchase(
   amount: number,
   interaction: ChatInputCommandInteraction<"cached">
 ) {
-  if (item.type === "food") {
-    const foodItem = item as FoodData;
+  if (item.type === "ingredient") {
+    const foodItem = item as IngredientData;
     const itemsToAdd = Array(amount).fill({
       name: { singular: foodItem.name.singular, plural: foodItem.name.plural },
       description: foodItem.description,
       type: foodItem.type,
       icon: foodItem.icon,
       price: foodItem.price,
-      effects: foodItem.effects,
       disabled: foodItem.disabled,
-      drinkable: foodItem.drinkable,
       amountPerUser: foodItem.amountPerUser,
-      uses: 0,
     });
 
     await Economy.updateOne(
@@ -336,6 +335,58 @@ export async function completePurchase(
         },
         $inc: {
           "users.$.accountBalance": -weaponItem.price * amount,
+        },
+      }
+    );
+  } else if (item.type === 'meal') {
+    const mealItem = item as MealData;
+    const itemstoAdd = Array(amount).fill({
+      name: { singular: mealItem.name.singular, plural: mealItem.name.plural },
+      description:  mealItem.description,
+      type:  mealItem.type,
+      icon:  mealItem.icon,
+      price:  mealItem.price,
+      disabled:  mealItem.disabled,
+      amountPerUser:  mealItem.amountPerUser,
+      ingredientsRequired: mealItem.ingredientsRequired,
+      effects: mealItem.effects
+    });
+
+
+    await Economy.updateOne(
+      { guildID: interaction.guildId, "users.userID": user.userID },
+      {
+        $push: {
+          [`users.$.inventory.items.${item.type}`]: { $each: itemstoAdd },
+        },
+        $inc: {
+          "users.$.accountBalance": -mealItem.price * amount,
+        },
+      }
+    );
+
+
+  } else if (item.type === 'drink') {
+    const drinkItem = item as DrinkData;
+    const itemstoAdd = Array(amount).fill({
+      name: { singular: drinkItem.name.singular, plural: drinkItem.name.plural },
+      description:  drinkItem.description,
+      type:  drinkItem.type,
+      icon:  drinkItem.icon,
+      price:  drinkItem.price,
+      disabled:  drinkItem.disabled,
+      amountPerUser:  drinkItem.amountPerUser,
+      effects: drinkItem.effects
+    });
+
+    await Economy.updateOne(
+      { guildID: interaction.guildId, "users.userID": user.userID },
+      {
+        $push: {
+          [`users.$.inventory.items.${item.type}`]: { $each: itemstoAdd },
+        },
+        $inc: {
+          "users.$.accountBalance": -drinkItem.price * amount,
         },
       }
     );

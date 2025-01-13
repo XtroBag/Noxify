@@ -41,18 +41,17 @@ export = {
         )
     ),
   async execute({ client, interaction }) {
-    const member =
-      interaction.options.getMember("member") || interaction.member;
-
-    if (!member)
-      return await interaction.reply({
-        content: `Please pick a member that is inside this server`,
-        ephemeral: true,
-      });
+    const member = interaction.options.getMember("member") || interaction.member;
 
     if (member.user.bot) {
       await interaction.reply({
-        content: "You cannot view the banking information of bots.",
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Error)
+            .setDescription(
+              `${Emojis.Cross} You cannot view the banking information of bots.`
+            ),
+        ],
         ephemeral: true,
       });
       return;
@@ -62,7 +61,13 @@ export = {
 
     if (!economy) {
       await interaction.reply({
-        content: "This server does not have an Economy system set up yet.",
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Warning)
+            .setDescription(
+              `${Emojis.Info} This server does not have an Economy system set up currently.`
+            ),
+        ],
         ephemeral: true,
       });
       return;
@@ -81,7 +86,7 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { food: [], weapon: [] } },
+        inventory: { items: { food: [], weapon: [], drink: [], ingredient: [] } },
         activeEffects: [],
       });
     }
@@ -93,12 +98,16 @@ export = {
     );
 
     if (!person) {
-      await interaction.reply({
-        content:
-          "An error occurred while retrieving the user's banking information.",
+      return await interaction.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Error)
+            .setDescription(
+              `${Emojis.Cross} An error occurred while retrieving the user's banking information.`
+            ),
+        ],
         ephemeral: true,
       });
-      return;
     }
 
     const parsedDate = parse(
@@ -121,29 +130,33 @@ export = {
     const rank = searchedUserIndex !== -1 ? searchedUserIndex + 1 : "Not found";
 
     const bankingInformation = new EmbedBuilder()
-    .setAuthor({
-      name: `${member.user.username}'s Profile`,  // More descriptive title
-      iconURL: member.displayAvatarURL({ extension: "png" }),
-    })
-    .setDescription(
-      `${Emojis.Joined} Joined: ${discordTimestamp}\n` +
-      `${Emojis.Transactions} Transactions: ${inlineCode(person.transactions.length.toString())}\n` +
-      `${Emojis.ActiveEffects} Active Effects: ${inlineCode(person.activeEffects.length.toString())}\n` +
-      `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n`
-    )
-    .setFields([
-      {
-        name: `${Emojis.Bank} **Bank Balance**`,
-        value: `${formatAmount(person.bankBalance)} ${economy.icon}`,
-        inline: true,
-      },
-      {
-        name: `${Emojis.Wallet} **Wallet Balance**`,
-        value: `${formatAmount(person.accountBalance)} ${economy.icon}`,
-        inline: true,
-      },
-    ])
-    .setColor(Colors.Normal)
+      .setAuthor({
+        name: `${member.user.username}'s Profile`, // More descriptive title
+        iconURL: member.displayAvatarURL({ extension: "png" }),
+      })
+      .setDescription(
+        `${Emojis.Joined} Joined: ${discordTimestamp}\n` +
+          `${Emojis.Transactions} Transactions: ${inlineCode(
+            person.transactions.length.toString()
+          )}\n` +
+          `${Emojis.ActiveEffects} Active Effects: ${inlineCode(
+            person.activeEffects.length.toString()
+          )}\n` +
+          `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n`
+      )
+      .setFields([
+        {
+          name: `${Emojis.Bank} **Bank Balance**`,
+          value: `${formatAmount(person.bankBalance)} ${economy.icon}`,
+          inline: true,
+        },
+        {
+          name: `${Emojis.Wallet} **Wallet Balance**`,
+          value: `${formatAmount(person.accountBalance)} ${economy.icon}`,
+          inline: true,
+        },
+      ])
+      .setColor(Colors.Normal);
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()

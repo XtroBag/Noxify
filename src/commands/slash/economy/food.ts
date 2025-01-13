@@ -16,8 +16,8 @@ import {
 } from "../../../handler/util/DatabaseCalls";
 import { format } from "date-fns";
 import { getInventoryItems, getItemsByType } from "../../../handler/util/Items";
-import { Colors } from "../../../config";
-import { FoodData } from "src/handler/types/Database";
+import { Colors, Emojis } from "../../../config";
+import { DrinkData, MealData } from "../../../handler/types/Database";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -83,7 +83,7 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { food: [], weapon: [] } },
+        inventory: { items: { food: [], weapon: [], drink: [], ingredient: [] } },
         activeEffects: [],
       });
     }
@@ -97,8 +97,8 @@ export = {
     );
 
     if (subcommand === "eat") {
-      const userItems = getInventoryItems(newUser, "food");
-      const validItems = getItemsByType(client, "food");
+      const userItems = getInventoryItems(newUser, "meal");
+      const validItems = getItemsByType(client, "meal");
 
       const isValid = validItems.some(
         (item) => item.name.singular === pickedItem
@@ -109,7 +109,7 @@ export = {
           embeds: [
             new EmbedBuilder()
               .setColor(Colors.Error)
-              .setDescription(`**${pickedItem}** is not a valid item`),
+              .setDescription(`${Emojis.Cross} **${pickedItem}** is not a valid item`),
           ],
         });
       }
@@ -123,28 +123,17 @@ export = {
           embeds: [
             new EmbedBuilder()
               .setColor(Colors.Error)
-              .setDescription(`You don't own a **${pickedItem}**`),
+              .setDescription(`${Emojis.Cross} You don't own a **${pickedItem}**`),
           ],
         });
       }
 
       const item = userItems.find(
-        (item) => item.name.singular === pickedItem && item.type === "food"
-      ) as FoodData;
+        (item) => item.name.singular === pickedItem && item.type === "drink"
+      ) as DrinkData;
 
       const effects = item.effects;
 
-      if (item && item.drinkable) {
-        return await interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor(Colors.Error)
-              .setDescription(
-                `**${pickedItem}** is a drink, not a food item. Please use the /food drink command to drink it.`
-              ),
-          ],
-        });
-      }
 
       let effectDescriptions = [];
 
@@ -158,25 +147,25 @@ export = {
       const effectsMessage = effectDescriptions.join("\n");
 
       const messages = [
-        `You devoured the **${pickedItem}**! Absolutely delicious!\n${effectsMessage}`,
-        `You munched on the **${pickedItem}**! That was tasty!\n${effectsMessage}`,
-        `Mmm, you just ate the **${pickedItem}**! So satisfying!\n${effectsMessage}`,
-        `You just gobbled down that **${pickedItem}**! Yum!\n${effectsMessage}`,
-        `That was a tasty bite of **${pickedItem}**! You enjoyed it!\n${effectsMessage}`,
-        `You snacked on the **${pickedItem}**! What a treat!\n${effectsMessage}`,
-        `The **${pickedItem}** is all gone! That hit the spot!\n${effectsMessage}`,
-        `You ate the **${pickedItem}** like a pro! That was delicious!\n${effectsMessage}`,
-        `You chomped down on the **${pickedItem}**! So good!\n${effectsMessage}`,
-        `You savored the **${pickedItem}**! That was a tasty choice!\n${effectsMessage}`,
-        `A tasty feast of **${pickedItem}** is now in your belly!\n${effectsMessage}`,
-        `The **${pickedItem}** didn’t stand a chance! That was delicious!\n${effectsMessage}`,
-        `You just polished off the **${pickedItem}**! So yum!\n${effectsMessage}`,
-        `You made quick work of the **${pickedItem}**! What a flavor!\n${effectsMessage}`,
-        `You scarfed down the **${pickedItem}**! Now that was tasty!\n${effectsMessage}`,
-        `You savored every bite of the **${pickedItem}**! Delicious!\n${effectsMessage}`,
-        `The **${pickedItem}** is gone, and you loved every bite!\n${effectsMessage}`,
-        `Yum! The **${pickedItem}** was a perfect choice!\n${effectsMessage}`,
-        `You just enjoyed the **${pickedItem}** to the fullest!\n${effectsMessage}`,
+        `${Emojis.Check} You devoured the **${pickedItem}**! Absolutely delicious!\n${effectsMessage}`,
+        `${Emojis.Check} You munched on the **${pickedItem}**! That was tasty!\n${effectsMessage}`,
+        `${Emojis.Check} Mmm, you just ate the **${pickedItem}**! So satisfying!\n${effectsMessage}`,
+        `${Emojis.Check} You just gobbled down that **${pickedItem}**! Yum!\n${effectsMessage}`,
+        `${Emojis.Check} That was a tasty bite of **${pickedItem}**! You enjoyed it!\n${effectsMessage}`,
+        `${Emojis.Check} You snacked on the **${pickedItem}**! What a treat!\n${effectsMessage}`,
+        `${Emojis.Check} The **${pickedItem}** is all gone! That hit the spot!\n${effectsMessage}`,
+        `${Emojis.Check} You ate the **${pickedItem}** like a pro! That was delicious!\n${effectsMessage}`,
+        `${Emojis.Check} You chomped down on the **${pickedItem}**! So good!\n${effectsMessage}`,
+        `${Emojis.Check} You savored the **${pickedItem}**! That was a tasty choice!\n${effectsMessage}`,
+        `${Emojis.Check} A tasty feast of **${pickedItem}** is now in your belly!\n${effectsMessage}`,
+        `${Emojis.Check} The **${pickedItem}** didn’t stand a chance! That was delicious!\n${effectsMessage}`,
+        `${Emojis.Check} You just polished off the **${pickedItem}**! So yum!\n${effectsMessage}`,
+        `${Emojis.Check} You made quick work of the **${pickedItem}**! What a flavor!\n${effectsMessage}`,
+        `${Emojis.Check} You scarfed down the **${pickedItem}**! Now that was tasty!\n${effectsMessage}`,
+        `${Emojis.Check} You savored every bite of the **${pickedItem}**! Delicious!\n${effectsMessage}`,
+        `${Emojis.Check} The **${pickedItem}** is gone, and you loved every bite!\n${effectsMessage}`,
+        `${Emojis.Check} Yum! The **${pickedItem}** was a perfect choice!\n${effectsMessage}`,
+        `${Emojis.Check} You just enjoyed the **${pickedItem}** to the fullest!\n${effectsMessage}`,
       ];
 
       const randomMessage =
@@ -198,13 +187,102 @@ export = {
       });
     } else if (subcommand === "drink") {
       // Handle the "drink" subcommand here, similar to "eat"
-    }
+  
+      // Get the user's inventory items and the list of valid drink items
+      const userItems = getInventoryItems(newUser, "drink"); // You might need to adjust this to include drinks
+      const validItems = getItemsByType(client, "drink"); // Changed to 'drink' type for drinkable items
+  
+      const isValid = validItems.some(
+        (item) => item.name.singular === pickedItem
+      );
+  
+      if (!isValid) {
+        return await interaction.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(Colors.Error)
+              .setDescription(`${Emojis.Cross} **${pickedItem}** is not a valid drink item`),
+          ],
+        });
+      }
+  
+      const hasItem = userItems.some(
+        (item) => item.name.singular === pickedItem && item.type === "food" // Adjusted check to match drink type
+      );
+  
+      if (!hasItem) {
+        return await interaction.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(Colors.Error)
+              .setDescription(`${Emojis.Cross} You don't own a **${pickedItem}**`),
+          ],
+        });
+      }
+  
+      const item = userItems.find(
+        (item) => item.name.singular === pickedItem && item.type === "meal" // Adjusted to drink type
+      ) as MealData;
+  
+      const effects = item.effects;
+  
+      let effectDescriptions = [];
+  
+      if (effects && effects.length > 0) {
+        const effectNames = effects.map((effect) => effect.name);
+        effectDescriptions.push(`-# effects: ${effectNames.join(", ")}`);
+      } else {
+        effectDescriptions.push("");
+      }
+  
+      const effectsMessage = effectDescriptions.join("\n");
+  
+      const messages = [
+        `${Emojis.Check} You drank the **${pickedItem}**! Absolutely refreshing!\n${effectsMessage}`,
+        `${Emojis.Check} You gulped down the **${pickedItem}**! That was tasty!\n${effectsMessage}`,
+        `${Emojis.Check} Mmm, you just drank the **${pickedItem}**! So satisfying!\n${effectsMessage}`,
+        `${Emojis.Check} You just downed the **${pickedItem}**! Yum!\n${effectsMessage}`,
+        `${Emojis.Check} That was a tasty sip of **${pickedItem}**! You enjoyed it!\n${effectsMessage}`,
+        `${Emojis.Check} You drank the **${pickedItem}**! What a treat!\n${effectsMessage}`,
+        `${Emojis.Check} The **${pickedItem}** is all gone! That hit the spot!\n${effectsMessage}`,
+        `${Emojis.Check} You drank the **${pickedItem}** like a pro! That was delicious!\n${effectsMessage}`,
+        `${Emojis.Check} You chugged down the **${pickedItem}**! So good!\n${effectsMessage}`,
+        `${Emojis.Check} You savored the **${pickedItem}**! That was a tasty choice!\n${effectsMessage}`,
+        `${Emojis.Check} A tasty sip of **${pickedItem}** is now in your belly!\n${effectsMessage}`,
+        `${Emojis.Check} The **${pickedItem}** didn’t stand a chance! That was delicious!\n${effectsMessage}`,
+        `${Emojis.Check} You just polished off the **${pickedItem}**! So refreshing!\n${effectsMessage}`,
+        `${Emojis.Check} You made quick work of the **${pickedItem}**! What a flavor!\n${effectsMessage}`,
+        `${Emojis.Check} You scarfed down the **${pickedItem}**! Now that was tasty!\n${effectsMessage}`,
+        `${Emojis.Check} You savored every drop of the **${pickedItem}**! Delicious!\n${effectsMessage}`,
+        `${Emojis.Check} The **${pickedItem}** is gone, and you loved every drop!\n${effectsMessage}`,
+        `${Emojis.Check} Yum! The **${pickedItem}** was a perfect choice!\n${effectsMessage}`,
+        `${Emojis.Check} You just enjoyed the **${pickedItem}** to the fullest!\n${effectsMessage}`,
+      ];
+  
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  
+      await useFoodItem(
+        interaction.guildId,
+        interaction.member.id,
+        pickedItem,
+        effects
+      );
+  
+      await interaction.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Success)
+            .setDescription(randomMessage),
+        ],
+      });
+  }
+  
   },
 
   async autocomplete(interaction, client) {
     const focusedValue = interaction.options.getFocused();
 
-    const items = getItemsByType(client, "food");
+    const items = getItemsByType(client, "meal");
 
     const filteredItems = items.filter(
       (item) =>

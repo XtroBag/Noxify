@@ -3,7 +3,7 @@ import {
   completePurchase,
   addEconomyUser,
 } from "../../../handler/util/DatabaseCalls";
-import { Colors } from "../../../config";
+import { Colors, Emojis } from "../../../config";
 import {
   CommandTypes,
   RegisterTypes,
@@ -19,7 +19,6 @@ import {
   StringSelectMenuBuilder,
 } from "discord.js";
 import {
-  findItemByName,
   getAllItems,
   getInventoryItemAmount,
 } from "../../../handler/util/Items";
@@ -61,6 +60,11 @@ export = {
 
     const economy = await getEconomy({ guildID: interaction.guildId });
 
+    if (!economy)
+      return await interaction.reply({
+        embeds: [new EmbedBuilder().setColor(Colors.Error).setDescription(`${Emojis.Cross} This server doesn't have an economy setup yet.`)],
+      });
+
     if (economy) {
       const embed = new EmbedBuilder().setColor(Colors.Normal);
 
@@ -81,8 +85,10 @@ export = {
               .setMinValues(1)
               .setPlaceholder("Pick a category")
               .addOptions([
-                { label: "Foods", value: "food" },
-                { label: "Weapons", value: "weapon" },
+                { label: 'Ingredients', value: 'ingredient' },
+                { label: 'Drinks', value: 'drink'},
+                { label: 'Meals', value: 'meal'},
+                { label: 'Weapons', value: 'weapon' },
               ])
           );
 
@@ -99,23 +105,56 @@ export = {
 
         if (buyingItem.includes("@everyone") || buyingItem.includes("@here")) {
           return await interaction.reply({
-            content: "You cannot mention `@everyone` or `@here` as an item",
+            embeds: [
+              new EmbedBuilder()
+                .setColor(Colors.Error)
+                .setDescription(
+                  `${Emojis.Cross} You cannot mention ${inlineCode(
+                    "@everyone"
+                  )} or ${inlineCode("@here")} as an item`
+                ),
+            ],
           });
         } else if (urlPattern.test(buyingItem)) {
           return await interaction.reply({
-            content: "You cannot search a link as an item",
+            embeds: [
+              new EmbedBuilder()
+                .setColor(Colors.Error)
+                .setDescription(
+                  `${Emojis.Cross} You cannot search a link as an item`
+                ),
+            ],
           });
         } else if (mentionPattern.test(buyingItem)) {
           return await interaction.reply({
-            content: "You cannot mention users as an item",
+            embeds: [
+              new EmbedBuilder()
+                .setColor(Colors.Error)
+                .setDescription(
+                  `${Emojis.Cross} You cannot mention users as an item`
+                ),
+            ],
           });
         }
 
-        const item = findItemByName(client, buyingItem);
+        const allItems = getAllItems(client);
+        const itemType = allItems.find(
+          (item) => item.name.singular === buyingItem
+        ).type;
+
+        const item = allItems.find((item) => item.type === itemType);
+
+        //  const item = findItemByName(client, buyingItem, itemType);
 
         if (!item) {
           return await interaction.reply({
-            embeds: [new EmbedBuilder().setColor(Colors.Error).setDescription(`Item "${buyingItem}" not found in the shop.`)]
+            embeds: [
+              new EmbedBuilder()
+                .setColor(Colors.Error)
+                .setDescription(
+                  `${Emojis.Cross} Item **${buyingItem}** not found in the shop.`
+                ),
+            ],
           });
         }
 
@@ -123,30 +162,33 @@ export = {
           (user) => user.userID === interaction.member.id
         );
 
-           if (!user) {
-              await addEconomyUser({
-                guildID: interaction.guildId,
-                userID: interaction.member.id,
-                displayName: interaction.member.displayName,
-                joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
-                accountBalance: economy.defaultBalance,
-                bankBalance: 0,
-                privacySettings: { receiveNotifications: true, viewInventory: false },
-                milestones: [],
-                transactions: [],
-                inventory: { items: { food: [], weapon: [] } },
-                activeEffects: []
-              });
-            }
-        const updatedEcononmy = await getEconomy({ guildID: interaction.guildId });
-
-        const newUser = updatedEcononmy.users.find((user) => user.userID === interaction.member.id)
-
-        if (newUser.accountBalance < item.price * amount) {
-          return await interaction.reply({
-            content: `You don't have enough funds to buy **${amount} ${buyingItem}**. Check your account balance.`,
+        if (!user) {
+          await addEconomyUser({
+            guildID: interaction.guildId,
+            userID: interaction.member.id,
+            displayName: interaction.member.displayName,
+            joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
+            accountBalance: economy.defaultBalance,
+            bankBalance: 0,
+            privacySettings: {
+              receiveNotifications: true,
+              viewInventory: false,
+            },
+            milestones: [],
+            transactions: [],
+            inventory: {
+              items: { food: [], weapon: [], drink: [], ingredient: [] },
+            },
+            activeEffects: [],
           });
         }
+        const updatedEcononmy = await getEconomy({
+          guildID: interaction.guildId,
+        });
+
+        const newUser = updatedEcononmy.users.find(
+          (user) => user.userID === interaction.member.id
+        );
 
         const maxAmount =
           item.amountPerUser === "unlimited" ? Infinity : item.amountPerUser;
@@ -166,9 +208,23 @@ export = {
               new EmbedBuilder()
                 .setColor(Colors.Error)
                 .setDescription(
-                  `You can't buy more than ${inlineCode(
+                  `${Emojis.Cross} You can't buy more than ${inlineCode(
                     maxAmount.toString()
                   )} ${itemName}.`
+                ),
+            ],
+          });
+        }
+
+        const noFunds = amount === 1 ? item.name.singular : item.name.plural;
+
+        if (newUser.accountBalance < item.price * amount) {
+          return await interaction.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setColor(Colors.Error)
+                .setDescription(
+                  `${Emojis.Cross} You don't have enough funds to buy ${amount} **${noFunds}**. Check your account balance.`
                 ),
             ],
           });
@@ -180,7 +236,7 @@ export = {
             new EmbedBuilder()
               .setColor(Colors.Success)
               .setDescription(
-                `You have successfully purchased ${inlineCode(
+                `${Emojis.Check} You have successfully purchased ${inlineCode(
                   amount.toString()
                 )} ${
                   amount > 1 ? item.name.plural : item.name.singular

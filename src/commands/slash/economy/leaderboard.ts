@@ -46,7 +46,7 @@ export = {
         privacySettings: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { food: [], weapon: []}},
+        inventory: { items: { food: [], weapon: [], drink: [], ingredient: [] }},
         activeEffects: []
       });
 

@@ -3,7 +3,7 @@ import { DiscordClient } from "./DiscordClient";
 import { itemsFolderName } from "../../config";
 import Logger from "./Logger";
 import { ItemModule } from "../types/Item";
-import { FoodData, WeaponData } from "../types/Database";
+import { DrinkData, IngredientData, MealData, WeaponData } from "../types/Database";
 
 export async function registerItems(client: DiscordClient) {
   await getItemModules(client);
@@ -34,8 +34,12 @@ async function getItemModules(client: DiscordClient): Promise<void> {
 
       if (module.type === "weapon") {
         client.items[module.type].set(module.name.singular, module as WeaponData);
-      } else if (module.type === "food") {
-        client.items[module.type].set(module.name.singular, module as FoodData);
+      } else if (module.type === "ingredient") {
+        client.items[module.type].set(module.name.singular, module as IngredientData);
+      } else if (module.type === 'meal') {
+        client.items[module.type].set(module.name.singular, module as MealData);
+      } else if (module.type === 'drink') {
+        client.items[module.type].set(module.name.singular, module as DrinkData);
       }
     } catch (err) {
       Logger.error(`Failed to load item at ${importPath}`, err);

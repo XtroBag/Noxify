@@ -1,16 +1,14 @@
-import { EffectType, FoodShopItem } from "../../handler/types/Item";
+import { IngredientShopItem } from "../../handler/types/Item";
 
 export = {
   name: {
     singular: "Bread",
     plural: "Breads",
   },
+  type: "ingredient",
   description: "A staple food that is soft, warm, and comforting.",
   icon: "🍞",
-  drinkable: false,
   disabled: false,
-  type: "food",
-  effects: [],
-  price: 7,
+  price: 20,
   amountPerUser: "unlimited",
-} as FoodShopItem;
+} as IngredientShopItem;

@@ -76,6 +76,13 @@ import {
       const user = economy.users.find(
         (user) => user.userID === interaction.member.id
       );
+
+
+      /**
+       * Make this system have a currentWeapon field on EconomyUser data in database and set it to whatever item they pick with this.
+       * Also there is also some checks i'll prob need to do for errors and others. Also make it so only items from their inventory as "weapon" type can be used and listed for autocomplete.
+       * Make a 'ammoTypeRequired' type field on weapons (files) to define what ammo they use if it's a weapon that does require ammo set the field in db to blank or something.
+       */
   
       // Further logic for handling the commands (use, equip, refill) goes here.
     },

@@ -6,8 +6,8 @@ export enum EffectType {
   Immunity = "immunity",
 }
 
-  export type ItemType = "weapon" | "food"
-  export type WeaponType = "sword" | "gun" | "lightsaber" | "other"
+  export type ItemType = "meal" | "ingredient" | "drink" | "weapon";
+  export type WeaponType = "sword" | "gun" | "lightsaber" | "other";
 
   export interface NameStyles {
     singular: string;
@@ -37,9 +37,18 @@ export enum EffectType {
   }
 
  
-  export interface FoodShopItem extends DefaultItem {
-    drinkable: boolean; // Whether the food is a drink or not.
+  export interface DrinkShopItem extends DefaultItem {
     effects: Effect[]; // Effects that the food item grants when consumed.
+    ingredientsRequired: string[];
+  }
+
+  export interface MealShopItem extends DefaultItem {
+    effects: Effect[];
+    ingredientsRequired: string[];
+  }
+
+  export interface IngredientShopItem extends DefaultItem {
+
   }
   
-  export type ItemModule = WeaponShopItem | FoodShopItem;
+  export type ItemModule = WeaponShopItem | DrinkShopItem | IngredientShopItem | MealShopItem;

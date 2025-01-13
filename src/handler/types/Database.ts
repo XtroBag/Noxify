@@ -1,4 +1,4 @@
-import { Effect, FoodShopItem, WeaponShopItem } from "./Item";
+import { DrinkShopItem, Effect, MealShopItem, WeaponShopItem, IngredientShopItem } from "./Item";
 
 export interface ServerData {
   name: string;
@@ -23,18 +23,29 @@ export interface Milestone {
 
 //--------------------------------------------------------------------------------
 
-export type Items = WeaponData | FoodData;
+export type Items = WeaponData | MealData | IngredientData | DrinkData;
 
 export interface UserInventory {
   items: {
     weapon: WeaponData[],
-    food: FoodData[]
+    food: MealData[]
+    ingredient: IngredientData[]
+    drink: DrinkData[]
   }
 }
 
-export interface FoodData extends FoodShopItem {
-  uses: number;
-  effects: Effect[]
+
+export interface IngredientData extends IngredientShopItem {
+  ingredientsRequired: string[];
+}
+
+export interface MealData extends MealShopItem {
+  effects: Effect[],
+
+}
+
+export interface DrinkData extends DrinkShopItem {
+  effects: Effect[],
 }
 
 export interface WeaponData extends WeaponShopItem {
@@ -43,6 +54,8 @@ export interface WeaponData extends WeaponShopItem {
   purchasedAt: string;
   requires: string[] // the singular name of another item from the shop to require this item to also have to use the item it's delcared on.
 }
+
+
 
 //--------------------------------------------------------------------------------
 

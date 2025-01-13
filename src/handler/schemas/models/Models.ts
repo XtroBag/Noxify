@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { ServerSchema } from "../GuildsSchema";
 import { EconomySchema } from "../EconomySchema";
-import { FoodData, GuildEconomy, ServerData, WeaponData } from "src/handler/types/Database";
+import { GuildEconomy, ServerData, WeaponData } from "src/handler/types/Database";
 
 export const Server = mongoose.model<ServerData>("Guild", ServerSchema);
 export const Economy = mongoose.model<GuildEconomy>("Economy", EconomySchema);

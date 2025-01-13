@@ -1,4 +1,4 @@
-import { EffectType, FoodShopItem } from "../../handler/types/Item";
+import { MealShopItem } from "../../handler/types/Item";
 
 export = {
   name: {
@@ -7,10 +7,10 @@ export = {
   },
   description: "A warm, freshly baked cookie that brings comfort and sweetness.",
   icon: "🍪",
-  drinkable: false,
   disabled: false,
-  type: "food",
-  effects: [],
-  price: 2,
+  type: "meal",
+  price: 140,
   amountPerUser: "unlimited",
-} as FoodShopItem;
+  effects: [],
+  ingredientsRequired: ['Butter', 'Chocolate Bar', 'Egg', 'Flour', 'Sugar'],
+} as MealShopItem;

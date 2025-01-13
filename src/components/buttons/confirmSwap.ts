@@ -18,223 +18,197 @@ export = {
     const fromUserID = extras[0];
     const toUserID = extras[1];
 
-    const economy = await getEconomy({ guildID: button.guildId });
+    await button.deferUpdate();
 
-    const fromUserData = economy.users.find(
-      (user) => user.userID === fromUserID
-    );
-    const toUserData = economy.users.find((user) => user.userID === toUserID);
+    // const economy = await getEconomy({ guildID: button.guildId });
 
-    if (!fromUserData || !toUserData) {
-      return button.update({
-        content: "One or both users could not be located.",
-        components: [],
-      });
-    }
+    // const fromUserData = economy.users.find(
+    //   (user) => user.userID === fromUserID
+    // );
+    // const toUserData = economy.users.find((user) => user.userID === toUserID);
 
-    if (!fromUserData || !toUserData) {
-      return await button.update({
-        content: "Unable to find user data in the database.",
-        components: [],
-      });
-    }
+    // if (!fromUserData || !toUserData) {
+    //   return button.update({
+    //     content: "One or both users could not be located.",
+    //     components: [],
+    //   });
+    // }
 
-    const fromUser = await button.guild.members.fetch(fromUserID);
-    const toUser = await button.guild.members.fetch(toUserID);
 
-    if (!fromUser || !toUser) {
-      return await button.update({
-        content: "One or both users could not be found in the server.",
-        components: [],
-      });
-    }
+    // const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    //   new ButtonBuilder()
+    //     .setCustomId("accept-swap-to")
+    //     .setLabel("Accept")
+    //     .setStyle(ButtonStyle.Success),
+    //   new ButtonBuilder()
+    //     .setCustomId("deny-swap-to")
+    //     .setLabel("Decline")
+    //     .setStyle(ButtonStyle.Danger)
+    // );
 
-    const embed = new EmbedBuilder()
-      .setTitle("Account Swap Request")
-      .setDescription(
-        `**${fromUser.user.tag}** has requested to transfer their account data to **${toUser.user.tag}**. Will you accept the request?`
-      )
-      .setColor("#ffcc00")
-      .setFooter({ text: `You can accept or decline the swap request.` });
+    // // Send the initial message in the channel (not private)
+    // const swapRequestMsg = await button.channel.send({
+    //   embeds: [
+    //     new EmbedBuilder()
+    //       .setDescription(
+    //         `A swap request has been sent to ${toUserData.displayName}. Please await their response.`
+    //       )
+    //       .setColor(Colors.Warning),
+    //   ],
+    //   components: [actionRow],
+    // });
 
-    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      new ButtonBuilder()
-        .setCustomId("accept-swap-to")
-        .setLabel("Accept")
-        .setStyle(ButtonStyle.Success),
-      new ButtonBuilder()
-        .setCustomId("deny-swap-to")
-        .setLabel("Decline")
-        .setStyle(ButtonStyle.Danger)
-    );
+    // try {
+    //   // Collector for button interactions
+    //   const collector = button.channel.createMessageComponentCollector({
+    //     componentType: ComponentType.Button,
+    //     time: 300000, // 5 minutes timeout
+    //   });
 
-    try {
-      const menuReply = await toUser.send({
-        embeds: [embed],
-        components: [actionRow],
-      });
+    //   collector.on(
+    //     "collect",
+    //     async (menuInteraction: ButtonInteraction<"cached">) => {
+    //       // Allow only the toUser to interact with the buttons
+    //       if (menuInteraction.user.id !== toUserID) {
+    //         return menuInteraction.reply({
+    //           content: "You are not authorized to interact with these buttons.",
+    //           ephemeral: true, // Prevent others from interacting
+    //         });
+    //       }
 
-      const sentMessage = await button.update({
-        embeds: [
-          new EmbedBuilder()
-            .setDescription(
-              `A swap request has been sent to ${toUser.user.tag}. Please await their response.`
-            )
-            .setColor(Colors.Warning),
-        ],
-        components: [],
-      });
+    //       if (menuInteraction.customId === "accept-swap-to") {
+    //         const economy = await getEconomy({ guildID: button.guildId });
 
-      const collector = menuReply.createMessageComponentCollector({
-        componentType: ComponentType.Button,
-        time: 300000,
-      });
+    //         const fromUserInDb = economy.users.find(
+    //           (user) => user.userID === fromUserData.userID
+    //         );
+    //         const toUserInDb = economy.users.find(
+    //           (user) => user.userID === toUserData.userID
+    //         );
 
-      collector.on(
-        "collect",
-        async (menuInteraction: ButtonInteraction<"cached">) => {
-          if (menuInteraction.customId === "accept-swap-to") {
-            const economy = await getEconomy({ guildID: button.guildId });
+    //         if (!fromUserInDb || !toUserInDb) {
+    //           return menuInteraction.reply({
+    //             content:
+    //               "One or both users could not be found in the database during swap.",
+    //             ephemeral: false,
+    //           });
+    //         }
 
-            const fromUserInDb = economy.users.find(
-              (user) => user.userID === fromUserData.userID
-            );
-            const toUserInDb = economy.users.find(
-              (user) => user.userID === toUserData.userID
-            );
+    //         const fromUserBackup = {
+    //           accountBalance: fromUserInDb.accountBalance,
+    //           bankBalance: fromUserInDb.bankBalance,
+    //           milestones: fromUserInDb.milestones,
+    //           transactions: fromUserInDb.transactions,
+    //           privacySettings: fromUserInDb.privacySettings,
+    //           inventory: fromUserInDb.inventory,
+    //         };
 
-            if (!fromUserInDb || !toUserInDb) {
-              return menuInteraction.update({
-                content:
-                  "One or both users could not be found in the database during swap.",
-                components: [],
-              });
-            }
+    //         const toUserBackup = {
+    //           accountBalance: toUserInDb.accountBalance,
+    //           bankBalance: toUserInDb.bankBalance,
+    //           milestones: toUserInDb.milestones,
+    //           transactions: toUserInDb.transactions,
+    //           privacySettings: toUserInDb.privacySettings,
+    //           inventory: toUserInDb.inventory,
+    //         };
 
-            const fromUserBackup = {
-              accountBalance: fromUserInDb.accountBalance,
-              bankBalance: fromUserInDb.bankBalance,
-              milestones: fromUserInDb.milestones,
-              transactions: fromUserInDb.transactions,
-              privacySettings: fromUserInDb.privacySettings,
-              inventory: fromUserInDb.inventory
-            };
+    //         // Swap data in the database
+    //         await Economy.updateOne(
+    //           {
+    //             guildID: button.guildId,
+    //             "users.userID": toUserInDb.userID,
+    //           },
+    //           {
+    //             $set: {
+    //               "users.$.accountBalance": fromUserBackup.accountBalance,
+    //               "users.$.bankBalance": fromUserBackup.bankBalance,
+    //               "users.$.milestones": fromUserBackup.milestones,
+    //               "users.$.transactions": fromUserBackup.transactions,
+    //               "users.$.privacySettings": fromUserBackup.privacySettings,
+    //               "users.$.inventory": fromUserBackup.inventory,
+    //             },
+    //           }
+    //         );
 
-            const toUserBackup = {
-              accountBalance: toUserInDb.accountBalance,
-              bankBalance: toUserInDb.bankBalance,
-              milestones: toUserInDb.milestones,
-              transactions: toUserInDb.transactions,
-              privacySettings: toUserInDb.privacySettings,
-              inventory: toUserInDb.inventory
-            };
+    //         await Economy.updateOne(
+    //           {
+    //             guildID: button.guildId,
+    //             "users.userID": fromUserInDb.userID,
+    //           },
+    //           {
+    //             $set: {
+    //               "users.$.accountBalance": toUserBackup.accountBalance,
+    //               "users.$.bankBalance": toUserBackup.bankBalance,
+    //               "users.$.milestones": toUserBackup.milestones,
+    //               "users.$.transactions": toUserBackup.transactions,
+    //               "users.$.privacySettings": toUserBackup.privacySettings,
+    //               "users.$.inventory": toUserBackup.inventory,
+    //             },
+    //           }
+    //         );
 
-            // Swap data
-            await Economy.updateOne(
-              {
-                guildID: button.guildId,
-                "users.userID": toUserInDb.userID,
-              },
-              {
-                $set: {
-                  "users.$.accountBalance": fromUserBackup.accountBalance,
-                  "users.$.bankBalance": fromUserBackup.bankBalance,
-                  "users.$.milestones": fromUserBackup.milestones,
-                  "users.$.transactions": fromUserBackup.transactions,
-                  "users.$.privacySettings": fromUserBackup.privacySettings,
-                  "users.$.inventory:": fromUserBackup.inventory,
-                },
-              }
-            );
+    //         // Notify both users publicly in the channel
+    //         await swapRequestMsg.edit({
+    //           embeds: [
+    //             new EmbedBuilder()
+    //               .setDescription(
+    //                 `The account swap request has been successfully completed between ${fromUserData.displayName} and ${toUserData.displayName}.`
+    //               )
+    //               .setColor(Colors.Success),
+    //           ],
+    //           components: [], // Disable the buttons
+    //         });
 
-            await Economy.updateOne(
-              {
-                guildID: button.guildId,
-                "users.userID": fromUserInDb.userID,
-              },
-              {
-                $set: {
-                  "users.$.accountBalance": toUserBackup.accountBalance,
-                  "users.$.bankBalance": toUserBackup.bankBalance,
-                  "users.$.milestones": toUserBackup.milestones,
-                  "users.$.transactions": toUserBackup.transactions,
-                  "users.$.privacySettings": toUserBackup.privacySettings,
-                  "users.$.inventory:": toUserBackup.inventory
-                },
-              }
-            );
+    //         await button.channel.send({
+    //           embeds: [
+    //             new EmbedBuilder()
+    //               .setDescription(
+    //                 `Your account has been successfully swapped with ${fromUserData.displayName}.`
+    //               )
+    //               .setColor(Colors.Success),
+    //           ],
+    //         });
 
-            await sentMessage.edit({
-              embeds: [
-                new EmbedBuilder()
-                  .setDescription(
-                    `The account swap request has been successfully completed between ${fromUser.displayName} and ${toUser.displayName}.`
-                  )
-                  .setColor(Colors.Success),
-              ],
-              components: [],
-            });
+    //         collector.stop();
+    //       } else if (menuInteraction.customId === "deny-swap-to") {
+    //         // If declined
+    //         await menuInteraction.reply({
+    //           content: `${toUserData.displayName} has declined the swap request.`,
+    //           ephemeral: false, // Public response in channel
+    //         });
 
-            await menuReply.edit({
-              embeds: [
-                new EmbedBuilder()
-                  .setDescription(
-                    `Your account has been successfully swapped with ${fromUser.displayName}.`
-                  )
-                  .setColor(Colors.Success),
-              ],
-              components: [],
-            });
+    //         await swapRequestMsg.edit({
+    //           embeds: [
+    //             new EmbedBuilder()
+    //               .setDescription(
+    //                 `The swap request has been declined by ${toUserData.displayName}.`
+    //               )
+    //               .setColor(Colors.Error),
+    //           ],
+    //           components: [], // Disable the buttons
+    //         });
 
-            collector.stop();
-            await menuInteraction.deferUpdate();
-          } else if (menuInteraction.customId === "deny-swap-to") {
-            await sentMessage.edit({
-              embeds: [
-                new EmbedBuilder()
-                  .setDescription(
-                    `${toUser.displayName} has declined the swap request.`
-                  )
-                  .setColor(Colors.Error),
-              ],
-              components: [],
-            });
+    //         collector.stop();
+    //       }
+    //     }
+    //   );
 
-            await menuReply.edit({
-              embeds: [
-                new EmbedBuilder()
-                  .setDescription(`You have declined the swap request.`)
-                  .setColor(Colors.Error),
-              ],
-              components: [],
-            });
-
-            collector.stop();
-            await menuInteraction.deferUpdate();
-          }
-        }
-      );
-
-      collector.on("end", async (collected, reason) => {
-        if (reason === "time") {
-          await sentMessage.edit({
-            embeds: [
-              new EmbedBuilder()
-                .setDescription(
-                  `${toUser.user.tag} did not respond in time. The swap request has expired.`
-                )
-                .setColor(Colors.Error),
-            ],
-            components: [],
-          });
-        }
-      });
-    } catch (error) {
-      console.error(`Error sending swap request: ${error.message}`);
-      return button.update({
-        content: `Failed to send the swap request to ${toUser.user.tag}. They may have DMs disabled.`,
-        components: [],
-      });
-    }
+    //   collector.on("end", async (collected, reason) => {
+    //     if (reason === "time") {
+    //       await swapRequestMsg.edit({
+    //         embeds: [
+    //           new EmbedBuilder()
+    //             .setDescription(
+    //               `${toUserData.displayName} did not respond in time. The swap request has expired.`
+    //             )
+    //             .setColor(Colors.Error),
+    //         ],
+    //         components: [], // Disable the buttons
+    //       });
+    //     }
+    //   });
+    // } catch (error) {
+    //   console.error(`Error processing swap request: ${error.message}`);
+    // }
   },
 } as ComponentModule<ButtonInteraction<"cached">>;

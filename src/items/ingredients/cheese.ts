@@ -1,4 +1,4 @@
-import { EffectType, FoodShopItem } from "../../handler/types/Item";
+import { IngredientShopItem } from "../../handler/types/Item";
 
 export = {
   name: {
@@ -7,10 +7,8 @@ export = {
   },
   description: "A rich and flavorful dairy product",
   icon: "🧀",
-  drinkable: false,
   disabled: false,
-  type: "food",
-  effects: [],
-  price: 6,
+  type: "ingredient",
+  price: 20,
   amountPerUser: "unlimited",
-} as FoodShopItem;
+} as IngredientShopItem;

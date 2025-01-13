@@ -1,4 +1,4 @@
-import { EffectType, FoodShopItem } from "../../handler/types/Item";
+import { IngredientShopItem } from "../../handler/types/Item";
 
 export = {
   name: {
@@ -7,10 +7,8 @@ export = {
   },
   description: "A sweet and indulgent treat. Perfect for satisfying your sweet tooth.",
   icon: "🍫",
-  drinkable: false,
   disabled: false,
-  type: "food",
-  effects: [],
-  price: 3,
+  type: "ingredient",
+  price: 30,
   amountPerUser: "unlimited",
-} as FoodShopItem;
+} as IngredientShopItem;

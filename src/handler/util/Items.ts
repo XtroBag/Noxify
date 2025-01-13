@@ -1,4 +1,4 @@
-import { FoodData, Items, UserEconomy, WeaponData } from "../types/Database";
+import { DrinkData, IngredientData, Items, MealData, UserEconomy, WeaponData } from "../types/Database";
 import { ItemType } from "../types/Item";
 import { DiscordClient } from "./DiscordClient";
 
@@ -6,7 +6,9 @@ export function getAllItems(client: DiscordClient): Items[] {
   // add future item categories in here to work.
   const allItems = [
     ...Array.from(client.items.weapon.values()),
-    ...Array.from(client.items.food.values()),
+    ...Array.from(client.items.meal.values()),
+    ...Array.from(client.items.ingredient.values()),
+    ...Array.from(client.items.drink.values()),
   ];
 
   const filtered = allItems.filter((item) => !item.disabled);
@@ -32,11 +34,12 @@ export function getItemsByType<T extends ItemType>(
   }
 
   // Return the correctly typed array
-  return items as T extends "weapon"
-    ? WeaponData[]
-    : T extends "food"
-    ? FoodData[]
-    : never;
+  return items as 
+    T extends "weapon" ? WeaponData[] : 
+    T extends "meal" ? MealData[] : 
+    T extends "ingredient" ? IngredientData[] : 
+    T extends "drink" ? DrinkData[] : 
+    never;
 }
 
 export function getInventoryItems(economy: UserEconomy, itemType?: ItemType) {
@@ -60,24 +63,3 @@ export function getInventoryItemAmount(
     (existingItem) => existingItem.name.singular === itemName
   ).length;
 }
-
-export function findItemByName(
-  client: DiscordClient,
-  buyingItem: string
-): Items | undefined {
-  const foodItem = client.items.food.find(
-    (food) => food.name.singular === buyingItem
-  );
-
-  if (foodItem) {
-    return foodItem;
-  }
-
-  const weaponItem = client.items.weapon.find(
-    (weapon) => weapon.name.singular === buyingItem
-  );
-
-  return weaponItem;
-}
-
-// maybe make a "hasItemInInvetory" function

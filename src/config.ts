@@ -141,9 +141,9 @@ export enum Emojis {
   MobileDnd = "<:MobileDnd:1225363543872765952>",
   WebDnd = "<:WebDnd:1225372400947040346>",
 //---------------------------------------------------------
-  Check = "<:Check:1327708976355213384>",
-  Cross = "<:Cross:1327708963017326592>",
-  Info = "<:Info:1327708950908370975>",
+  Check = "<:Check:1327805046238220459>",
+  Cross = "<:Cross:1327805032686682112>",
+  Info = "<:Info:1327805011358384249>",
   XtroBag = "<:XtroBag:1327053059179810999>",
   BroBoiler = "<:BroBoiler:1327053036912119890>",
   Noxify = "<:Noxify:1327053875286638624>",
@@ -157,14 +157,20 @@ export enum Emojis {
   ReceiveNotifications = "<:ReceiveNotifications:1327682773686685718>",
   ViewInventory = "<:ViewInventory:1327682762529968260>",
   Weapons = "<:Weapons:1327691131001241600>",
-  FoodsDrinks = "<:FoodsDrinks:1327690982409502721>",
+  Meals = "<:Meals:1328232906778480672>",
+  Drinks = "<:Drinks:1328232919113928765>",
+  Ingredients = "<:Ingredients:1328232894837297193>",
+  ChocolateMilk = "<:ChocolateMilk:1328222977220939806>",
+  StrawberryMilk = "<:StrawberryMilk:1328222418543710208>",
+  Sugar = "<:Sugar:1328212985306681486>",
+  Flour = "<:Flour:1328211629220827226>",
 }
 
 export enum Colors {
-  Error = "#FF0000",
-  Success = "#008000",
+  Error = "#FF0800",
+  Success = "#55FF00",
   Normal = "#2C2D31",
-  Warning = "#d1ad0a",
+  Warning = "#FFFF00",
 }
 
 enum BadgeCustomName {

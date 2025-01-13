@@ -26,24 +26,26 @@ export = {
 
     let selectedItems: Items[];
 
+    // Updated item type filtering to include meals, drinks, and ingredients
     if (selectedType === "weapon") {
       selectedItems = getItemsByType(client, "weapon");
-    } else if (selectedType === "food") {
-      selectedItems = getItemsByType(client, "food");
+    } else if (selectedType === "meal") {
+      selectedItems = getItemsByType(client, "meal");
+    } else if (selectedType === "drink") {
+      selectedItems = getItemsByType(client, "drink");
+    } else if (selectedType === "ingredient") {
+      selectedItems = getItemsByType(client, "ingredient");
     } else {
       selectedItems = [];
     }
 
-    selectedItems.sort((a, b) =>
-      a.name.singular.localeCompare(b.name.singular)
-    );
-
-    pageIndex = Math.min(
-      pageIndex + 1,
-      Math.ceil(selectedItems.length / itemsPerPage) - 1
-    );
+    selectedItems.sort((a, b) => a.name.singular.localeCompare(b.name.singular));
 
     const totalPages = Math.ceil(selectedItems.length / itemsPerPage);
+
+    // Increment the page index when "Next" button is clicked
+    pageIndex = Math.min(pageIndex + 1, totalPages - 1); // Prevent going beyond total pages
+
     const currentItems = selectedItems.slice(
       pageIndex * itemsPerPage,
       (pageIndex + 1) * itemsPerPage
@@ -56,34 +58,28 @@ export = {
       );
 
     const itemDescriptions = currentItems.map((item) => {
-      let itemDescription = `\n${item.icon} **${
-        item.name.singular
-      }** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
+      let itemDescription = `\n${item.icon} **${item.name.singular}** - Price: ${inlineCode(formatAmount(item.price))} ${economy.icon}`;
 
-      if ("damage" in item) {
-        itemDescription += `\n› Damage: ${inlineCode(
-          item.damage.toString()
-        )} ❘ Durability: ${inlineCode(
-          item.durability.toString()
-        )} ❘ Type: ${inlineCode(item.weaponType)} ❘ Requires: ${
+      // Additional checks for items based on their type
+      if (selectedType === "weapon" && "damage" in item) {
+        itemDescription += `\n› Damage: ${inlineCode(item.damage.toString())} ❘ Durability: ${inlineCode(item.durability.toString())} ❘ Type: ${inlineCode(item.weaponType)} ❘ Requires: ${
           item.requires && item.requires.length > 0
             ? item.requires.map((reqItem) => inlineCode(reqItem)).join(" ")
             : inlineCode("none")
         }`;
       }
-      if ("drinkable" in item) {
-        itemDescription += `\n› Drinkable: ${inlineCode(
-          item.drinkable ? "yes" : "no"
-        )} ❘ Effects: ${
-          item.effects && item.effects.length > 0
-            ? item.effects.map((effect) => inlineCode(effect.name)).join(" ")
-            : inlineCode("none")
-        }`;
+
+      if (selectedType === "drink" && "drinkable" in item) {
+        itemDescription += `\n› Drinkable: ${inlineCode(item.drinkable ? "yes" : "no")}`;
       }
 
-      itemDescription += `\n-# ➜ ${
-        item.description || "No description available."
-      }`;
+      if (selectedType === "ingredient" && "ingredientsRequired" in item) {
+        // Map ingredients and list them in inlineCode with a space between each
+        const ingredients = (item as any).ingredientsRequired.map((ingredient: string) => inlineCode(ingredient)).join(" ");
+        itemDescription += `\n› Ingredients Required: ${ingredients || inlineCode("none")}`;
+      }
+
+      itemDescription += `\n-# ➜ ${item.description || "No description available."}`;
 
       return itemDescription;
     });
@@ -104,25 +100,23 @@ export = {
             .setMinValues(1)
             .setPlaceholder("Pick a category")
             .addOptions([
-              { label: "Foods", value: "food" },
+              { label: "Foods", value: "meal" },
               { label: "Weapons", value: "weapon" },
+              { label: "Drinks", value: "drink" }, // Added drinks category
+              { label: "Ingredients", value: "ingredient" }, // Added ingredients category
             ])
         ),
         new ActionRowBuilder<ButtonBuilder>().addComponents(
           new ButtonBuilder()
-            .setCustomId(
-              `shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`
-            )
+            .setCustomId(`shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`)
             .setLabel("«")
             .setStyle(ButtonStyle.Secondary)
             .setDisabled(pageIndex === 0),
           new ButtonBuilder()
-            .setCustomId(
-              `shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`
-            )
+            .setCustomId(`shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`)
             .setLabel("»")
             .setStyle(ButtonStyle.Secondary)
-            .setDisabled(pageIndex >= totalPages - 1)
+            .setDisabled(pageIndex >= totalPages - 1) // Disable "Next" if we're on the last page
         ),
       ],
     });

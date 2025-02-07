@@ -1,6 +1,6 @@
 import Logger from "../handler/util/Logger";
 import { Events, ActivityType } from "discord.js";
-import { EventModule } from "../handler";
+import { EventModule } from "../handler/types/EventModule";
 
 export = {
   name: Events.ClientReady,

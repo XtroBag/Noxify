@@ -6,7 +6,7 @@ import {
   ButtonBuilder,
   ButtonStyle,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler";
+import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import { Emojis, Colors } from "../../config";
 
 export = {
@@ -14,7 +14,7 @@ export = {
   type: ComponentTypes.Button,
   async execute(client, button, extras) {
     const userId = extras[0];
-    const economy = await client.utils.calls.getEconomy({ guildID: button.guildId });
+    const economy = await client.utils.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
     if (button.member.id !== person.userID) {
@@ -65,11 +65,11 @@ export = {
           new EmbedBuilder()
             .setTitle("Edit Permissions")
             .setDescription(`${Emojis.ViewInventory} View Inventory ${
-                person.privacySettings.viewInventory
+                person.privacyOptions.viewInventory
                   ? Emojis.Check
                   : Emojis.Cross
               }\n${Emojis.ReceiveNotifications} Receive Notifications ${
-                  person.privacySettings.receiveNotifications
+                  person.privacyOptions.receiveNotifications
                     ? Emojis.Check
                     : Emojis.Cross
                 }`

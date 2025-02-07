@@ -2,14 +2,13 @@ import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler";
+} from "../../../handler/types/Command";
 import {
   ApplicationIntegrationType,
   EmbedBuilder,
   InteractionContextType,
   SlashCommandBuilder,
 } from "discord.js";
-import { format } from "date-fns";
 import { Colors } from "../../../config";
 
 export = {
@@ -65,7 +64,7 @@ export = {
       return;
     }
 
-    const economyData = await client.utils.calls.getEconomy({
+    const economyData = await client.utils.getEconomy({
       guildID: interaction.guildId,
     });
 
@@ -103,23 +102,25 @@ export = {
       (economyUser) => economyUser.userID === interaction.member.id
     );
     if (!user) {
-      await client.utils.calls.addEconomyUser({
+      await client.utils.addUserToEconomy({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
-        joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
-        accountBalance: economyData.defaultBalance,
-        bankBalance: 0,
-        privacySettings: { receiveNotifications: true, viewInventory: false },
+        joined: new Date(),
+        bankingAccounts: {
+            wallet: economyData.defaultBalance,
+            bank: 0
+        },
+        privacyOptions: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
         inventory: {
-          items: { meal: [], weapon: [], drink: [], ingredient: [] },
+          meals: [], weapons: [], drinks: [], ingredients: [],
         },
-        activeEffects: [],
+        effects: [],
       });
 
-      const updatedEconomyData = await client.utils.calls.getEconomy({
+      const updatedEconomyData = await client.utils.getEconomy({
         guildID: interaction.guildId,
       });
 
@@ -131,24 +132,26 @@ export = {
 
     const recipient = economyUsers.find((user) => user.userID === member.id);
     if (!recipient) {
-      await client.utils.calls.addEconomyUser({
-        guildID: interaction.guildId,
-        userID: member.id,
-        joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
-        displayName: member.displayName,
-        accountBalance: economyData.defaultBalance,
-        bankBalance: 0,
-        privacySettings: { receiveNotifications: true, viewInventory: false },
-        milestones: [],
-        transactions: [],
-        inventory: {
-          items: { meal: [], weapon: [], drink: [], ingredient: [] },
-        },
-        activeEffects: [],
-      });
+        await client.utils.addUserToEconomy({
+            guildID: interaction.guildId,
+            userID: interaction.member.id,
+            displayName: interaction.member.displayName,
+            joined: new Date(),
+            bankingAccounts: {
+                wallet: economyData.defaultBalance,
+                bank: 0
+            },
+            privacyOptions: { receiveNotifications: true, viewInventory: false },
+            milestones: [],
+            transactions: [],
+            inventory: {
+              meals: [], weapons: [], drinks: [], ingredients: [],
+            },
+            effects: [],
+          });
     }
 
-    const updatedEconomy = await client.utils.calls.getEconomy({
+    const updatedEconomy = await client.utils.getEconomy({
       guildID: interaction.guildId,
     });
 
@@ -175,7 +178,7 @@ export = {
       return;
     }
 
-    if (updatedSender.accountBalance < amount) {
+    if (updatedSender.bankingAccounts.wallet < amount) {
       await interaction.reply({
         embeds: [
           new EmbedBuilder()
@@ -187,10 +190,10 @@ export = {
       return;
     }
 
-    updatedSender.accountBalance -= amount;
-    updatedRecipient.accountBalance += amount;
+    updatedSender.bankingAccounts.wallet -= amount;
+    updatedRecipient.bankingAccounts.wallet += amount;
 
-    await client.utils.calls.updateUserBalancesAndTransactions({
+    await client.utils.updateUserBalancesAndTransactions({
       guildID: interaction.guildId,
       amount: amount,
       economy: economyData,
@@ -203,7 +206,7 @@ export = {
         new EmbedBuilder()
           .setColor(Colors.Success)
           .setDescription(
-            `Successfully transferred ${client.utils.extras.formatAmount(
+            `Successfully transferred ${client.utils.formatNumber(
               amount
             )} ${economyData.name.toLowerCase().replace(/s$/, "")}${
               amount === 1 ? "" : "s"

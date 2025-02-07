@@ -1,4 +1,5 @@
-import { IngredientShopItem } from "../../handler/types/Item";
+import { Item } from "../../handler/types/economy/EconomyItem";
+import { Emojis } from "../../config";
 
 export = {
   name: {
@@ -6,9 +7,9 @@ export = {
     plural: "Peppers",
   },
   description: "A spicy and flavorful pepper that adds a fiery kick to any dish.",
-  icon: "🌶",
+  icon: Emojis.Pepper,
   disabled: false,
-  type: "ingredient",
+  shopType: "ingredients",
   price: 30,
-  amountPerUser: "unlimited",
-} as IngredientShopItem;
+  amountPerUser: "Unlimited",
+} as Item;

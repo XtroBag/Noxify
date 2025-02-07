@@ -2,7 +2,7 @@ import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler";
+} from "../../../handler/types/Command";
 import {
   ActionRowBuilder,
   ApplicationIntegrationType,
@@ -15,7 +15,7 @@ import {
   userMention,
 } from "discord.js";
 import { Colors, Emojis, milestones } from "../../../config";
-import { format, parse } from "date-fns";
+import { EconomyUser } from "../../../handler/types/economy/EconomyUser";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -35,10 +35,11 @@ export = {
         )
     ),
   async execute({ client, interaction }) {
-    const member = interaction.options.getMember("member") || interaction.member;
+    const member =
+      interaction.options.getMember("member") || interaction.member;
 
     if (member.user.bot) {
-      await interaction.reply({
+      return await interaction.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
@@ -48,10 +49,11 @@ export = {
         ],
         ephemeral: true,
       });
-      return;
     }
 
-    const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.getEconomy({
+      guildID: interaction.guildId,
+    });
 
     if (!economy) {
       await interaction.reply({
@@ -67,27 +69,34 @@ export = {
       return;
     }
 
-    const exists = economy.users.find((user) => user.userID === member.id);
+    const userExists = economy.users.find((user) => user.userID === member.id);
 
-    if (!exists) {
-      await client.utils.calls.addEconomyUser({
+    if (!userExists) {
+      await client.utils.addUserToEconomy({
         guildID: interaction.guildId,
         userID: member.id,
         displayName: member.displayName,
-        joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
-        accountBalance: economy.defaultBalance,
-        bankBalance: 0,
-        privacySettings: { receiveNotifications: true, viewInventory: false },
+        joined: new Date(),
+        bankingAccounts: {
+          wallet: economy.defaultBalance,
+          bank: 0,
+        },
+        privacyOptions: {
+          receiveNotifications: true,
+          viewInventory: false,
+        },
         milestones: [],
         transactions: [],
-        inventory: { items: { meal: [], weapon: [], drink: [], ingredient: [] } },
-        activeEffects: [],
+        effects: [],
+        inventory: { meals: [], weapons: [], drinks: [], ingredients: [] },
       });
     }
 
-    const updatedEconomy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
+    const fetchedEconomy = await client.utils.getEconomy({
+      guildID: interaction.guildId,
+    });
 
-    const person = updatedEconomy.users.find(
+    const person = fetchedEconomy.users.find(
       (user) => user.userID === member.id
     );
 
@@ -104,18 +113,14 @@ export = {
       });
     }
 
-    const parsedDate = parse(
-      person.joined,
-      "EEEE, MMMM d, yyyy 'at' h:mm a",
-      new Date()
-    );
-    const timestampInSeconds = Math.floor(parsedDate.getTime() / 1000);
-    const discordTimestamp = `<t:${timestampInSeconds}:D>`;
+    const getTotalBalance = (user: EconomyUser): number =>
+      user.bankingAccounts.wallet + user.bankingAccounts.bank;
 
-    const leaderboard = updatedEconomy.users.sort(
-      (a, b) =>
-        b.accountBalance + b.bankBalance - (a.accountBalance + a.bankBalance)
-    );
+    const leaderboard = fetchedEconomy.users.sort((a, b) => {
+      const totalA = getTotalBalance(a);
+      const totalB = getTotalBalance(b);
+      return totalB - totalA;
+    });
 
     const searchedUserIndex = leaderboard.findIndex(
       (user) => user.displayName === person.displayName
@@ -125,28 +130,32 @@ export = {
 
     const bankingInformation = new EmbedBuilder()
       .setAuthor({
-        name: `${member.user.username}'s Profile`, // More descriptive title
+        name: `${member.user.username}'s Profile`,
         iconURL: member.displayAvatarURL({ extension: "png" }),
       })
       .setDescription(
-        `${Emojis.Joined} Joined: ${discordTimestamp}\n` +
+        `${Emojis.Joined} Joined: ${person.joined.toDateString()}\n` +
           `${Emojis.Transactions} Transactions: ${inlineCode(
             person.transactions.length.toString()
           )}\n` +
           `${Emojis.ActiveEffects} Active Effects: ${inlineCode(
-            person.activeEffects.length.toString()
+            person.effects.length.toString()
           )}\n` +
           `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n`
       )
       .setFields([
         {
-          name: `${Emojis.Bank} **Bank Balance**`,
-          value: `${client.utils.extras.formatAmount(person.bankBalance)} ${economy.icon}`,
+          name: `${Emojis.Bank} **Bank**`,
+          value: `${client.utils.formatNumber(
+            person.bankingAccounts.bank
+          )} ${economy.icon}`,
           inline: true,
         },
         {
-          name: `${Emojis.Wallet} **Wallet Balance**`,
-          value: `${client.utils.extras.formatAmount(person.accountBalance)} ${economy.icon}`,
+          name: `${Emojis.Wallet} **Wallet**`,
+          value: `${client.utils.formatNumber(
+            person.bankingAccounts.wallet
+          )} ${economy.icon}`,
           inline: true,
         },
       ])
@@ -170,28 +179,30 @@ export = {
     await interaction.deferReply();
 
     let milestoneReached = false;
-    let milestone = null;
+    let currentMilestone = null;
 
-    for (const m of milestones) {
+    for (const milestoneAmount of milestones) {
       const milestoneReachedAlready = person.milestones.some(
-        (milestone) => milestone.amount === m && milestone.finished === true
+        (milestone) =>
+          milestone.amount === milestoneAmount && milestone.finished === true
       );
 
       if (
-        person.bankBalance + person.accountBalance >= m &&
+        person.bankingAccounts.bank + person.bankingAccounts.wallet >=
+          milestoneAmount &&
         !milestoneReachedAlready
       ) {
-        milestone = m;
+        currentMilestone = milestoneAmount;
 
-        await client.utils.calls.updateUserMilestones({
+        await client.utils.addMilestoneToUser({
           guildID: interaction.guildId,
           userID: member.id,
           milestone: {
-            amount: m,
+            amount: currentMilestone,
             finished: true,
-            reachedAt: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
+            recieved: new Date().toDateString(),
           },
-        })
+        });
 
         milestoneReached = true;
         break;
@@ -205,8 +216,8 @@ export = {
 
     if (
       milestoneReached &&
-      milestone !== null &&
-      person.privacySettings.receiveNotifications
+      currentMilestone !== null &&
+      person.privacyOptions.receiveNotifications
     ) {
       await interaction.followUp({
         embeds: [
@@ -216,10 +227,11 @@ export = {
             .setDescription(
               `${userMention(
                 person.userID
-              )} you reached a milestone of **${client.utils.extras.formatAmount(
-                milestone
+              )} you reached a milestone of **${client.utils.formatNumber(
+                currentMilestone
               )}** ${economy.name.toLowerCase().replace(/s$/, "")}${
-                milestone !== 1 || economy.name.toLowerCase().endsWith("s")
+                currentMilestone !== 1 ||
+                economy.name.toLowerCase().endsWith("s")
                   ? "s"
                   : ""
               }`

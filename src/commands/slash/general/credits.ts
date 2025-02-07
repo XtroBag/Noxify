@@ -3,7 +3,7 @@ import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler";
+} from "../../../handler/types/Command";
 import {
   ActionRowBuilder,
   ApplicationIntegrationType,

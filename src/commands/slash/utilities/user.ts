@@ -7,7 +7,7 @@ import {
   BoostBadges,
   Colors,
 } from "../../../config";
-import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
+import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler/types/Command";
 import {
   PermissionFlagsBits,
   SlashCommandBuilder,
@@ -30,7 +30,7 @@ import {
 export = {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
-  disabled: true,
+  disabled: false,
   data: new SlashCommandBuilder()
     .setName("user")
     .setDescription("Checkout a users information!")

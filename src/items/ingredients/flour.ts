@@ -1,15 +1,15 @@
 import { Emojis } from "../../config";
-import { IngredientShopItem } from "../../handler/types/Item";
+import { Item } from "../../handler/types/economy/EconomyItem";
 
 export = {
   name: {
     singular: "Flour",
     plural: "Flours",
   },
-  type: 'ingredient',
+  shopType: 'ingredients',
   // description: "",
   icon: Emojis.Flour,
   disabled: false,
-  amountPerUser: 'unlimited',
+  amountPerUser: 'Unlimited',
   price: 30,
-} as IngredientShopItem;
+} as Item;

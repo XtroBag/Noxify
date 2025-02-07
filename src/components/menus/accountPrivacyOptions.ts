@@ -8,7 +8,7 @@ import {
     ComponentType,
     StringSelectMenuInteraction,
   } from "discord.js";
-  import { ComponentModule, ComponentTypes } from "../../handler";
+  import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
   import { Emojis, Colors } from "../../config";
   
   export = {
@@ -18,7 +18,7 @@ import {
   
       // Extract userID from customId
       const userId = extras[0];
-      const economy = await client.utils.calls.getEconomy({ guildID: menu.guildId });
+      const economy = await client.utils.getEconomy({ guildID: menu.guildId });
       const person = economy.users.find((user) => user.userID === userId);
   
       // Ensure the member ID matches the userID for permissions
@@ -37,7 +37,7 @@ import {
         // Defer the update immediately
         await menu.deferUpdate();
         
-          await client.utils.calls.updateUserPermissions({ 
+          await client.utils.updatePrivacyOptions({ 
             guildID: menu.guildId,
             userID: person.userID,
             selectedPermissions: menu.values
@@ -71,7 +71,7 @@ import {
             .setStyle(ButtonStyle.Secondary)
         );
 
-        const economy = await client.utils.calls.getEconomy({ guildID: menu.guildId });
+        const economy = await client.utils.getEconomy({ guildID: menu.guildId });
         const updatedPerson = economy.users.find((user) => user.userID === userId);
   
         // Create reply with embedded data and select menu
@@ -81,11 +81,11 @@ import {
             new EmbedBuilder()
               .setTitle("Edit Permissions")
               .setDescription(`${Emojis.ViewInventory} View Inventory ${
-                updatedPerson.privacySettings.viewInventory
+                updatedPerson.privacyOptions.viewInventory
                   ? Emojis.Check
                   : Emojis.Cross
               }\n${Emojis.ReceiveNotifications} Receive Notifications ${
-                updatedPerson.privacySettings.receiveNotifications
+                updatedPerson.privacyOptions.receiveNotifications
                     ? Emojis.Check
                     : Emojis.Cross
                 }`

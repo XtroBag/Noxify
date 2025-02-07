@@ -10,7 +10,7 @@ import {
   deleteAllCommands,
   deleteCommands,
   registerCommands,
-} from "./handleCommands";
+} from "./HandleCommands";
 import mongoose, { Mongoose } from "mongoose";
 import {
   CommandCollections,
@@ -24,10 +24,9 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../types/Command";
-import { DatabaseOptions, DrinkData, IngredientData, MealData, WeaponData } from "../types/Database";
+import { Meal, Drink, Weapon, Item as Ingredient } from "../types/economy/EconomyItem";
 import { registerItems } from "./handleItems";
-import { ClientUtils } from "../types/Item";
-import { DatabaseCalls, DatabaseExtras, DatabaseItems } from "./DatabaseUtils";
+import { Utilities } from "./Utilities";
 
 export class DiscordClient extends Client {
   public events: string[];
@@ -36,7 +35,7 @@ export class DiscordClient extends Client {
   public cooldowns: CooldownCollections;
   public items: ItemCollections;
   public db: Mongoose;
-  public utils: ClientUtils
+  public utils: Utilities;
 
   constructor(options: ConstructorParameters<typeof Client>[0]) {
     super(options);
@@ -64,24 +63,19 @@ export class DiscordClient extends Client {
       user: new Collection<string, Collection<string, number>>(),
     };
     this.items = {
-      weapon: new Collection<string, WeaponData>(),
-      ingredient: new Collection<string, IngredientData>(),
-      drink: new Collection<string, DrinkData>(),
-      meal: new Collection<string, MealData>()
-
+      weapons: new Collection<string, Weapon>(),
+      ingredients: new Collection<string, Ingredient>(),
+      drinks: new Collection<string, Drink>(),
+      meals: new Collection<string, Meal>()
     };
-    this.utils = {
-      items: new DatabaseItems(this),
-      calls: new DatabaseCalls(this),
-      extras: new DatabaseExtras(this)
-    };
+    this.utils = new Utilities(this)
     this.db = mongoose;
   }
 
   public async registerDatabase(
-    options: DatabaseOptions
+    options: { enabled: boolean }
   ): Promise<void> {
-    this.utils.extras.connectDatabase(options)
+    this.utils.databaseConnection(options)
   }
 
   public async registerEvents(): Promise<void> {

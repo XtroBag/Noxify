@@ -6,9 +6,9 @@ import {
   EmbedBuilder,
   inlineCode,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler";
+import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import { Colors, Emojis } from "../../config";
-import { parse } from "date-fns";
+import { EconomyUser } from "../../handler/types/economy/EconomyUser";
 
 export = {
   id: "accountBack",
@@ -18,22 +18,18 @@ export = {
 
     const userData = await button.guild.members.fetch({ user: userId });
 
-    const economy = await client.utils.calls.getEconomy({ guildID: button.guildId });
+    const economy = await client.utils.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
-    const canViewInventory = person?.privacySettings.viewInventory;
+    const canViewInventory = person?.privacyOptions.viewInventory;
 
-    const parsedDate = parse(
-      person.joined,
-      "EEEE, MMMM d, yyyy 'at' h:mm a",
-      new Date()
-    );
-    const timestampInSeconds = Math.floor(parsedDate.getTime() / 1000);
-    const discordTimestamp = `<t:${timestampInSeconds}:D>`;
+    const getTotalBalance = (user: EconomyUser): number =>
+      user.bankingAccounts.wallet + user.bankingAccounts.bank;
 
-    const leaderboard = economy.users.sort(
-      (a, b) =>
-        b.accountBalance + b.bankBalance - (a.accountBalance + a.bankBalance)
-    );
+    const leaderboard = economy.users.sort((a, b) => {
+      const totalA = getTotalBalance(a);
+      const totalB = getTotalBalance(b);
+      return totalB - totalA;
+    });
 
     const searchedUserIndex = leaderboard.findIndex(
       (user) => user.displayName === person.displayName
@@ -47,24 +43,32 @@ export = {
         iconURL: userData.displayAvatarURL({ extension: "png" }),
       })
       .setDescription(
-        `${Emojis.Joined} Joined: ${discordTimestamp}\n` +
-        `${Emojis.Transactions} Transactions: ${inlineCode(person.transactions.length.toString())}\n` +
-        `${Emojis.ActiveEffects} Active Effects: ${inlineCode(person.activeEffects.length.toString())}\n` +
-        `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n`
+        `${Emojis.Joined} Joined: ${person.joined.toDateString()}\n` +
+          `${Emojis.Transactions} Transactions: ${inlineCode(
+            person.transactions.length.toString()
+          )}\n` +
+          `${Emojis.ActiveEffects} Active Effects: ${inlineCode(
+            person.effects.length.toString()
+          )}\n` +
+          `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n`
       )
       .setFields([
         {
-          name: `${Emojis.Bank} **Bank Balance**`,
-          value: `${client.utils.extras.formatAmount(person.bankBalance)} ${economy.icon}`,
+          name: `${Emojis.Bank} **Bank**`,
+          value: `${client.utils.formatNumber(
+            person.bankingAccounts.bank
+          )} ${economy.icon}`,
           inline: true,
         },
         {
-          name: `${Emojis.Wallet} **Wallet Balance**`,
-          value: `${client.utils.extras.formatAmount(person.accountBalance)} ${economy.icon}`,
+          name: `${Emojis.Wallet} **Wallet**`,
+          value: `${client.utils.formatNumber(
+            person.bankingAccounts.wallet
+          )} ${economy.icon}`,
           inline: true,
         },
       ])
-      .setColor(Colors.Normal)
+      .setColor(Colors.Normal);
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()

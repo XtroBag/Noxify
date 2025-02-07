@@ -1,12 +1,8 @@
-import { ClientEvents, Events } from 'discord.js';
+import { ClientEvents } from 'discord.js';
 import { DiscordClient } from "../util/DiscordClient";
 
-type EventArguments<T extends keyof ClientEvents | Events> = T extends keyof ClientEvents
-  ? ClientEvents[T]
-  : never;
-
-export interface EventModule<T extends keyof ClientEvents | Events> {
+export interface EventModule<T extends keyof ClientEvents> {
   name: T;
   once?: boolean;
-  execute: (params: { client: DiscordClient, args: EventArguments<T> }) => Promise<any>;
+  execute: (params: { client: DiscordClient, args: ClientEvents[T] }) => Promise<any>;
 }

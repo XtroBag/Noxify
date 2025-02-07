@@ -7,9 +7,9 @@ import {
   inlineCode,
   userMention,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler";
-import { format, parse } from "date-fns";
+import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import { Colors, Emojis, milestones } from "../../config";
+import { EconomyUser } from "src/handler/types/economy/EconomyUser";
 
 export = {
   id: "accountRefresh",
@@ -19,7 +19,7 @@ export = {
 
     const userData = await button.guild.members.fetch({ user: userId });
 
-    const economy = await client.utils.calls.getEconomy({ guildID: button.guildId });
+    const economy = await client.utils.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
     if (button.member.id !== userId) {
@@ -51,18 +51,14 @@ export = {
         return;
       }
 
-      const parsedDate = parse(
-        user.joined,
-        "EEEE, MMMM d, yyyy 'at' h:mm a",
-        new Date()
-      );
-      const timestampInSeconds = Math.floor(parsedDate.getTime() / 1000);
-      const discordTimestamp = `<t:${timestampInSeconds}:D>`;
+      const getTotalBalance = (user: EconomyUser): number =>
+        user.bankingAccounts.wallet + user.bankingAccounts.bank;
 
-      const leaderboard = economy.users.sort(
-        (a, b) =>
-          b.accountBalance + b.bankBalance - (a.accountBalance + a.bankBalance)
-      );
+      const leaderboard = economy.users.sort((a, b) => {
+        const totalA = getTotalBalance(a);
+        const totalB = getTotalBalance(b);
+        return totalB - totalA;
+      });
 
       const searchedUserIndex = leaderboard.findIndex(
         (user) => user.displayName === person.displayName
@@ -71,31 +67,40 @@ export = {
       const rank =
         searchedUserIndex !== -1 ? searchedUserIndex + 1 : "Not found";
 
-
       const bankingInformation = new EmbedBuilder()
         .setAuthor({
           name: `${userData.user.username}'s Profile`,
           iconURL: userData.displayAvatarURL({ extension: "png" }),
         })
         .setDescription(
-          `${Emojis.Joined} Joined: ${discordTimestamp}\n` +
-          `${Emojis.Transactions} Transactions: ${inlineCode(person.transactions.length.toString())}\n` +
-          `${Emojis.ActiveEffects} Active Effects: ${inlineCode(person.activeEffects.length.toString())}\n` +
-          `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n`
+          `${Emojis.Joined} Joined: ${person.joined.toDateString()}\n` +
+            `${Emojis.Transactions} Transactions: ${inlineCode(
+              person.transactions.length.toString()
+            )}\n` +
+            `${Emojis.ActiveEffects} Active Effects: ${inlineCode(
+              person.effects.length.toString()
+            )}\n` +
+            `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(
+              `#${rank}`
+            )}\n`
         )
         .setFields([
           {
-            name: `${Emojis.Bank} **Bank Balance**`,
-            value: `${client.utils.extras.formatAmount(person.bankBalance)} ${economy.icon}`,
+            name: `${Emojis.Bank} **Bank**`,
+            value: `${client.utils.formatNumber(
+              person.bankingAccounts.bank
+            )} ${economy.icon}`,
             inline: true,
           },
           {
-            name: `${Emojis.Wallet} **Wallet Balance**`,
-            value: `${client.utils.extras.formatAmount(person.accountBalance)} ${economy.icon}`,
+            name: `${Emojis.Wallet} **Wallet**`,
+            value: `${client.utils.formatNumber(
+              person.bankingAccounts.wallet
+            )} ${economy.icon}`,
             inline: true,
           },
         ])
-        .setColor(Colors.Normal)
+        .setColor(Colors.Normal);
 
       const isSearchingOwnAccount = button.user.id === userId;
 
@@ -115,7 +120,6 @@ export = {
           .setStyle(ButtonStyle.Danger)
       );
 
-      // Milestone Check Logic
       let milestoneReached = false;
       let milestone = null;
 
@@ -125,18 +129,18 @@ export = {
         );
 
         if (
-          user.bankBalance + user.accountBalance >= m &&
+          user.bankingAccounts.bank + user.bankingAccounts.wallet >= m &&
           !milestoneReachedAlready
         ) {
           milestone = m;
 
-          await client.utils.calls.updateUserMilestones({
+          await client.utils.addMilestoneToUser({
             guildID: button.guildId,
             userID: userId,
             milestone: {
               amount: m,
               finished: true,
-              reachedAt: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
+              recieved: new Date().toDateString(),
             },
           });
 
@@ -153,7 +157,7 @@ export = {
       if (
         milestoneReached &&
         milestone !== null &&
-        user.privacySettings.receiveNotifications
+        user.privacyOptions.receiveNotifications
       ) {
         await button.followUp({
           embeds: [
@@ -163,7 +167,7 @@ export = {
               .setDescription(
                 `${userMention(
                   person.userID
-                )} you reached a milestone of **${client.utils.extras.formatAmount(
+                )} you reached a milestone of **${client.utils.formatNumber(
                   milestone
                 )}** ${economy.name.toLowerCase().replace(/s$/, "")}${
                   milestone !== 1 || economy.name.toLowerCase().endsWith("s")

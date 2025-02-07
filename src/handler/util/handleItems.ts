@@ -2,8 +2,7 @@ import { glob } from "glob";
 import { DiscordClient } from "./DiscordClient";
 import { itemsFolderName } from "../../config";
 import Logger from "./Logger";
-import { ItemModule } from "../types/Item";
-import { DrinkData, IngredientData, MealData, WeaponData } from "../types/Database";
+import { Drink, Item, Items, Meal, Weapon } from "../types/economy/EconomyItem";
 
 export async function registerItems(client: DiscordClient) {
   await getItemModules(client);
@@ -21,9 +20,9 @@ async function getItemModules(client: DiscordClient): Promise<void> {
     )}`;
 
     try {
-      const module: ItemModule = (await import(importPath)).default;
+      const module: Items = (await import(importPath)).default;
 
-      if (!module.name || !module.type) {
+      if (!module.name || !module.shopType) {
         Logger.error(`No name or type set for the item at ${importPath}`);
         continue;
       }
@@ -32,14 +31,14 @@ async function getItemModules(client: DiscordClient): Promise<void> {
 
       totalItems++;
 
-      if (module.type === "weapon") {
-        client.items[module.type].set(module.name.singular, module as WeaponData);
-      } else if (module.type === "ingredient") {
-        client.items[module.type].set(module.name.singular, module as IngredientData);
-      } else if (module.type === 'meal') {
-        client.items[module.type].set(module.name.singular, module as MealData);
-      } else if (module.type === 'drink') {
-        client.items[module.type].set(module.name.singular, module as DrinkData);
+      if (module.shopType === "weapons") {
+        client.items[module.shopType].set(module.name.singular, module as Weapon);
+      } else if (module.shopType === "ingredients") {
+        client.items[module.shopType].set(module.name.singular, module as Item);
+      } else if (module.shopType === 'meals') {
+        client.items[module.shopType].set(module.name.singular, module as Meal);
+      } else if (module.shopType === 'drinks') {
+        client.items[module.shopType].set(module.name.singular, module as Drink);
       }
     } catch (err) {
       Logger.error(`Failed to load item at ${importPath}`, err);

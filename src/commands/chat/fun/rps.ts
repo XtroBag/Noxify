@@ -1,5 +1,5 @@
 import { ChannelType, EmbedBuilder, MessageReaction, User } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler";
+import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
 import { Colors } from "../../../config";
 
 export = {

@@ -1,4 +1,5 @@
-import { WeaponShopItem } from "../../handler/types/Item";
+import { Weapon } from "../../handler/types/economy/EconomyItem";
+import { Emojis } from "../../config";
 
 export = {
   name: {
@@ -6,13 +7,13 @@ export = {
     plural: 'Saws'
   },
   description: "A durable tool for slicing through tough opponents.",
-  icon: "🪚",
+  icon: Emojis.Saw,
   disabled: false,
-  type: "weapon",
+  shopType: "weapons",
   price: 28,
   damage: 34,
-  durability: 70,
-  weaponType: 'other',
+  uses: 70,
+  weaponType: 'Melee',
   amountPerUser: 1,
-  requires: [] // enter NAMES of other items by their Sinular name to require them for this item to be used.
-} as WeaponShopItem;
+  requires: []
+} as Omit<Weapon, 'purchasedAt'>;

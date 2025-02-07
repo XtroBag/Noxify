@@ -73,7 +73,7 @@ export async function registerComponents(client: DiscordClient): Promise<void> {
           break;
 
         default:
-          Logger.error(`Unknown component type found: ${type}`);
+          Logger.issue(`File might be empty or missing the necessary handler.`);
       }
     } catch (err) {
       Logger.error(`Failed to load component at ${importPath}`, err);

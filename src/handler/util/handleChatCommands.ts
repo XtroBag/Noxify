@@ -1,6 +1,6 @@
 import { client } from "../../index";
 import { Message } from "discord.js";
-import { hasCooldown, isAllowedCommand } from "./handleCommands";
+import { hasCooldown, isAllowedCommand } from "./HandleCommands";
 import { getCommandOnCooldownEmbed, defaultPrefix } from "../../config";
 import {
   CommandTypes,
@@ -15,7 +15,10 @@ export async function handleMessageCommands(message: Message): Promise<void> {
 
   const guildSettings = await Server.findOne({ guildID: message.guildId });
 
-  const guildPrefix = guildSettings && guildSettings.prefix ? guildSettings.prefix : defaultPrefix;
+  const guildPrefix =
+    guildSettings && guildSettings.prefix
+      ? guildSettings.prefix
+      : defaultPrefix;
 
   if (message.content.startsWith(guildPrefix)) {
     await handleCommand(CommandTypes.PrefixCommand, message, guildPrefix);
@@ -41,7 +44,9 @@ async function handleCommand(
   // Generate args based on the command type
   if (type === CommandTypes.PrefixCommand) {
     // Remove the prefix and extract the command name
-    const contentWithoutPrefix = message.content.slice(guildPrefix.length).trim();
+    const contentWithoutPrefix = message.content
+      .slice(guildPrefix.length)
+      .trim();
     const spaceIndex = contentWithoutPrefix.indexOf(" "); // Find where the command name ends
 
     // Extract command name and the rest of the arguments
@@ -52,14 +57,22 @@ async function handleCommand(
       args = contentWithoutPrefix.slice(spaceIndex).trim().split(/\s+/); // Arguments after command name
     }
   } else if (type === CommandTypes.PingCommand) {
-    // Handle ping commands (though this is typically just a mention of the bot)
-    commandName = message.content.split(" ")[1].replace(/ /g, "");
-    message.content = message.content.replace(
-      `<@${client.user.id}> ${commandName} `,
-      ""
+    // Split the message content by spaces and get the command part
+    const commandParts = message.content.split(" ");
+    // Safely get commandName and remove spaces
+    commandName = commandParts[1]?.replace(/ /g, "") || "";
+
+    // Use a dynamic RegExp to match the bot mention and command name, accounting for possible spaces
+    const botMentionPattern = new RegExp(
+      `<@!?${client.user.id}>\\s*${commandName}\\s*`,
+      "g"
     );
 
-    args = message.content.trim().split(/\s+/); // Just in case, get args from message content
+    // Remove the bot mention and command from the message content
+    message.content = message.content.replace(botMentionPattern, "");
+
+    // Get the arguments from the remaining message content
+    args = message.content.trim().split(/\s+/); // Split by whitespace to capture all arguments
   } else if (type === CommandTypes.MessageCommand) {
     // For message commands, command name is the first word
     commandName = message.content.split(" ")[0];

@@ -2,10 +2,11 @@ import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler";
+} from "../../../handler/types/Command";
 import {
   ActionRowBuilder,
   ApplicationIntegrationType,
+  EmbedBuilder,
   InteractionContextType,
   ModalBuilder,
   SlashCommandBuilder,
@@ -13,6 +14,7 @@ import {
   TextInputStyle,
 } from "discord.js";
 import { Economy } from "../../../handler/schemas/models/Models";
+import { Colors, Emojis } from "../../../config";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -63,21 +65,41 @@ export = {
 
       if (member.user.bot)
         return await interaction.reply({
-          content: "You cannot repair the economy data of a bot.",
+          embeds: [
+            new EmbedBuilder()
+              .setColor(Colors.Error)
+              .setDescription(
+                `${Emojis.Cross} You cannot repair the economy data of a bot.`
+              ),
+          ],
           ephemeral: true,
         });
 
-      const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
+      const economy = await client.utils.getEconomy({
+        guildID: interaction.guildId,
+      });
       if (!economy)
         return await interaction.reply({
-          content: `This server doesn't have an economy system set up.`,
+          embeds: [
+            new EmbedBuilder()
+              .setColor(Colors.Error)
+              .setDescription(
+                `${Emojis.Cross} This server doesn't have an economy system set up.`
+              ),
+          ],
           ephemeral: true,
         });
 
       const user = economy.users.find((user) => user.userID === member.id);
       if (!user)
         return await interaction.reply({
-          content: `The user does not have an account in the economy system.`,
+          embeds: [
+            new EmbedBuilder()
+              .setColor(Colors.Warning)
+              .setDescription(
+                `${Emojis.Info} The user does not have an account in the economy system.`
+              ),
+          ],
           ephemeral: true,
         });
 
@@ -86,18 +108,20 @@ export = {
           case "bankBalance":
             {
               const modal = new ModalBuilder()
-                .setCustomId(`repair-bank-balance|${member.id}`)
+                .setCustomId(`repair-savings-balance|${member.id}`)
                 .setTitle("Update Bank Balance")
                 .setComponents(
                   new ActionRowBuilder<TextInputBuilder>().addComponents(
                     new TextInputBuilder()
-                    .setCustomId('repaired-bank-balance')
-                    .setLabel('New Balance')
-                    .setPlaceholder(`Please don't use comma's they are not allowed`)
-                    .setMinLength(1)
-                    .setMaxLength(10)
-                    .setStyle(TextInputStyle.Short)
-                    .setRequired(true)
+                      .setCustomId("repaired-savings-balance")
+                      .setLabel("New Balance")
+                      .setPlaceholder(
+                        `Please don't use comma's they are not allowed`
+                      )
+                      .setMinLength(1)
+                      .setMaxLength(10)
+                      .setStyle(TextInputStyle.Short)
+                      .setRequired(true)
                   )
                 );
 
@@ -107,22 +131,24 @@ export = {
           case "accountBalance":
             {
               const modal = new ModalBuilder()
-              .setCustomId(`repair-account-balance|${member.id}`)
-              .setTitle("Update Account Balance")
-              .setComponents(
-                new ActionRowBuilder<TextInputBuilder>().addComponents(
-                  new TextInputBuilder()
-                  .setCustomId('repaired-account-balance')
-                  .setLabel('New Balance')
-                  .setPlaceholder(`Please don't use comma's they are not allowed`)
-                  .setMinLength(1)
-                  .setMaxLength(10)
-                  .setStyle(TextInputStyle.Short)
-                  .setRequired(true)
-                )
-              );
+                .setCustomId(`repair-checking-balance|${member.id}`)
+                .setTitle("Update Account Balance")
+                .setComponents(
+                  new ActionRowBuilder<TextInputBuilder>().addComponents(
+                    new TextInputBuilder()
+                      .setCustomId("repaired-checking-balance")
+                      .setLabel("New Balance")
+                      .setPlaceholder(
+                        `Please don't use comma's they are not allowed`
+                      )
+                      .setMinLength(1)
+                      .setMaxLength(10)
+                      .setStyle(TextInputStyle.Short)
+                      .setRequired(true)
+                  )
+                );
 
-            await interaction.showModal(modal);
+              await interaction.showModal(modal);
             }
             break;
           case "milestones":
@@ -133,7 +159,13 @@ export = {
               );
 
               await interaction.reply({
-                content: `The milestones for ${member.user.username} have been repaired (reset).`,
+                embeds: [
+                  new EmbedBuilder()
+                    .setColor(Colors.Success)
+                    .setDescription(
+                      `${Emojis.Check} The milestones for ${member.user.username} have been repaired.`
+                    ),
+                ],
                 ephemeral: true,
               });
             }
@@ -146,7 +178,13 @@ export = {
               );
 
               await interaction.reply({
-                content: `The transactions for ${member.user.username} have been repaired (reset).`,
+                embeds: [
+                  new EmbedBuilder()
+                    .setColor(Colors.Success)
+                    .setDescription(
+                      `${Emojis.Check} The transactions for ${member.user.username} have been repaired.`
+                    ),
+                ],
                 ephemeral: true,
               });
             }
@@ -161,7 +199,13 @@ export = {
       }
     } else {
       return await interaction.reply({
-        content: `You do not have administrator permissions to use this command.`,
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Error)
+            .setDescription(
+              `${Emojis.Cross} You do not have administrator permissions to use this command.`
+            ),
+        ],
       });
     }
   },

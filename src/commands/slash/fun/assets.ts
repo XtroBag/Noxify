@@ -1,9 +1,5 @@
 import SGDB, { SGDBImage } from "steamgriddb";
-import {
-  CommandTypes,
-  RegisterTypes,
-  SlashCommandModule,
-} from "../../../handler";
+import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler/types/Command";
 import {
   ApplicationIntegrationType,
   InteractionContextType,

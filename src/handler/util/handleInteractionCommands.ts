@@ -1,6 +1,5 @@
 import Logger from "./Logger";
-import { client } from "../../index";
-import { hasCooldown, isAllowedCommand } from "./handleCommands";
+import { hasCooldown, isAllowedCommand } from "./HandleCommands";
 import {
   CommandTypes,
   ContextMenuCommandModule,

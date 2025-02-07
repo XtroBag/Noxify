@@ -1,16 +1,22 @@
-import { MealShopItem } from "../../handler/types/Item";
+import { Meal } from "../../handler/types/economy/EconomyItem";
+import { Emojis } from "../../config";
 
 export = {
   name: {
     singular: "Pizza",
     plural: "Pizzas",
   },
-  description: "A delicious, cheesy pizza topped with your favorite ingredients.",
-  icon: "🍕",
+  description:
+    "A delicious, cheesy pizza topped with your favorite ingredients.",
+  icon: Emojis.Pizza,
   disabled: false,
-  type: "meal",
+  shopType: "meals",
   effects: [],
   price: 200,
-  amountPerUser: "unlimited",
-  ingredientsRequired: ['Bread', 'Cheese', 'Pepper'] // make this an array of objects with data like this:       ingredientsRequired: [{ name: string, amountRequired: number }]
-} as MealShopItem;
+  amountPerUser: "Unlimited",
+  ingredientsRequired: [
+    { name: "Bread", amountNeeded: 1 },
+    { name: "Cheese", amountNeeded: 1 },
+    { name: "Pepper", amountNeeded: 4 },
+  ],
+} as Meal;

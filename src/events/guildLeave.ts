@@ -1,4 +1,4 @@
-import { EventModule } from "../handler";
+import { EventModule } from "../handler/types/EventModule";
 import { Events } from "discord.js";
 import { Server } from "../handler/schemas/models/Models";
 

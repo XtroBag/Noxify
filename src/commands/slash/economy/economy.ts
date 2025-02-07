@@ -3,7 +3,7 @@ import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler";
+} from "../../../handler/types/Command";
 import {
   ApplicationIntegrationType,
   EmbedBuilder,
@@ -61,9 +61,8 @@ export = {
       const economyName = interaction.options.getString("name");
       const economySymbol = interaction.options.getString("symbol");
       const defaultBalance = interaction.options.getNumber("default");
-
-      // Fetch the current economy setup for the server
-      const existingEconomy = await client.utils.calls.getEconomy({
+      
+      const existingEconomy = await client.utils.getEconomy({
         guildID: interaction.guildId,
       });
 
@@ -81,9 +80,9 @@ export = {
       }
 
       if (
-        validCurrencySymbols.includes(economySymbol) || client.utils.extras.isServerEmojiValid(economySymbol, interaction)
+        validCurrencySymbols.includes(economySymbol) || client.utils.isServerEmojiValid(economySymbol, interaction)
       ) {
-        const newEconomy = await client.utils.calls.createEconomy({
+        const newEconomy = await client.utils.createEconomy({
           guildID: interaction.guildId,
           name: economyName.charAt(0).toUpperCase() + economyName.slice(1),
           icon: economySymbol,
@@ -126,7 +125,7 @@ export = {
         });
       }
     } else if (subcommand === "delete") {
-      const deleted = await client.utils.calls.deleteEconomy(interaction.guildId);
+      const deleted = await client.utils.deleteEconomy(interaction.guildId);
 
       if (deleted) {
         return await interaction.reply({

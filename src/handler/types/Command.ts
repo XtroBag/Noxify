@@ -8,7 +8,7 @@ import {
     Message,
     SlashCommandBuilder
 } from "discord.js";
-import { DrinkData, IngredientData, MealData, WeaponData } from "./Database";
+import { Weapon, Meal, Item, Drink } from "./economy/EconomyItem";
 
 export enum CommandTypes {
     SlashCommand = "slash",
@@ -45,11 +45,10 @@ export interface CooldownCollections {
 }
 
 export interface ItemCollections {
-    weapon: Collection<string, WeaponData>
-    meal: Collection<string, MealData>
-    ingredient: Collection<string, IngredientData>
-    drink: Collection<string, DrinkData>
-
+    weapons: Collection<string, Weapon>
+    meals: Collection<string, Meal>
+    ingredients: Collection<string, Item>
+    drinks: Collection<string, Drink>
 }
 
 export type CommandModule = SlashCommandModule | PrefixCommandModule | MessageCommandModule | PingCommandModule | ContextMenuCommandModule;

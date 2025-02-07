@@ -1,14 +1,15 @@
-import { IngredientShopItem } from "../../handler/types/Item";
+import { Emojis } from "../../config";
+import { Item } from "../../handler/types/economy/EconomyItem";
 
 export = {
   name: {
     singular: "Blueberry",
     plural: "Blueberries",
   },
-  type: 'ingredient',
+  shopType: 'ingredients',
   description: "A small, sweet fruit packed with antioxidants.",
-  icon: "🫐",
+  icon: Emojis.BlueBerry,
   disabled: false,
-  amountPerUser: 'unlimited',
+  amountPerUser: 'Unlimited',
   price: 30,
-} as IngredientShopItem;
+} as Item;

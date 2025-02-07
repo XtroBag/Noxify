@@ -37,7 +37,7 @@ async function getCommandModules(client: DiscordClient): Promise<void> {
             const module: CommandModule = (await import(importPath)).default;
 
             if (module.type === CommandTypes.SlashCommand && (!module.data.name || !module.data.description)) {
-                return Logger.error(`No name or description for command at ${importPath} set.`);
+                return Logger.issue(`No name or description for command at ${importPath} set.`);
             }
 
             if (module.disabled) {
@@ -65,21 +65,21 @@ async function getCommandModules(client: DiscordClient): Promise<void> {
         }
 
         if (client.commands.slash.size > 100) {
-            Logger.error("You can only register 100 Slash Commands.");
+            Logger.warn("You can only register 100 Slash Commands.");
             process.exit();
         }
 
         if ((client.commands.context.filter(
             command => command.data.type === ApplicationCommandType.Message)).size > 5
         ) {
-            Logger.error("You can only register 5 Message Context Menus.");
+            Logger.warn("You can only register 5 Message Context Menus.");
             process.exit();
         }
 
         if ((client.commands.context.filter(
             command => command.data.type === ApplicationCommandType.User)).size > 5
         ) {
-            Logger.error("You can only register 5 Message User Menus.");
+            Logger.warn("You can only register 5 Message User Menus.");
             process.exit();
         }
     }

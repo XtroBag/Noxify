@@ -1,4 +1,5 @@
-import { MealShopItem } from "../../handler/types/Item";
+import { Meal } from "../../handler/types/economy/EconomyItem";
+import { Emojis } from "../../config";
 
 export = {
   name: {
@@ -6,11 +7,19 @@ export = {
     plural: "Cakes",
   },
   // description: '',
-  icon: "🎂",
+  icon: Emojis.Cake,
   disabled: false,
-  type: "meal",
+  shopType: "meals",
   effects: [],
   price: 180,
-  ingredientsRequired: ['Butter', 'Egg', 'Flour', 'Glass of Milk', 'Salt', 'Strawberry', 'Sugar'],
-  amountPerUser: "unlimited",
-} as MealShopItem;
+  ingredientsRequired: [
+    { name: "Butter", amountNeeded: 1 },
+    { name: "Egg", amountNeeded: 2 },
+    { name: "Flour", amountNeeded: 1 },
+    { name: "Milk", amountNeeded: 1 },
+    { name: "Salt", amountNeeded: 1 },
+    { name: "Strawberry", amountNeeded: 1 },
+    { name: "Sugar", amountNeeded: 1 },
+  ],
+  amountPerUser: "Unlimited",
+} as Meal;

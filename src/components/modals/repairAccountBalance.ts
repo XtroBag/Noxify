@@ -1,15 +1,15 @@
 import { inlineCode, ModalSubmitInteraction } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler";
+import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import { Economy } from "../../handler/schemas/models/Models";
 
 export = {
-  id: "repair-account-balance",
+  id: "repair-checking-balance",
   type: ComponentTypes.Modal,
   async execute(client, interaction, extras) {
     const userID = extras[0];
 
     let newBalance = interaction.fields.getTextInputValue(
-      "repaired-account-balance"
+      "repaired-checking-balance"
     );
 
     newBalance = newBalance.replace(/,/g, ""); // Remove commas
@@ -27,11 +27,11 @@ export = {
     // Update logic here (save the new balance to the database or perform other actions)
     await Economy.findOneAndUpdate(
       { guildID: interaction.guildId, "users.userID": userID },
-      { $set: { "users.$.accountBalance": newBalance } }
+      { $set: { "users.$.bankingAccounts.checking": newBalance } }
     );
 
     await interaction.reply({
-      content: `Account balance updated to ${inlineCode(client.utils.extras.formatAmount(Number(newBalance)))}`,
+      content: `Account balance updated to ${inlineCode(client.utils.formatNumber(Number(newBalance)))}`,
     });
   },
 } as ComponentModule<ModalSubmitInteraction<"cached">>;

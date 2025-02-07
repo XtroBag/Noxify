@@ -1,4 +1,4 @@
-import { EventModule } from "../../handler";
+import { EventModule } from "../../handler/types/EventModule";
 import {
   channelMention,
   EmbedBuilder,

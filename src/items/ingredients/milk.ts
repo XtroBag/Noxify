@@ -1,14 +1,15 @@
-import { IngredientShopItem } from "../../handler/types/Item";
+import { Item } from "../../handler/types/economy/EconomyItem";
+import { Emojis } from "../../config";
 
 export = {
   name: {
-    singular: "Glass of Milk",
-    plural: "Glasses of Milk",
+    singular: "Milk",
+    plural: "Milks",
   },
   description: "A refreshing drink that boosts your immunity and helps maintain a healthy body.",
-  icon: "🥛",
+  icon: Emojis.Milk,
   disabled: false,
-  type: "ingredient",
+  shopType: "ingredients",
   price: 40,
-  amountPerUser: "unlimited",
-} as IngredientShopItem;
+  amountPerUser: "Unlimited",
+} as Item;

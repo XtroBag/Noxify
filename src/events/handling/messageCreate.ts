@@ -1,6 +1,6 @@
-import { EventModule } from "../../handler";
+import { EventModule } from "../../handler/types/EventModule";
 import { Events } from "discord.js";
-import { handleMessageCommands } from "../../handler/util/handleChatCommands";
+import { handleMessageCommands } from "../../handler/util/HandleChatCommands";
 
 export = {
   name: Events.MessageCreate,

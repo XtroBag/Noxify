@@ -1,4 +1,4 @@
-import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
+import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler/types/Command";
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -11,7 +11,6 @@ import {
   ApplicationIntegrationType,
 } from "discord.js";
 import { Colors } from "../../../config";
-import { format } from "date-fns";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -26,7 +25,7 @@ export = {
   async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
 
-    const economyData = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
+    const economyData = await client.utils.getEconomy({ guildID: interaction.guildId });
 
     if (!economyData) {
       await interaction.reply({
@@ -42,21 +41,23 @@ export = {
     );
 
     if (!user) {
-      await client.utils.calls.addEconomyUser({
+      await client.utils.addUserToEconomy({
         guildID: interaction.guildId,
         displayName: interaction.member.displayName,
         userID: interaction.member.id,
-        joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
-        accountBalance: economyData.defaultBalance,
-        bankBalance: 0,
-        privacySettings: { receiveNotifications: true, viewInventory: false },
+        joined: new Date(),
+        bankingAccounts: {
+            wallet: economyData.defaultBalance,
+            bank: 0
+        },
+        privacyOptions: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { meal: [], weapon: [], drink: [], ingredient: [] }},
-        activeEffects: []
+        inventory: { meals: [], weapons: [], drinks: [], ingredients: [] },
+        effects: []
       });
 
-      const updatedEconomyData = await client.utils.calls.getEconomy({
+      const updatedEconomyData = await client.utils.getEconomy({
         guildID: interaction.guildId,
       });
       user = updatedEconomyData?.users.find(
@@ -92,7 +93,7 @@ export = {
         return `**Description:** ${transaction.description || "No description"}
         **Type:** ${transaction.type}
         **Amount:** ${transaction.amount || "No amount"}
-        **Time:** ${client.utils.extras.convertTimeToDiscordTimestamp(transaction.time)}`;
+        **Time:** ${transaction.time.toDateString()}`;
       })
       .join("\n\n");
 
@@ -156,7 +157,7 @@ export = {
           }
           **Type:** ${transaction.type}
           **Amount:** ${transaction.amount || "No amount"}
-          **Time:** ${client.utils.extras.convertTimeToDiscordTimestamp(transaction.time)}`;
+          **Time:** ${transaction.time.toDateString()}`;
         })
         .join("\n\n");
 

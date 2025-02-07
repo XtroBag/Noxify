@@ -5,9 +5,10 @@ import {
   ButtonStyle,
   EmbedBuilder,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler";
+import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import { Colors, Emojis } from "../../config";
-import { Items, UserEconomy } from "../../handler/types/Database";
+import { EconomyUser } from "../../handler/types/economy/EconomyUser";
+import { Items } from "../../handler/types/economy/EconomyItem";
 
 export = {
   id: "accountInventory",
@@ -15,10 +16,10 @@ export = {
   async execute(client, button, extras) {
     const userId = extras[0];
 
-    const economy = await client.utils.calls.getEconomy({ guildID: button.guildId });
+    const economy = await client.utils.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
 
-    const canViewInventory = person?.privacySettings.viewInventory;
+    const canViewInventory = person?.privacyOptions.viewInventory;
 
     if (button.member.id !== person.userID) {
       if (canViewInventory === false) {
@@ -39,19 +40,29 @@ export = {
       await displayInventory(button, person, userId);
     }
   },
-} as ComponentModule<ButtonInteraction<'cached'>>;
+} as ComponentModule<ButtonInteraction<"cached">>;
 
-async function displayInventory(button: ButtonInteraction<'cached'>, person: UserEconomy, userId: string) {
-  // Retrieve weapon, meal, ingredient, and drink items from the user's inventory
-  const weapons = person.inventory.items.weapon.filter(item => item.type === "weapon");
-  const meals = person.inventory.items.meal.filter(item => item.type === "meal");
-  const ingredients = person.inventory.items.ingredient.filter(item => item.type === "ingredient");
-  const drinks = person.inventory.items.drink.filter(item => item.type === "drink");
+async function displayInventory(
+  button: ButtonInteraction<"cached">,
+  person: EconomyUser,
+  userId: string
+) {
+  const weapons = person.inventory.weapons.filter(
+    (item) => item.shopType === "weapons"
+  );
+  const meals = person.inventory.meals.filter(
+    (item) => item.shopType === "meals"
+  );
+  const ingredients = person.inventory.ingredients.filter(
+    (item) => item.shopType === "ingredients"
+  );
+  const drinks = person.inventory.drinks.filter(
+    (item) => item.shopType === "drinks"
+  );
 
-  // Function to group items and count quantities
   const groupItemsByName = (items: Items[]) => {
     const groupedItems: { [key: string]: any[] } = {};
-    items.forEach(item => {
+    items.forEach((item) => {
       if (!groupedItems[item.name.singular]) {
         groupedItems[item.name.singular] = [];
       }
@@ -69,59 +80,17 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
   let inventoryDescription = "";
 
   // Function to get the correct item name based on quantity
-  const getItemName = (itemName: string, itemPluralName: string, quantity: number): string => {
+  const getItemName = (
+    itemName: string,
+    itemPluralName: string,
+    quantity: number
+  ): string => {
     return quantity > 1 ? itemPluralName : itemName;
   };
 
-  // Show weapons
-  if (Object.keys(groupedWeapons).length > 0) {
-    inventoryDescription += `\n${Emojis.Weapons} **Weapons**:\n`;
-    for (const [name, items] of Object.entries(groupedWeapons)) {
-      const quantity = items.length;
-      const item = items[0]; // Assuming the name is consistent for all items of this type
-      const itemName = item.name.singular;
-      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
-
-      // Get the correct item name based on quantity
-      const itemNamePluralized = getItemName(itemName, itemPluralName, quantity);
-
-      // If there's more than 1, show quantity
-      if (quantity > 1) {
-        inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
-      } else {
-        inventoryDescription += `› ${itemNamePluralized}\n`; // Just show name if only 1 item
-      }
-    }
-  } else {
-    inventoryDescription += `${Emojis.Weapons} **Weapons**: None\n`;
-  }
-
-  // Show meals
-  if (Object.keys(groupedMeals).length > 0) {
-    inventoryDescription += `\n${Emojis.Meals} **Meals**:\n`;
-    for (const [name, items] of Object.entries(groupedMeals)) {
-      const quantity = items.length;
-      const item = items[0]; // Assuming the name is consistent for all items of this type
-      const itemName = item.name.singular;
-      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
-
-      // Get the correct item name based on quantity
-      const itemNamePluralized = getItemName(itemName, itemPluralName, quantity);
-
-      // If there's more than 1, show quantity
-      if (quantity > 1) {
-        inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
-      } else {
-        inventoryDescription += `› ${itemNamePluralized}\n`; // Just show name if only 1 item
-      }
-    }
-  } else {
-    inventoryDescription += `${Emojis.Meals} **Meals**: None\n`;
-  }
-
   // Show ingredients
   if (Object.keys(groupedIngredients).length > 0) {
-    inventoryDescription += `\n${Emojis.Ingredients} **Ingredients**:\n`;
+    inventoryDescription += `${Emojis.Ingredients} **Ingredients**:\n`;
     for (const [name, items] of Object.entries(groupedIngredients)) {
       const quantity = items.length;
       const item = items[0]; // Assuming the name is consistent for all items of this type
@@ -129,14 +98,14 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
       const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
 
       // Get the correct item name based on quantity
-      const itemNamePluralized = getItemName(itemName, itemPluralName, quantity);
+      const itemNamePluralized = getItemName(
+        itemName,
+        itemPluralName,
+        quantity
+      );
 
       // If there's more than 1, show quantity
-      if (quantity > 1) {
-        inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
-      } else {
-        inventoryDescription += `› ${itemNamePluralized}\n`; // Just show name if only 1 item
-      }
+      inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
     }
   } else {
     inventoryDescription += `${Emojis.Ingredients} **Ingredients**: None\n`;
@@ -144,7 +113,7 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
 
   // Show drinks
   if (Object.keys(groupedDrinks).length > 0) {
-    inventoryDescription += `\n${Emojis.Drinks} **Drinks**:\n`;
+    inventoryDescription += `${Emojis.Drinks} **Drinks**:\n`;
     for (const [name, items] of Object.entries(groupedDrinks)) {
       const quantity = items.length;
       const item = items[0]; // Assuming the name is consistent for all items of this type
@@ -152,17 +121,63 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
       const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
 
       // Get the correct item name based on quantity
-      const itemNamePluralized = getItemName(itemName, itemPluralName, quantity);
+      const itemNamePluralized = getItemName(
+        itemName,
+        itemPluralName,
+        quantity
+      );
 
       // If there's more than 1, show quantity
-      if (quantity > 1) {
-        inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
-      } else {
-        inventoryDescription += `› ${itemNamePluralized}\n`; // Just show name if only 1 item
-      }
+      inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
     }
   } else {
     inventoryDescription += `${Emojis.Drinks} **Drinks**: None\n`;
+  }
+
+  // Show meals
+  if (Object.keys(groupedMeals).length > 0) {
+    inventoryDescription += `${Emojis.Meals} **Meals**:\n`;
+    for (const [name, items] of Object.entries(groupedMeals)) {
+      const quantity = items.length;
+      const item = items[0]; // Assuming the name is consistent for all items of this type
+      const itemName = item.name.singular;
+      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
+
+      // Get the correct item name based on quantity
+      const itemNamePluralized = getItemName(
+        itemName,
+        itemPluralName,
+        quantity
+      );
+
+      // If there's more than 1, show quantity
+      inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
+    }
+  } else {
+    inventoryDescription += `${Emojis.Meals} **Meals**: None\n`;
+  }
+
+  // Show weapons
+  if (Object.keys(groupedWeapons).length > 0) {
+    inventoryDescription += `${Emojis.Weapons} **Weapons**:\n`;
+    for (const [name, items] of Object.entries(groupedWeapons)) {
+      const quantity = items.length;
+      const item = items[0]; // Assuming the name is consistent for all items of this type
+      const itemName = item.name.singular;
+      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
+
+      // Get the correct item name based on quantity
+      const itemNamePluralized = getItemName(
+        itemName,
+        itemPluralName,
+        quantity
+      );
+
+      // If there's more than 1, show quantity
+      inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
+    }
+  } else {
+    inventoryDescription += `${Emojis.Weapons} **Weapons**: None\n`;
   }
 
   // Create the embed with the inventory
@@ -184,3 +199,4 @@ async function displayInventory(button: ButtonInteraction<'cached'>, person: Use
     ],
   });
 }
+

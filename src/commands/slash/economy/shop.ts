@@ -3,7 +3,7 @@ import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler";
+} from "../../../handler/types/Command";
 import {
   ActionRowBuilder,
   ApplicationIntegrationType,
@@ -13,7 +13,6 @@ import {
   SlashCommandBuilder,
   StringSelectMenuBuilder,
 } from "discord.js";
-import { format } from "date-fns";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -49,11 +48,19 @@ export = {
   async execute({ client, interaction }) {
     const subcommand = interaction.options.getSubcommand();
 
-    const economy = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.getEconomy({
+      guildID: interaction.guildId,
+    });
 
     if (!economy)
       return await interaction.reply({
-        embeds: [new EmbedBuilder().setColor(Colors.Error).setDescription(`${Emojis.Cross} This server doesn't have an economy setup yet.`)],
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Error)
+            .setDescription(
+              `${Emojis.Cross} This server doesn't have an economy setup yet.`
+            ),
+        ],
       });
 
     if (economy) {
@@ -66,7 +73,7 @@ export = {
             "Browse the items available for purchase in the economy shop."
           );
 
-        const itemsPerPage = 10;
+        const itemsPerPage = 12;
 
         const menuRow =
           new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
@@ -76,10 +83,10 @@ export = {
               .setMinValues(1)
               .setPlaceholder("Pick a category")
               .addOptions([
-                { label: 'Ingredients', value: 'ingredient' },
-                { label: 'Drinks', value: 'drink'},
-                { label: 'Meals', value: 'meal'},
-                { label: 'Weapons', value: 'weapon' },
+                { label: "Ingredients", value: "ingredients", emoji: Emojis.Ingredients },
+                { label: "Drinks", value: "drinks", emoji: Emojis.Drinks },
+                { label: "Meals", value: "meals", emoji: Emojis.Meals },
+                { label: "Weapons", value: "weapons", emoji: Emojis.Weapons },
               ])
           );
 
@@ -128,50 +135,59 @@ export = {
           });
         }
 
-        const allItems = client.utils.items.getAllItems();
+        const allItems = client.utils.getAll();
         const itemType = allItems.find(
           (item) => item.name.singular === buyingItem
         );
 
-        const item = allItems.find((item) => item.type === itemType.type && item.name.singular === buyingItem);
-
-        if (!item) {
+        if (!itemType) {
           return await interaction.reply({
             embeds: [
               new EmbedBuilder()
                 .setColor(Colors.Error)
                 .setDescription(
-                  `${Emojis.Cross} Item **${buyingItem}** not found in the shop.`
+                  `${Emojis.Cross} **${buyingItem}** not found in the shop.`
                 ),
             ],
           });
         }
+
+        const item = allItems.find(
+          (item) =>
+            item.shopType === itemType.shopType &&
+            item.name.singular === buyingItem
+        );
 
         const user = economy.users.find(
           (user) => user.userID === interaction.member.id
         );
 
         if (!user) {
-          await client.utils.calls.addEconomyUser({
+          await client.utils.addUserToEconomy({
             guildID: interaction.guildId,
             userID: interaction.member.id,
             displayName: interaction.member.displayName,
-            joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
-            accountBalance: economy.defaultBalance,
-            bankBalance: 0,
-            privacySettings: {
+            joined: new Date(),
+            bankingAccounts: {
+              bank: economy.defaultBalance,
+              wallet: 0,
+            },
+            privacyOptions: {
               receiveNotifications: true,
               viewInventory: false,
             },
             milestones: [],
             transactions: [],
             inventory: {
-              items: { meal: [], weapon: [], drink: [], ingredient: [] },
+              meals: [],
+              weapons: [],
+              drinks: [],
+              ingredients: [],
             },
-            activeEffects: [],
+            effects: [],
           });
         }
-        const updatedEcononmy = await client.utils.calls.getEconomy({
+        const updatedEcononmy = await client.utils.getEconomy({
           guildID: interaction.guildId,
         });
 
@@ -180,16 +196,20 @@ export = {
         );
 
         const maxAmount =
-          item.amountPerUser === "unlimited" ? Infinity : item.amountPerUser;
+          item.amountPerUser === "Unlimited" ? Infinity : item.amountPerUser;
 
-        const currentAmount = client.utils.items.getInventoryItemAmount(
+        const inventoryItems = client.utils.getInventoryItems(
           newUser,
-          item.type,
-          item.name.singular
+          item.shopType
         );
 
         const itemName =
-          maxAmount === 1 ? item.name.singular : item.name.plural;
+        maxAmount === 1 ? item.name.singular : item.name.plural;
+
+        const currentAmount = inventoryItems.filter(
+          (item) => item.name.singular === itemName
+        ).length;
+
 
         if (currentAmount + amount > maxAmount) {
           return await interaction.reply({
@@ -207,7 +227,7 @@ export = {
 
         const noFunds = amount === 1 ? item.name.singular : item.name.plural;
 
-        if (newUser.accountBalance < item.price * amount) {
+        if (newUser.bankingAccounts.wallet < item.price * amount) {
           return await interaction.reply({
             embeds: [
               new EmbedBuilder()
@@ -219,7 +239,12 @@ export = {
           });
         }
 
-        await client.utils.calls.completePurchase(newUser, item, amount, interaction);
+        await client.utils.completePurchase({
+          user: newUser,
+          item: item,
+          amount: amount,
+          guildID: interaction.guildId,
+        });
         return await interaction.reply({
           embeds: [
             new EmbedBuilder()
@@ -240,7 +265,7 @@ export = {
   async autocomplete(interaction, client) {
     const focusedValue = interaction.options.getFocused();
 
-    const items = client.utils.items.getAllItems();
+    const items = client.utils.getAll();
 
     const filteredItems = items.filter(
       (item) =>
@@ -251,7 +276,7 @@ export = {
     if (filteredItems.length > 25) {
       await interaction.respond([
         {
-          name: "Too many items to list. Please type the name of the item you're looking for.",
+          name: "Please enter the item you're trying to purchase.",
           value: "",
         },
       ]);

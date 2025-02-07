@@ -1,4 +1,4 @@
-import { CommandTypes, PrefixCommandModule } from "../../../handler";
+import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
 import { EmbedBuilder } from "discord.js";
 import { Colors } from "../../../config";
 

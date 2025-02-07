@@ -1,17 +1,20 @@
 import { Emojis } from "../../config";
-import { DrinkShopItem } from "src/handler/types/Item";
+import { Drink } from "../../handler/types/economy/EconomyItem";
 
 export = {
-    name: {
-        singular: 'Strawberry Milk',
-        plural: 'Strawberry Milks'
-    },
-  // description: "",
-    icon: Emojis.StrawberryMilk,
-    type: 'drink',
-    price: 80,
-    disabled: false,
-    amountPerUser: 'unlimited',
-    effects: [],
-    ingredientsRequired: ['Strawberry', 'Glass of Milk']
-} as DrinkShopItem
+  name: {
+    singular: "Strawberry Milk",
+    plural: "Strawberry Milks",
+  },
+  description: "",
+  icon: Emojis.StrawberryMilk,
+  shopType: "drinks",
+  price: 80,
+  disabled: false,
+  amountPerUser: "Unlimited",
+  effects: [],
+  ingredientsRequired: [
+    { name: "Strawberry", amountNeeded: 1 },
+    { name: "Milk", amountNeeded: 1 },
+  ],
+} as Drink;

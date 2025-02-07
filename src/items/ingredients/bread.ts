@@ -1,14 +1,15 @@
-import { IngredientShopItem } from "../../handler/types/Item";
+import { Item } from "../../handler/types/economy/EconomyItem";
+import { Emojis } from "../../config";
 
 export = {
   name: {
     singular: "Bread",
     plural: "Breads",
   },
-  type: "ingredient",
+  shopType: "ingredients",
   description: "A staple food that is soft, warm, and comforting.",
-  icon: "🍞",
+  icon: Emojis.Bread,
   disabled: false,
   price: 20,
-  amountPerUser: "unlimited",
-} as IngredientShopItem;
+  amountPerUser: "Unlimited",
+} as Item;

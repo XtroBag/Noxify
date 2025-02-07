@@ -6,7 +6,7 @@ import {
   resolveColor,
   userMention,
 } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler";
+import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
 import { Colors, Emojis } from "../../../config";
 
 export = {

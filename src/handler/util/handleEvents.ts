@@ -17,7 +17,7 @@ export async function registerEvents(client: DiscordClient): Promise<void> {
 
     try {
       // Dynamically import the event module
-      const eventModule: EventModule<keyof ClientEvents | Events> = (await import(importPath)).default;
+      const eventModule: EventModule<keyof ClientEvents> = (await import(importPath)).default;
 
       const { name, execute, once } = eventModule;
 

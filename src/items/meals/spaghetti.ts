@@ -1,16 +1,20 @@
-import { MealShopItem } from "../../handler/types/Item";
+import { Meal } from "../../handler/types/economy/EconomyItem";
+import { Emojis } from "../../config";
 
 export = {
   name: {
-    singular: "Bowl of Spaghetti",
-    plural: "Bowls of Spaghetti",
+    singular: "Spaghetti",
+    plural: "Spaghetti",
   },
   // description: "",
-  icon: "🍝",
+  icon: Emojis.Spaghetti,
   disabled: false,
-  type: "meal",
+  shopType: "meals",
   effects: [],
   price: 70,
-  ingredientsRequired: ['Noodle', 'Tomato Sauce'],
-  amountPerUser: "unlimited",
-} as MealShopItem;
+  ingredientsRequired: [
+    { name: "Noodles", amountNeeded: 1 },
+    { name: "Sauce", amountNeeded: 1 },
+  ],
+  amountPerUser: "Unlimited",
+} as Meal;

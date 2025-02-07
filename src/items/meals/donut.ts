@@ -1,4 +1,5 @@
-import { EffectType, MealShopItem } from "../../handler/types/Item";
+import { Meal, EffectType } from "../../handler/types/economy/EconomyItem";
+import { Emojis } from "../../config";
 
 export = {
   name: {
@@ -6,11 +7,16 @@ export = {
     plural: "Donuts",
   },
   description: "A sweet, fried dough pastry, covered in sugar or icing.",
-  icon: "🍩",
+  icon: Emojis.Donut,
   disabled: false,
-  type: "meal",
+  shopType: "meals",
   effects: [{ name: EffectType.Luck, lasts: 1000 }],
-  ingredientsRequired: ['Egg', 'Flour', 'Glass of Milk', 'Sugar'],
+  ingredientsRequired: [
+    { name: "Egg", amountNeeded: 2 },
+    { name: "Flour", amountNeeded: 1 },
+    { name: "Milk", amountNeeded: 1 },
+    { name: "Sugar", amountNeeded: 1 },
+  ],
   price: 140,
-  amountPerUser: "unlimited",
-} as MealShopItem;
+  amountPerUser: "Unlimited",
+} as Meal;

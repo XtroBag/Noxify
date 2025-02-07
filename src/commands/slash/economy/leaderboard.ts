@@ -1,7 +1,6 @@
-import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler";
+import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler/types/Command";
 import { ApplicationIntegrationType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { Colors } from "../../../config";
-import { format } from "date-fns";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -13,7 +12,7 @@ export = {
     .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
 
   async execute({ client, interaction }) {
-    const economyData = await client.utils.calls.getEconomy({ guildID: interaction.guildId });
+    const economyData = await client.utils.getEconomy({ guildID: interaction.guildId });
 
     if (!economyData) {
       await interaction.reply({
@@ -31,21 +30,23 @@ export = {
     );
 
     if (!user) {
-      await client.utils.calls.addEconomyUser({
+      await client.utils.addUserToEconomy({
         guildID: interaction.guildId,
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
-        joined: format(new Date(), "eeee, MMMM d, yyyy 'at' h:mm a"),
-        accountBalance: economyData.defaultBalance,
-        bankBalance: 0,
-        privacySettings: { receiveNotifications: true, viewInventory: false },
+        joined: new Date(),
+        bankingAccounts: {
+            wallet: economyData.defaultBalance,
+            bank: 0
+        },
+        privacyOptions: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { items: { meal: [], weapon: [], drink: [], ingredient: [] }},
-        activeEffects: []
+        inventory: { meals: [], weapons: [], drinks: [], ingredients: [] },
+        effects: []
       });
 
-      const updatedEconomyData = await client.utils.calls.getEconomy({
+      const updatedEconomyData = await client.utils.getEconomy({
         guildID: interaction.guildId,
       });
 
@@ -58,7 +59,7 @@ export = {
     const leaderboard = economyUsers
     .sort(
       (a, b) =>
-        b.accountBalance + b.bankBalance - (a.accountBalance + a.bankBalance)
+        b.bankingAccounts.wallet + b.bankingAccounts.bank - (a.bankingAccounts.wallet + a.bankingAccounts.bank)
     )
     .slice(0, 10);
   
@@ -73,7 +74,7 @@ export = {
   const leaderboardDescription = leaderboard
   .map((user, index) => {
     const icon = economyData.icon;
-    const formattedAmount = client.utils.extras.formatAmount(user.accountBalance + user.bankBalance);
+    const formattedAmount = client.utils.formatNumber(user.bankingAccounts.wallet + user.bankingAccounts.bank);
 
     return `${index + 1}. **${user.displayName}** ${formattedAmount} ${icon}`;
   })

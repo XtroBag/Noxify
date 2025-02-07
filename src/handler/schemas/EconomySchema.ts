@@ -1,41 +1,51 @@
 import { Schema, SchemaTypes } from "mongoose";
 import {
-  Transaction,
-  UserEconomy,
-  UserPrivacy,
+  BankingAccounts,
+  EconomyUser,
   Milestone,
+  PrivacyOptions,
+  Transaction,
   UserInventory,
-  MealData,
-  DrinkData,
-  WeaponData,
-  IngredientData,
-} from "../types/Database";
-import { Effect, NameStyles } from "../types/Item";
+} from "../types/economy/EconomyUser";
+import {
+  Drink,
+  Effect,
+  Item,
+  Meal,
+  NameStyles,
+  RequiredIngredient,
+  Weapon,
+} from "../types/economy/EconomyItem";
 
-// Define the Transaction Schema
 export const TransactionSchema = new Schema<Transaction>({
   type: { type: SchemaTypes.String, required: true },
   description: { type: SchemaTypes.String, required: true },
   amount: { type: SchemaTypes.Number, required: true },
-  time: { type: SchemaTypes.String, required: true },
+  time: { type: SchemaTypes.Date, required: true },
 });
 
-// Define the EconomyUserPrivacy Schema
-export const EconomyUserPrivacy = new Schema<UserPrivacy>({
+export const EconomyUserPrivacy = new Schema<PrivacyOptions>({
   viewInventory: { type: SchemaTypes.Boolean, default: false },
   receiveNotifications: { type: SchemaTypes.Boolean, default: true },
 });
 
-// Define the Milestone Schema
 export const EconomyMilestone = new Schema<Milestone>({
   amount: { type: SchemaTypes.Number, required: true },
-  reachedAt: { type: SchemaTypes.String, required: true },
+  recieved: { type: SchemaTypes.String, required: true },
   finished: { type: SchemaTypes.Boolean, default: false, required: true },
 });
 
 export const ItemName = new Schema<NameStyles>({
-  singular: { type: SchemaTypes.String, required: true, default: "No name available" },
-  plural: { type: SchemaTypes.String, required: true, default: "No name available" },
+  singular: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No name available",
+  },
+  plural: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No name available",
+  },
 });
 
 export const FoodEffect = new Schema<Effect>({
@@ -43,19 +53,34 @@ export const FoodEffect = new Schema<Effect>({
   lasts: { type: SchemaTypes.Number, required: true },
 });
 
-export const WeaponSchema = new Schema<WeaponData>({
+export const MealIngredient = new Schema<RequiredIngredient>({
+  name: { type: SchemaTypes.String, required: true },
+  amountNeeded: { type: SchemaTypes.Number, required: true, default: 0 },
+});
+
+export const WeaponSchema = new Schema<Weapon>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true, default: "No description available" },
-  type: { type: SchemaTypes.String, required: true, default: 'weapon' },
-  icon: { type: SchemaTypes.String, required: true, default: "No icon available" },
-  weaponType: { type: SchemaTypes.String, required: true, default: "other" },
-  purchasedAt: { type: SchemaTypes.String, required: true, default: "no purchasedAt available" },
+  description: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No description available",
+  },
+  purchasedAt: {
+    type: SchemaTypes.Date,
+    required: true,
+  },
+  shopType: { type: SchemaTypes.String, required: true, default: "weapons" },
+  icon: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No icon available",
+  },
+  weaponType: { type: SchemaTypes.String, required: true, default: "Other" },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
   level: { type: SchemaTypes.Number, required: true, default: 0 },
-  uses: { type: SchemaTypes.Number, required: true, default: 0 },
   damage: { type: SchemaTypes.Number, required: true, default: 0 },
-  durability: { type: SchemaTypes.Mixed, required: true, default: "unlimited" },
-  disabled: { type: SchemaTypes.Boolean, required: true, default: false },
+  uses: { type: SchemaTypes.Mixed, required: true, default: "Unlimited" },
+  disabled: { type: SchemaTypes.Boolean, required: false },
   amountPerUser: {
     type: SchemaTypes.Mixed,
     required: true,
@@ -64,68 +89,95 @@ export const WeaponSchema = new Schema<WeaponData>({
   requires: { type: SchemaTypes.Mixed, required: true, default: [] },
 });
 
-export const MealSchema = new Schema<MealData>({
+export const MealSchema = new Schema<Meal>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true, default: "No description available" },
-  type: { type: SchemaTypes.String, required: true, default: 'meal' },
-  icon: { type: SchemaTypes.String, required: true, default: "No icon available" },
+  description: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No description available",
+  },
+  shopType: { type: SchemaTypes.String, required: true, default: "meals" },
+  icon: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No icon available",
+  },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
-  disabled: { type: SchemaTypes.Boolean, required: true, default: false },
+  disabled: { type: SchemaTypes.Boolean, required: false },
   effects: { type: [FoodEffect], required: true, default: [] },
-  ingredientsRequired: { type: [SchemaTypes.String], required: true, default: [] },
+  ingredientsRequired: { type: [MealIngredient], required: true, default: [] },
   amountPerUser: { type: SchemaTypes.Mixed, required: true, default: 0 },
 });
 
-export const ingredientSchema = new Schema<IngredientData>({
+export const ingredientSchema = new Schema<Item>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true, default: "No description available" },
-  type: { type: SchemaTypes.String, required: true, default: 'ingredient' },
-  icon: { type: SchemaTypes.String, required: true, default: "No icon available" },
+  description: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No description available",
+  },
+  shopType: { type: SchemaTypes.String, required: true, default: "ingredients" },
+  icon: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No icon available",
+  },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
-  disabled: { type: SchemaTypes.Boolean, required: true, default: false },
+  disabled: { type: SchemaTypes.Boolean, required: false },
   amountPerUser: {
     type: SchemaTypes.Mixed,
     required: true,
     default: "unlimited",
-  }
+  },
 });
 
-export const drinkSchema = new Schema<DrinkData>({
+export const drinkSchema = new Schema<Drink>({
   name: { type: ItemName, required: true },
-  description: { type: SchemaTypes.String, required: true, default: 'No description available' },
-  type: { type: SchemaTypes.String, required: true, default: 'drink' },
-  icon: { type: SchemaTypes.String, required: true, default: "No icon available" },
+  description: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No description available",
+  },
+  shopType: { type: SchemaTypes.String, required: true, default: "drinks" },
+  icon: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No icon available",
+  },
   price: { type: SchemaTypes.Number, required: true, default: 0 },
-  disabled: { type: SchemaTypes.Boolean, required: true, default: false },
-  amountPerUser: { type: SchemaTypes.Mixed, required: true, default: "unlimited" },
+  disabled: { type: SchemaTypes.Boolean, required: false },
+  amountPerUser: {
+    type: SchemaTypes.Mixed,
+    required: true,
+    default: "unlimited",
+  },
   effects: { type: [FoodEffect], required: true, default: [] },
 });
 
 export const EconomyUserInventory = new Schema<UserInventory>({
-  items: {
-    weapon: [WeaponSchema],
-    meal: [MealSchema],
-    ingredient: [ingredientSchema],
-    drink: [drinkSchema]
-    
-  },
+  weapons: [WeaponSchema],
+  meals: [MealSchema],
+  ingredients: [ingredientSchema],
+  drinks: [drinkSchema],
 });
 
-// Define the EconomyUser Schema
-export const EconomyUserSchema = new Schema<UserEconomy>({
+export const EconomyUserAccounts = new Schema<BankingAccounts>({
+  wallet: { type: SchemaTypes.Number, required: true, default: 0 },
+  bank: { type: SchemaTypes.Number, required: true, default: 0 },
+});
+
+export const EconomyUserSchema = new Schema<EconomyUser>({
   displayName: { type: SchemaTypes.String, required: true },
   userID: { type: SchemaTypes.String, required: true },
-  joined: { type: SchemaTypes.String, required: true },
-  accountBalance: { type: SchemaTypes.Number, default: 0 },
-  bankBalance: { type: SchemaTypes.Number, default: 0 },
-  privacySettings: { type: EconomyUserPrivacy, default: {} },
+  joined: { type: SchemaTypes.Date, required: true },
+  bankingAccounts: { type: EconomyUserAccounts, required: true, default: {} },
+  privacyOptions: { type: EconomyUserPrivacy, default: {} },
+  inventory: { type: EconomyUserInventory, default: {} },
   milestones: { type: [EconomyMilestone], default: [] },
   transactions: { type: [TransactionSchema], default: [] },
-  inventory: { type: EconomyUserInventory, default: {} },
-  activeEffects: { type: [FoodEffect], required: true, default: [] }
+  effects: { type: [FoodEffect], required: true, default: [] },
 });
 
-// Define the Guild Economy Schema
 export const EconomySchema = new Schema({
   name: { type: SchemaTypes.String, required: true },
   guildID: { type: SchemaTypes.String, required: true },

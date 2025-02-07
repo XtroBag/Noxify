@@ -1,5 +1,5 @@
 import { inlineCode } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler";
+import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
 import { Server } from '../../../handler/schemas/models/Models';
 
 export = {

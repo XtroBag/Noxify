@@ -1,5 +1,9 @@
-import { Intent, ConsoleColor } from "./handler";
-import { ChatInputCommandInteraction, ContextMenuCommandInteraction, EmbedBuilder } from "discord.js";
+import { Intent } from "./handler/types/Intent";
+import {
+  ChatInputCommandInteraction,
+  ContextMenuCommandInteraction,
+  EmbedBuilder,
+} from "discord.js";
 
 // Message command prefix.
 export const defaultPrefix: string = ".";
@@ -17,7 +21,7 @@ export const defaultIntents: Intent[] = [
 export const eventsFolderName: string = "events";
 export const commandsFolderName: string = "commands";
 export const componentsFolderName: string = "components";
-export const itemsFolderName: string = 'items';
+export const itemsFolderName: string = "items";
 
 export const milestones: number[] = [
   1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000,
@@ -27,6 +31,18 @@ export const validCurrencySymbols = ["$", "€", "£", "¥", "₣", "₹"];
 
 // Your Discord ID (for owner only commands)
 export const ownerId: string = "149621801989701633";
+
+export enum ConsoleColor {
+  Black = "\x1b[30m",
+  Red = "\x1b[31m",
+  Green = "\x1b[32m",
+  Yellow = "\x1b[33m",
+  Blue = "\x1b[34m",
+  Magenta = "\x1b[35m",
+  Cyan = "\x1b[36m",
+  White = "\x1b[37m",
+  Reset = "\x1b[0m",
+}
 
 // Layout for the info logging message.
 export function getLoggerLogMessage(message: string): string {
@@ -43,9 +59,15 @@ export function getLoggerErrorMessage(message: string): string {
   return `${ConsoleColor.Red}[ERROR] ${message}${ConsoleColor.Reset}`;
 }
 
+export function getLoggerIssueMessage(message: string): string {
+  return `${ConsoleColor.Cyan}[ISSUE] ${message}${ConsoleColor.Reset}`;
+}
+
 // Generates an embed when a user lacks the necessary conditions to execute a command.
 export function getCommandNotAllowedEmbed(
-  interaction: ChatInputCommandInteraction<"cached"> | ContextMenuCommandInteraction<'cached'>
+  interaction:
+    | ChatInputCommandInteraction<"cached">
+    | ContextMenuCommandInteraction<"cached">
 ): EmbedBuilder {
   return new EmbedBuilder()
     .setTitle("You are not allowed to use this command!")
@@ -74,7 +96,7 @@ export function formatCooldown(cooldownSeconds: number) {
   // If there's no cooldown, return "none"
   if (!cooldownSeconds || cooldownSeconds === 0) {
     return "None";
-}
+  }
   // Calculate minutes and seconds
   const minutes = Math.floor(cooldownSeconds / 60);
   const seconds = cooldownSeconds % 60;
@@ -140,14 +162,26 @@ export enum Emojis {
   DesktopDnd = "<:DesktopDnd:1225363491016151053>",
   MobileDnd = "<:MobileDnd:1225363543872765952>",
   WebDnd = "<:WebDnd:1225372400947040346>",
-//---------------------------------------------------------
+  //---------------------------------------------------------
   Check = "<:Check:1327805046238220459>",
   Cross = "<:Cross:1327805032686682112>",
   Info = "<:Info:1327805011358384249>",
   XtroBag = "<:XtroBag:1327053059179810999>",
   BroBoiler = "<:BroBoiler:1327053036912119890>",
   Noxify = "<:Noxify:1327053875286638624>",
-//---------------------------------------------------------
+  Blank = "<:Blank:1336760508736475136>",
+  Back = "<:Back:1336877193430827079>",
+  Forward = "<:Forward:1336877123075309629>",
+  Damage = "<:Damage:1336898713875910747>",
+  Description = "<:Description:1336898666342125688>",
+  Uses = "<:Uses:1336921047303454771>",
+  //---------------------------------------------------------
+  Ammo = "<:Ammo:1337153601126010932>",
+  Melee = "<:Melee:1336920971713708084>",
+  Ranged = "<:Ranged:1336920871423574019>",
+  Throwable = "<:Throwable:1336920821339521107>",
+  Other = "<:Other:1336921005821792358>",
+  //---------------------------------------------------------
   Wallet = "<:Wallet:1327676494327316544>",
   Bank = "<:Bank:1327676483405086720>",
   Leaderboard = "<:Leaderboard:1327676465852186746>",
@@ -157,13 +191,56 @@ export enum Emojis {
   ReceiveNotifications = "<:ReceiveNotifications:1327682773686685718>",
   ViewInventory = "<:ViewInventory:1327682762529968260>",
   Weapons = "<:Weapons:1327691131001241600>",
-  Meals = "<:Meals:1328232906778480672>",
+  Meals = "<:Meal:1337140908298207312>",
   Drinks = "<:Drinks:1328232919113928765>",
   Ingredients = "<:Ingredients:1328232894837297193>",
-  ChocolateMilk = "<:ChocolateMilk:1328222977220939806>",
-  StrawberryMilk = "<:StrawberryMilk:1328222418543710208>",
-  Sugar = "<:Sugar:1328212985306681486>",
-  Flour = "<:Flour:1328211629220827226>",
+  //---------------------------------------------------------
+  // Drinks
+  ChocolateMilk = "<:ChocolateMilk:1337142079348019362>",
+  StrawberryMilk = "<:StrawberryMilk:1337142050193150053>",
+  //---------------------------------------------------------
+  // Ingredients
+  BlueBerry = "<:Blueberry:1337141225395982337>",
+  Bread = "<:Bread:1337141318459330651>",
+  Butter = "<:Butter:1337145852095107133>",
+  Cheese = "<:Cheese:1337141356052611163>",
+  Chocolate = "<:Chocolate:1337141395084804207>",
+  Corn = "<:Corn:1337141439469064223>",
+  Cucumber = "<:Cucumber:1337141475951116328>",
+  Egg = "<:Egg:1337141509950148740>",
+  Flour = "<:Flour:1337141546444652676>",
+  Lettuce = "<:Lettuce:1337141584562618470>",
+  Meat = "<:Meat:1337141616917614663>",
+  Milk = "<:Milk:1337141656473829466>",
+  Noodles = "<:Noodles:1337141690246365316>",
+  Onion = "<:Onion:1337141722907545702>",
+  Pepper = "<:Pepper:1337141757384855697>",
+  Pineapple = "<:Pineapple:1337141788275904562>",
+  Potato = "<:Potato:1337141835012902942>",
+  Salt = "<:Salt:1337141884279324752>",
+  Sauce = "<:Sauce:1337141922145370223>",
+  Strawberry = "<:Strawberry:1337141953007194163>",
+  Sugar = "<:Sugar:1337141993112862814>",
+  Tomato = "<:Tomato:1337142023173705859>",
+  //---------------------------------------------------------
+  // Meals
+  Cake = "<:Cake:1337142109446340688>",
+  Cookie = "<:Cookie:1337142136075980820>",
+  Donut = "<:Donut:1337142158871761009>",
+  Fries = "<:Fries:1337142182192222221>",
+  Burger = "<:Burger:1337142207047532676>",
+  Pizza = "<:Pizza:1337142230980235376>",
+  Salad = "<:Salad:1337142253960826940>",
+  Sandwich = "<:Sandwich:1337142277738332180>",
+  Spaghetti = "<:Spaghetti:1337142300882505819>",
+  Taco = "<:Taco:1337142323393462342>",
+  //---------------------------------------------------------
+  // Weapons
+  Bomb = "<:Bomb:1337141016486219807>",
+  Bow = "<:Bow:1337141083271991306>",
+  Gun = "<:Gun:1337141116176306257>",
+  Knife = "<:Knife:1337147545322913852>",
+  Saw = "<:Saw:1337141191468253295>",
 }
 
 export enum Colors {

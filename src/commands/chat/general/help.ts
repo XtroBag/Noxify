@@ -1,5 +1,5 @@
 import { Collection, EmbedBuilder, inlineCode } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler";
+import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
 import { Colors, formatCooldown } from "../../../config";
 
 export = {

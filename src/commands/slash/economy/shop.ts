@@ -41,7 +41,7 @@ export = {
             .setName("amount")
             .setDescription("The amount of this item you would like to buy")
             .setMinValue(1)
-            .setMaxValue(10)
+            .setMaxValue(100)
             .setRequired(true)
         )
     ),
@@ -83,10 +83,15 @@ export = {
               .setMinValues(1)
               .setPlaceholder("Pick a category")
               .addOptions([
-                { label: "Ingredients", value: "ingredients", emoji: Emojis.Ingredients },
+                {
+                  label: "Ingredients",
+                  value: "ingredients",
+                  emoji: Emojis.Ingredients,
+                },
                 { label: "Drinks", value: "drinks", emoji: Emojis.Drinks },
                 { label: "Meals", value: "meals", emoji: Emojis.Meals },
                 { label: "Weapons", value: "weapons", emoji: Emojis.Weapons },
+                { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
               ])
           );
 
@@ -95,7 +100,7 @@ export = {
           components: [menuRow],
         });
       } else if (subcommand === "buy") {
-        const buyingItem = interaction.options.getString("item");
+        let buyingItem = interaction.options.getString("item");
         const amount = interaction.options.getNumber("amount");
 
         const mentionPattern = /<@!?(\d+)>/;
@@ -134,6 +139,17 @@ export = {
             ],
           });
         }
+
+        // Function to capitalize the first letter of each word
+        const capitalizeWords = (str: string): string => {
+          return str
+            .split(" ") // Split by space to handle multi-word items
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+            .join(" "); // Join back into a string
+        };
+
+        // Capitalize the first letter of each word in the item name
+        buyingItem = capitalizeWords(buyingItem);
 
         const allItems = client.utils.getAll();
         const itemType = allItems.find(
@@ -183,20 +199,22 @@ export = {
               weapons: [],
               drinks: [],
               ingredients: [],
+              ammos: [],
             },
             effects: [],
           });
         }
-        const updatedEcononmy = await client.utils.getEconomy({
+
+        const updatedEconomy = await client.utils.getEconomy({
           guildID: interaction.guildId,
         });
 
-        const newUser = updatedEcononmy.users.find(
+        const newUser = updatedEconomy.users.find(
           (user) => user.userID === interaction.member.id
         );
 
         const maxAmount =
-          item.amountPerUser === "Unlimited" ? Infinity : item.amountPerUser;
+          item.amountPerUser === "Infinite" ? Infinity : item.amountPerUser;
 
         const inventoryItems = client.utils.getInventoryItems(
           newUser,
@@ -204,12 +222,11 @@ export = {
         );
 
         const itemName =
-        maxAmount === 1 ? item.name.singular : item.name.plural;
+          maxAmount === 1 ? item.name.singular : item.name.plural;
 
         const currentAmount = inventoryItems.filter(
           (item) => item.name.singular === itemName
         ).length;
-
 
         if (currentAmount + amount > maxAmount) {
           return await interaction.reply({
@@ -245,6 +262,7 @@ export = {
           amount: amount,
           guildID: interaction.guildId,
         });
+
         return await interaction.reply({
           embeds: [
             new EmbedBuilder()

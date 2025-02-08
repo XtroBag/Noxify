@@ -10,6 +10,7 @@ import {
 import { GuildEconomy } from "../types/Database";
 import { ChatInputCommandInteraction } from "discord.js";
 import {
+  Ammo,
   Drink,
   Item,
   ItemCategory,
@@ -26,20 +27,16 @@ export class Utilities {
     this.client = client;
   }
 
-  async databaseConnection(options: {
-    enabled: boolean;
-  }): Promise<Mongoose | void> {
+  async databaseConnection(): Promise<Mongoose | void> {
     try {
-      if (options.enabled) {
-        Logger.log("Connecting to MongoDB.");
-        return await this.client.db.connect(process.env.MONGOOSE_URI, {
-          dbName: "Noxify",
-          autoCreate: true,
-        });
-      } else {
-        Logger.log("Disconnecting from MongoDB.");
-        return await this.client.db.disconnect();
-      }
+      Logger.log("Connecting to MongoDB.");
+      return await this.client.db.connect(process.env.MONGOOSE_URI, {
+        dbName: "Noxify",
+        autoCreate: true,
+      });
+
+      Logger.log("Disconnecting from MongoDB.");
+      return await this.client.db.disconnect();
     } catch (error) {
       Logger.error("Database connection failed", error);
       throw error;
@@ -194,7 +191,7 @@ export class Utilities {
     );
   }
 
-  async setCheckingBalance({
+  async setWalletBalance({
     guildID,
     userID,
     amount,
@@ -211,7 +208,7 @@ export class Utilities {
     );
   }
 
-  async setSavingsBalance({
+  async setBankBalance({
     guildID,
     userID,
     amount,
@@ -243,7 +240,9 @@ export class Utilities {
     this.client.items.weapons.map((item) => {
       return allItems.push(item);
     });
-
+    this.client.items.ammos.map((item) => {
+      return allItems.push(item)
+    })
     return allItems;
   }
 
@@ -267,7 +266,7 @@ export class Utilities {
 
     for (const item of itemsIterator) {
       if (!item.disabled) {
-        items.push(item as Item & Meal & Drink & Weapon);
+        items.push(item as Item & Meal & Drink & Weapon & Ammo);
       }
     }
 
@@ -467,7 +466,7 @@ export class Utilities {
           uses: weaponItem.uses,
           purchasedAt: new Date().toDateString(),
           requires: weaponItem.requires,
-        });
+        }) as Weapon[];
         break;
       }
 
@@ -477,7 +476,7 @@ export class Utilities {
           ...itemData,
           ingredientsRequired: mealItem.ingredientsRequired,
           effects: mealItem.effects,
-        });
+        }) as Meal[];
         break;
       }
 
@@ -486,7 +485,18 @@ export class Utilities {
         itemsToAdd = Array(amount).fill({
           ...itemData,
           effects: drinkItem.effects,
-        });
+          ingredientsRequired: drinkItem.ingredientsRequired,
+        }) as Drink[];
+        break;
+      }
+
+      case "ammos": {
+        const ammoItem = item as Ammo;
+        itemsToAdd = Array(amount).fill({
+          ...itemData,
+          speed: ammoItem.speed,
+          specialEffects: ammoItem.specialEffects
+        }) as Ammo[];
         break;
       }
 
@@ -499,7 +509,7 @@ export class Utilities {
         [`users.$.inventory.${item.shopType}`]: { $each: itemsToAdd },
       },
       $inc: {
-        "users.$.bankingAccounts.checking": -item.price * amount,
+        "users.$.bankingAccounts.wallet": -item.price * amount,
       },
     };
 

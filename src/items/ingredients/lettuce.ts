@@ -10,6 +10,6 @@ export = {
   // description: "",
   icon: Emojis.Lettuce,
   disabled: false,
-  amountPerUser: 'Unlimited',
+  amountPerUser: 'Infinite',
   price: 10,
 } as Item;

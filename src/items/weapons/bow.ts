@@ -14,6 +14,6 @@ export = {
   amountPerUser: 1,
   weaponType: "Ranged",
   damage: 82,
-  requires: ['Arrows'],
-  uses: 'Unlimited',
+  requires: ['Arrow'],
+  uses: 'Infinite',
 } as Omit<Weapon, 'purchasedAt'>;

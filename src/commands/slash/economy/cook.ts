@@ -75,6 +75,7 @@ export = {
           weapons: [],
           drinks: [],
           ingredients: [],
+          ammos: [],
         },
         effects: [],
       });

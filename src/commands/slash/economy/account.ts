@@ -88,7 +88,7 @@ export = {
         milestones: [],
         transactions: [],
         effects: [],
-        inventory: { meals: [], weapons: [], drinks: [], ingredients: [] },
+        inventory: { meals: [], weapons: [], drinks: [], ingredients: [], ammos: [] },
       });
     }
 

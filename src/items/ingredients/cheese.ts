@@ -11,5 +11,5 @@ export = {
   disabled: false,
   shopType: "ingredients",
   price: 20,
-  amountPerUser: "Unlimited",
+  amountPerUser: "Infinite",
 } as Item;

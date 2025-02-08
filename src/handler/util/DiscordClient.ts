@@ -24,7 +24,7 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../types/Command";
-import { Meal, Drink, Weapon, Item as Ingredient } from "../types/economy/EconomyItem";
+import { Meal, Drink, Weapon, Item as Ingredient, Ammo } from "../types/economy/EconomyItem";
 import { registerItems } from "./handleItems";
 import { Utilities } from "./Utilities";
 
@@ -66,16 +66,15 @@ export class DiscordClient extends Client {
       weapons: new Collection<string, Weapon>(),
       ingredients: new Collection<string, Ingredient>(),
       drinks: new Collection<string, Drink>(),
-      meals: new Collection<string, Meal>()
+      meals: new Collection<string, Meal>(),
+      ammos: new Collection<string, Ammo>(),
     };
     this.utils = new Utilities(this)
     this.db = mongoose;
   }
 
-  public async registerDatabase(
-    options: { enabled: boolean }
-  ): Promise<void> {
-    this.utils.databaseConnection(options)
+  public async registerDatabase(): Promise<void> {
+    this.utils.databaseConnection()
   }
 
   public async registerEvents(): Promise<void> {

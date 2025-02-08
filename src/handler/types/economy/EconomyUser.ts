@@ -1,4 +1,4 @@
-import { Drink, Effect, Item, Meal, Weapon } from "./EconomyItem";
+import { Ammo, Drink, Effect, Item, Meal, Weapon } from "./EconomyItem";
 
 export interface Milestone {
   amount: number;
@@ -23,6 +23,7 @@ export interface UserInventory {
   weapons: Weapon[];
   meals: Meal[];
   drinks: Drink[];
+  ammos: Ammo[];
 }
 
 export interface BankingAccounts {
@@ -47,6 +48,7 @@ export interface EconomyUser {
     weapons: Weapon[];
     meals: Meal[];
     drinks: Drink[];
+    ammos: Ammo[];
   };
   milestones: Milestone[];
   transactions: Transaction[];

@@ -90,7 +90,7 @@ export = {
         privacyOptions: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: {  meals: [], weapons: [], drinks: [], ingredients: [] },
+        inventory: {  meals: [], weapons: [], drinks: [], ingredients: [], ammos: [], },
         effects: []
       });
       user = economy.users.find(
@@ -120,8 +120,8 @@ export = {
       user.bankingAccounts.bank -= amount;
       user.bankingAccounts.wallet += amount;
 
-      client.utils.setCheckingBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.wallet });
-      client.utils.setSavingsBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.bank });
+      client.utils.setWalletBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.wallet });
+      client.utils.setBankBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.bank });
 
       const transactionDescription = `Transferred ${client.utils.formatNumber(
         amount
@@ -175,8 +175,8 @@ export = {
       user.bankingAccounts.wallet -= amount;
       user.bankingAccounts.bank += amount;
 
-      client.utils.setCheckingBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.wallet });
-      client.utils.setSavingsBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.bank });
+      client.utils.setWalletBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.wallet });
+      client.utils.setBankBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.bank });
 
       const transactionDescription = `Transferred ${client.utils.formatNumber(
         amount

@@ -44,8 +44,8 @@ export = {
             value: "bankBalance",
           },
           {
-            name: "Account Balance",
-            value: "accountBalance",
+            name: "Wallet Balance",
+            value: "walletBalance",
           },
           {
             name: "Milestones",
@@ -108,12 +108,12 @@ export = {
           case "bankBalance":
             {
               const modal = new ModalBuilder()
-                .setCustomId(`repair-savings-balance|${member.id}`)
+                .setCustomId(`repair-bank-balance|${member.id}`)
                 .setTitle("Update Bank Balance")
                 .setComponents(
                   new ActionRowBuilder<TextInputBuilder>().addComponents(
                     new TextInputBuilder()
-                      .setCustomId("repaired-savings-balance")
+                      .setCustomId("repaired-bank-balance")
                       .setLabel("New Balance")
                       .setPlaceholder(
                         `Please don't use comma's they are not allowed`
@@ -128,15 +128,15 @@ export = {
               await interaction.showModal(modal);
             }
             break;
-          case "accountBalance":
+          case "walletBalance":
             {
               const modal = new ModalBuilder()
-                .setCustomId(`repair-checking-balance|${member.id}`)
+                .setCustomId(`repair-wallet-balance|${member.id}`)
                 .setTitle("Update Account Balance")
                 .setComponents(
                   new ActionRowBuilder<TextInputBuilder>().addComponents(
                     new TextInputBuilder()
-                      .setCustomId("repaired-checking-balance")
+                      .setCustomId("repaired-wallet-balance")
                       .setLabel("New Balance")
                       .setPlaceholder(
                         `Please don't use comma's they are not allowed`

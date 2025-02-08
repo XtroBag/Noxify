@@ -10,7 +10,7 @@ export const client: DiscordClient = new DiscordClient({
     await client.registerEvents();
     await client.registerComponents();
     await client.registerItems();
-    await client.registerDatabase({ enabled: true });
+    await client.registerDatabase();
     await client.registerCommands({ deploy: true });
     await client.connect(process.env.CLIENT_TOKEN);
 })();

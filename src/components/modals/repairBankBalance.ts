@@ -3,13 +3,13 @@ import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import { Economy } from "../../handler/schemas/models/Models";
 
 export = {
-  id: "repair-savings-balance",
+  id: "repair-bank-balance",
   type: ComponentTypes.Modal,
   async execute(client, interaction, extras) {
     const userID = extras[0];
 
     let newBalance = interaction.fields.getTextInputValue(
-      "repaired-savings-balance"
+      "repaired-bank-balance"
     );
 
     newBalance = newBalance.replace(/,/g, ""); // Remove commas
@@ -27,7 +27,7 @@ export = {
     // Update logic here (save the new balance to the database or perform other actions)
     await Economy.findOneAndUpdate(
       { guildID: interaction.guildId, "users.userID": userID },
-      { $set: { "users.$.bankingAccounts.savings": newBalance } }
+      { $set: { "users.$.bankingAccounts.bank": newBalance } }
     );
 
     await interaction.reply({

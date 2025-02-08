@@ -2,7 +2,7 @@ import { glob } from "glob";
 import { DiscordClient } from "./DiscordClient";
 import { itemsFolderName } from "../../config";
 import Logger from "./Logger";
-import { Drink, Item, Items, Meal, Weapon } from "../types/economy/EconomyItem";
+import { Ammo, Drink, Item, Items, Meal, Weapon } from "../types/economy/EconomyItem";
 
 export async function registerItems(client: DiscordClient) {
   await getItemModules(client);
@@ -39,6 +39,8 @@ async function getItemModules(client: DiscordClient): Promise<void> {
         client.items[module.shopType].set(module.name.singular, module as Meal);
       } else if (module.shopType === 'drinks') {
         client.items[module.shopType].set(module.name.singular, module as Drink);
+      } else if (module.shopType === 'ammos') {
+        client.items[module.shopType].set(module.name.singular, module as Ammo);
       }
     } catch (err) {
       Logger.error(`Failed to load item at ${importPath}`, err);

@@ -10,6 +10,6 @@ export = {
   // description: "",
   icon: Emojis.Potato,
   disabled: false,
-  amountPerUser: 'Unlimited',
+  amountPerUser: 'Infinite',
   price: 30,
 } as Item;

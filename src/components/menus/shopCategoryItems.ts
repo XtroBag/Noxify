@@ -118,6 +118,7 @@ export = {
                       value: "weapons",
                       emoji: Emojis.Weapons,
                     },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
                   ])
               ),
               ...buttonRow,
@@ -234,6 +235,7 @@ export = {
                       value: "weapons",
                       emoji: Emojis.Weapons,
                     },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
                   ])
               ),
               ...buttonRow,
@@ -351,6 +353,7 @@ export = {
                       value: "weapons",
                       emoji: Emojis.Weapons,
                     },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
                   ])
               ),
               ...buttonRow,
@@ -389,7 +392,7 @@ export = {
           );
 
           const typeIcons: { [key in WeaponType]: string } = {
-            Ammo: Emojis.Ammo,
+            // Ammo: Emojis.Ammo,
             Melee: Emojis.Melee,
             Ranged: Emojis.Ranged,
             Throwable: Emojis.Throwable,
@@ -434,6 +437,17 @@ export = {
             )} ${Emojis.Damage} Damage: ${inlineCode(paddedDamage)} ${
               Emojis.Uses
             } Uses: ${inlineCode(item.uses.toString() || "Unknown")}\n`;
+
+            const requiresText =
+              item.requires && item.requires.length > 0
+                ? item.requires
+                    .map((requirement) => requirement.toString())
+                    .join(" | ")
+                : "None";
+
+            description += `${Emojis.Blank} ${
+              Emojis.Requires
+            } Requires: ${inlineCode(requiresText)}\n`;
           });
 
           embed.setDescription(description);
@@ -487,6 +501,115 @@ export = {
                       value: "weapons",
                       emoji: Emojis.Weapons,
                     },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
+                  ])
+              ),
+              ...buttonRow,
+            ],
+          });
+        }
+        break;
+
+      case "ammos":
+        {
+          const selectedItems = client.utils.getItemsByType("ammos");
+          const sortedList = selectedItems.sort((a, b) =>
+            a.name.singular.localeCompare(b.name.singular)
+          );
+
+          const totalPages = Math.ceil(sortedList.length / itemsPerPage);
+          const ammos = sortedList.slice(
+            pageIndex * itemsPerPage,
+            (pageIndex + 1) * itemsPerPage
+          );
+
+          const longestItemNameLength = Math.max(
+            ...ammos.map((item) => item.name.singular.length)
+          );
+
+          let description = "";
+          const topic = "";
+
+          if (topic.length > 0) {
+            description += `${topic}\n\n`;
+          }
+
+          ammos.forEach((item) => {
+            const formattedPrice = client.utils.formatNumber(item.price);
+            const paddedName = item.name.singular.padEnd(
+              longestItemNameLength,
+              " "
+            );
+
+            const specialEffects =
+              item.specialEffects && item.specialEffects.length > 0
+                ? item.specialEffects
+                    .map((effect) => inlineCode(effect))
+                    .join(" | ")
+                : "None";
+
+            // Add to the description
+            description += `${item.icon} **\`${paddedName}\`** ${inlineCode(
+              formattedPrice
+            )} ${economy.icon}\n`;
+            description += `${Emojis.Blank} ${Emojis.Speed} Speed: ${inlineCode(
+              item.speed.toString()
+            )}\n`;
+            description += `${Emojis.Blank} ${
+              Emojis.SpecialEffects
+            } Special Effects: ${inlineCode(specialEffects)}\n`;
+          });
+
+          embed.setDescription(description);
+          embed.setFooter({
+            text: `Viewing: Ammos`,
+          });
+
+          const buttonRow =
+            totalPages > 1
+              ? [
+                  new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ButtonBuilder()
+                      .setCustomId(
+                        `shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`
+                      )
+                      .setEmoji(Emojis.Back)
+                      .setStyle(ButtonStyle.Secondary)
+                      .setDisabled(pageIndex === 0),
+                    new ButtonBuilder()
+                      .setCustomId(
+                        `shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`
+                      )
+                      .setEmoji(Emojis.Forward)
+                      .setStyle(ButtonStyle.Secondary)
+                      .setDisabled(pageIndex >= totalPages - 1)
+                  ),
+                ]
+              : [];
+
+          await menu.update({
+            embeds: [embed],
+            components: [
+              new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+                new StringSelectMenuBuilder()
+                  .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
+                  .setMaxValues(1)
+                  .setMinValues(1)
+                  .setPlaceholder("Pick a category")
+                  .addOptions([
+                    {
+                      label: "Ingredients",
+                      value: "ingredients",
+                      emoji: Emojis.Ingredients,
+                    },
+                    { label: "Drinks", value: "drinks", emoji: Emojis.Drinks },
+                    { label: "Meals", value: "meals", emoji: Emojis.Meals },
+                    {
+                      label: "Weapons",
+                      value: "weapons",
+                      emoji: Emojis.Weapons,
+                    },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
                   ])
               ),
               ...buttonRow,

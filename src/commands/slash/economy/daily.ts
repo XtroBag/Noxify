@@ -40,7 +40,7 @@ export = {
         privacyOptions: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { meals: [], weapons: [], drinks: [], ingredients: [] },
+        inventory: { meals: [], weapons: [], drinks: [], ingredients: [], ammos: [], },
         effects: []
       });
     }
@@ -54,7 +54,7 @@ export = {
 
     const newBankBalance = user.bankingAccounts.bank + gained;
 
-    await client.utils.setSavingsBalance({
+    await client.utils.setBankBalance({
       guildID: interaction.guildId,
       userID: interaction.member.id,
       amount: newBankBalance,

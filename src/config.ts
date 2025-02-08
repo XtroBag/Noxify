@@ -194,6 +194,9 @@ export enum Emojis {
   Meals = "<:Meal:1337140908298207312>",
   Drinks = "<:Drinks:1328232919113928765>",
   Ingredients = "<:Ingredients:1328232894837297193>",
+  Requires = "<:Requires:1337580573362749530>",
+  Speed = "<:Speed:1337600796677636136>",
+  SpecialEffects = "<:SpecialEffects:1337600829078634519>",
   //---------------------------------------------------------
   // Drinks
   ChocolateMilk = "<:ChocolateMilk:1337142079348019362>",
@@ -241,6 +244,10 @@ export enum Emojis {
   Gun = "<:Gun:1337141116176306257>",
   Knife = "<:Knife:1337147545322913852>",
   Saw = "<:Saw:1337141191468253295>",
+  //---------------------------------------------------------
+  // Ammos
+  Arrow = "<:Arrow:1337580232915288074>",
+  Bullet = "<:Bullet:1337580206877179935>",
 }
 
 export enum Colors {

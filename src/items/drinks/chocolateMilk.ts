@@ -11,7 +11,7 @@ export = {
   shopType: "drinks",
   price: 90,
   disabled: false,
-  amountPerUser: "Unlimited",
+  amountPerUser: "Infinite",
   effects: [],
   ingredientsRequired: [
     { name: "Chocolate", amountNeeded: 1 },

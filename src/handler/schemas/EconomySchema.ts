@@ -8,6 +8,7 @@ import {
   UserInventory,
 } from "../types/economy/EconomyUser";
 import {
+  Ammo,
   Drink,
   Effect,
   Item,
@@ -79,12 +80,12 @@ export const WeaponSchema = new Schema<Weapon>({
   price: { type: SchemaTypes.Number, required: true, default: 0 },
   level: { type: SchemaTypes.Number, required: true, default: 0 },
   damage: { type: SchemaTypes.Number, required: true, default: 0 },
-  uses: { type: SchemaTypes.Mixed, required: true, default: "Unlimited" },
+  uses: { type: SchemaTypes.Mixed, required: true, default: "Infinite" },
   disabled: { type: SchemaTypes.Boolean, required: false },
   amountPerUser: {
     type: SchemaTypes.Mixed,
     required: true,
-    default: "unlimited",
+    default: "Infinite",
   },
   requires: { type: SchemaTypes.Mixed, required: true, default: [] },
 });
@@ -127,7 +128,7 @@ export const ingredientSchema = new Schema<Item>({
   amountPerUser: {
     type: SchemaTypes.Mixed,
     required: true,
-    default: "unlimited",
+    default: "Infinite",
   },
 });
 
@@ -149,16 +150,42 @@ export const drinkSchema = new Schema<Drink>({
   amountPerUser: {
     type: SchemaTypes.Mixed,
     required: true,
-    default: "unlimited",
+    default: "Infinite",
   },
   effects: { type: [FoodEffect], required: true, default: [] },
 });
+
+export const ammoSchema = new Schema<Ammo>({
+  name: { type: ItemName, required: true },
+  description: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No description available",
+  },
+  shopType: { type: SchemaTypes.String, required: true, default: "drinks" },
+  icon: {
+    type: SchemaTypes.String,
+    required: true,
+    default: "No icon available",
+  },
+  price: { type: SchemaTypes.Number, required: true, default: 0 },
+  disabled: { type: SchemaTypes.Boolean, required: false },
+  amountPerUser: {
+    type: SchemaTypes.Mixed,
+    required: true,
+    default: "Infinite",
+  },
+  specialEffects: { type: [String], required: true, default: [] },
+  speed: { type: SchemaTypes.Number, required: true, default: 0 },
+
+})
 
 export const EconomyUserInventory = new Schema<UserInventory>({
   weapons: [WeaponSchema],
   meals: [MealSchema],
   ingredients: [ingredientSchema],
   drinks: [drinkSchema],
+  ammos: [ammoSchema],
 });
 
 export const EconomyUserAccounts = new Schema<BankingAccounts>({

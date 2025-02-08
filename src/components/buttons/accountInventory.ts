@@ -26,9 +26,9 @@ export = {
         button.reply({
           embeds: [
             new EmbedBuilder()
-              .setColor(Colors.Warning)
+              .setColor(Colors.Error)
               .setDescription(
-                `Due to ${person.displayName}'s privacy settings, you cannot view their inventory.`
+                `${Emojis.Cross} Due to ${person.displayName}'s privacy options, their inventory is not visible to you.`
               ),
           ],
           ephemeral: true,
@@ -59,6 +59,9 @@ async function displayInventory(
   const drinks = person.inventory.drinks.filter(
     (item) => item.shopType === "drinks"
   );
+  const ammos = person.inventory.ammos.filter(
+    (item) => item.shopType === "ammos"
+  );
 
   const groupItemsByName = (items: Items[]) => {
     const groupedItems: { [key: string]: any[] } = {};
@@ -71,15 +74,14 @@ async function displayInventory(
     return groupedItems;
   };
 
-  // Group weapons, meals, ingredients, and drinks separately
   const groupedWeapons = groupItemsByName(weapons);
   const groupedMeals = groupItemsByName(meals);
   const groupedIngredients = groupItemsByName(ingredients);
   const groupedDrinks = groupItemsByName(drinks);
+  const groupedAmmos = groupItemsByName(ammos);
 
   let inventoryDescription = "";
 
-  // Function to get the correct item name based on quantity
   const getItemName = (
     itemName: string,
     itemPluralName: string,
@@ -93,18 +95,16 @@ async function displayInventory(
     inventoryDescription += `${Emojis.Ingredients} **Ingredients**:\n`;
     for (const [name, items] of Object.entries(groupedIngredients)) {
       const quantity = items.length;
-      const item = items[0]; // Assuming the name is consistent for all items of this type
+      const item = items[0];
       const itemName = item.name.singular;
-      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
+      const itemPluralName = item.name.plural || `${itemName}s`;
 
-      // Get the correct item name based on quantity
       const itemNamePluralized = getItemName(
         itemName,
         itemPluralName,
         quantity
       );
 
-      // If there's more than 1, show quantity
       inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
     }
   } else {
@@ -116,18 +116,16 @@ async function displayInventory(
     inventoryDescription += `${Emojis.Drinks} **Drinks**:\n`;
     for (const [name, items] of Object.entries(groupedDrinks)) {
       const quantity = items.length;
-      const item = items[0]; // Assuming the name is consistent for all items of this type
+      const item = items[0];
       const itemName = item.name.singular;
-      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
+      const itemPluralName = item.name.plural || `${itemName}s`;
 
-      // Get the correct item name based on quantity
       const itemNamePluralized = getItemName(
         itemName,
         itemPluralName,
         quantity
       );
 
-      // If there's more than 1, show quantity
       inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
     }
   } else {
@@ -139,18 +137,16 @@ async function displayInventory(
     inventoryDescription += `${Emojis.Meals} **Meals**:\n`;
     for (const [name, items] of Object.entries(groupedMeals)) {
       const quantity = items.length;
-      const item = items[0]; // Assuming the name is consistent for all items of this type
+      const item = items[0];
       const itemName = item.name.singular;
-      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
+      const itemPluralName = item.name.plural || `${itemName}s`;
 
-      // Get the correct item name based on quantity
       const itemNamePluralized = getItemName(
         itemName,
         itemPluralName,
         quantity
       );
 
-      // If there's more than 1, show quantity
       inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
     }
   } else {
@@ -162,25 +158,43 @@ async function displayInventory(
     inventoryDescription += `${Emojis.Weapons} **Weapons**:\n`;
     for (const [name, items] of Object.entries(groupedWeapons)) {
       const quantity = items.length;
-      const item = items[0]; // Assuming the name is consistent for all items of this type
+      const item = items[0];
       const itemName = item.name.singular;
-      const itemPluralName = item.name.plural || `${itemName}s`; // Default to plural if no explicit plural form exists
+      const itemPluralName = item.name.plural || `${itemName}s`;
 
-      // Get the correct item name based on quantity
       const itemNamePluralized = getItemName(
         itemName,
         itemPluralName,
         quantity
       );
 
-      // If there's more than 1, show quantity
       inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
     }
   } else {
     inventoryDescription += `${Emojis.Weapons} **Weapons**: None\n`;
   }
 
-  // Create the embed with the inventory
+  // Show ammos (New section)
+  if (Object.keys(groupedAmmos).length > 0) {
+    inventoryDescription += `${Emojis.Ammo} **Ammos**:\n`;  // Assuming you have an Emojis.Ammos
+    for (const [name, items] of Object.entries(groupedAmmos)) {
+      const quantity = items.length;
+      const item = items[0];
+      const itemName = item.name.singular;
+      const itemPluralName = item.name.plural || `${itemName}s`;
+
+      const itemNamePluralized = getItemName(
+        itemName,
+        itemPluralName,
+        quantity
+      );
+
+      inventoryDescription += `› ${itemNamePluralized} x${quantity}\n`;
+    }
+  } else {
+    inventoryDescription += `${Emojis.Ammo} **Ammos**: None\n`;  // Assuming you have an Emojis.Ammos
+  }
+
   await button.deferUpdate();
   await button.editReply({
     components: [
@@ -199,4 +213,3 @@ async function displayInventory(
     ],
   });
 }
-

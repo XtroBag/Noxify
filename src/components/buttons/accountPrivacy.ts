@@ -23,7 +23,7 @@ export = {
           new EmbedBuilder()
             .setColor(Colors.Warning)
             .setDescription(
-              `You're not able to use this menu, it's ${person.displayName}'s`
+              `${Emojis.Info} This menu is for ${person.displayName}, so you cannot use it.`
             ),
         ],
         ephemeral: true,

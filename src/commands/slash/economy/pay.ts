@@ -115,7 +115,7 @@ export = {
         milestones: [],
         transactions: [],
         inventory: {
-          meals: [], weapons: [], drinks: [], ingredients: [],
+          meals: [], weapons: [], drinks: [], ingredients: [], ammos: [],
         },
         effects: [],
       });
@@ -145,7 +145,7 @@ export = {
             milestones: [],
             transactions: [],
             inventory: {
-              meals: [], weapons: [], drinks: [], ingredients: [],
+              meals: [], weapons: [], drinks: [], ingredients: [], ammos: [],
             },
             effects: [],
           });

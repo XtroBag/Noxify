@@ -121,6 +121,7 @@ export = {
                       value: "weapons",
                       emoji: Emojis.Weapons,
                     },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
                   ])
               ),
               ...buttonRow,
@@ -237,6 +238,7 @@ export = {
                       value: "weapons",
                       emoji: Emojis.Weapons,
                     },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
                   ])
               ),
               ...buttonRow,
@@ -353,6 +355,7 @@ export = {
                       value: "weapons",
                       emoji: Emojis.Weapons,
                     },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
                   ])
               ),
               ...buttonRow,
@@ -391,7 +394,7 @@ export = {
           );
 
           const typeIcons: { [key in WeaponType]: string } = {
-            Ammo: Emojis.Ammo,
+            // Ammo: Emojis.Ammo,
             Melee: Emojis.Melee,
             Ranged: Emojis.Ranged,
             Throwable: Emojis.Throwable,
@@ -489,6 +492,7 @@ export = {
                       value: "weapons",
                       emoji: Emojis.Weapons,
                     },
+                    { label: "Ammos", value: "ammos", emoji: Emojis.Ammo },
                   ])
               ),
               ...buttonRow,

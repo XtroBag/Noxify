@@ -21,8 +21,9 @@ export interface RequiredIngredient {
   amountNeeded: number;
 }
 
-export type ItemType = "meals" | "ingredients" | "drinks" | "weapons";
-export type WeaponType = "Throwable" | "Ammo" | "Melee" | "Ranged" | "Other";
+export type ItemType = "meals" | "ingredients" | "drinks" | "weapons" | "ammos";
+export type WeaponType = "Throwable" | "Melee" | "Ranged" | "Other";
+export type Items = Weapon | Meal | Drink | Item | Ammo;
 
 export interface Item {
   name: NameStyles;
@@ -31,16 +32,21 @@ export interface Item {
   icon: string;
   disabled: boolean;
   price: number;
-  amountPerUser: number | "Unlimited";
+  amountPerUser: number | "Infinite";
 }
 
 export interface Weapon extends Item {
   damage: number;
   weaponType: WeaponType;
-  uses: number | "Unlimited";
+  uses: number | "Infinite";
   level: number;
   purchasedAt?: Date;
   requires: string[];
+}
+
+export interface Ammo extends Item {
+  speed: number,
+  specialEffects: string[]
 }
 
 export interface Meal extends Item {
@@ -58,6 +64,5 @@ export type ItemCategory = {
   meals: Meal[];
   drinks: Drink[];
   ingredients: Item[];
+  ammos: Ammo[];
 };
-
-export type Items = Weapon | Meal | Drink | Item;

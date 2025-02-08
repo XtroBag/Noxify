@@ -10,6 +10,6 @@ export = {
   description: "A small, sweet fruit packed with antioxidants.",
   icon: Emojis.BlueBerry,
   disabled: false,
-  amountPerUser: 'Unlimited',
+  amountPerUser: 'Infinite',
   price: 30,
 } as Item;

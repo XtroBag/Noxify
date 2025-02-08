@@ -12,7 +12,7 @@ export = {
   disabled: false,
   shopType: "meals",
   price: 140,
-  amountPerUser: "Unlimited",
+  amountPerUser: "Infinite",
   effects: [],
   ingredientsRequired: [
     { name: "Butter", amountNeeded: 1 },

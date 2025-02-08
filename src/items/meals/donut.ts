@@ -18,5 +18,5 @@ export = {
     { name: "Sugar", amountNeeded: 1 },
   ],
   price: 140,
-  amountPerUser: "Unlimited",
+  amountPerUser: "Infinite",
 } as Meal;

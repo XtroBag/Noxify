@@ -6,9 +6,9 @@ import {
   EmbedBuilder,
   inlineCode,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
-import { Colors, Emojis } from "../../config";
-import { EconomyUser } from "../../handler/types/economy/EconomyUser";
+import { ComponentModule, ComponentTypes } from "../../../handler/types/Component";
+import { Colors, Emojis } from "../../../config";
+import { EconomyUser } from "../../../handler/types/economy/EconomyUser";
 
 export = {
   id: "accountBack",

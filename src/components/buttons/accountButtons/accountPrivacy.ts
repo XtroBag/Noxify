@@ -6,8 +6,8 @@ import {
   ButtonBuilder,
   ButtonStyle,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
-import { Emojis, Colors } from "../../config";
+import { ComponentModule, ComponentTypes } from "../../../handler/types/Component";
+import { Emojis, Colors } from "../../../config";
 
 export = {
   id: "accountPrivacy",

@@ -153,22 +153,34 @@ export = {
     }
 
     if (missingIngredients.length > 0) {
+      const mealName =
+        quantity > 1
+          ? selectedMealData.name.plural
+          : selectedMealData.name.singular;
+      const mealAmountText = quantity > 1 ? `**${quantity}** ` : "a ";
+    
+      let ingredientsText = "";
+      let chunkSize = 4;
+      let chunkCount = Math.ceil(missingIngredients.length / chunkSize);
+    
+      for (let i = 0; i < chunkCount; i++) {
+        let chunk = missingIngredients.slice(i * chunkSize, (i + 1) * chunkSize);
+        ingredientsText += `${Emojis.Blank} ${chunk.join(" ")}\n`;
+      }
+    
       await interaction.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Warning)
             .setDescription(
-              `${
-                Emojis.Info
-              } You are missing the following ingredients to cook ${
-                selectedMealData.name.singular
-              } (x${quantity}):\n${missingIngredients.join(" ")}`
+              `${Emojis.Info} You’re missing these ingredients to cook ${mealAmountText}${mealName}\n${ingredientsText}`
             ),
         ],
         ephemeral: true,
       });
       return;
     }
+    
 
     selectedMealData.ingredientsRequired.forEach(async (ingredient) => {
       const ingredientIndex = user.inventory.ingredients.findIndex(
@@ -186,6 +198,8 @@ export = {
     await client.utils.addMealToInventory({
       guildID: interaction.guildId,
       userID: interaction.member.id,
+      items: user.inventory.ingredients,
+      quantity: quantity,
       meal: {
         name: {
           singular: selectedMealData.name.singular,
@@ -200,8 +214,6 @@ export = {
         amountPerUser: selectedMealData.amountPerUser,
         ingredientsRequired: selectedMealData.ingredientsRequired,
       },
-      item: user.inventory.ingredients,
-      quantity: quantity,
     });
 
     await interaction.reply({

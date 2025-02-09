@@ -5,10 +5,10 @@ import {
   ButtonStyle,
   EmbedBuilder,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
-import { Colors, Emojis } from "../../config";
-import { EconomyUser } from "../../handler/types/economy/EconomyUser";
-import { Items } from "../../handler/types/economy/EconomyItem";
+import { ComponentModule, ComponentTypes } from "../../../handler/types/Component";
+import { Colors, Emojis } from "../../../config";
+import { EconomyUser } from "../../../handler/types/economy/EconomyUser";
+import { Items } from "../../../handler/types/economy/EconomyItem";
 
 export = {
   id: "accountInventory",

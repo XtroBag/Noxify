@@ -7,8 +7,8 @@ import {
   inlineCode,
   userMention,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
-import { Colors, Emojis, milestones } from "../../config";
+import { ComponentModule, ComponentTypes } from "../../../handler/types/Component";
+import { Colors, Emojis, milestones } from "../../../config";
 import { EconomyUser } from "src/handler/types/economy/EconomyUser";
 
 export = {

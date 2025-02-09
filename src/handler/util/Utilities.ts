@@ -319,13 +319,13 @@ export class Utilities {
     guildID,
     userID,
     meal,
-    item,
+    items,
     quantity,
   }: {
     guildID: string;
     userID: string;
     meal: Meal;
-    item: Item[];
+    items: Item[];
     quantity: number;
   }) {
 
@@ -333,7 +333,7 @@ export class Utilities {
   
     for (const ingredient of meal.ingredientsRequired) {
       const amountNeeded = ingredient.amountNeeded * quantity;
-      const userIngredient = item.find(
+      const userIngredient = items.find(
         (userItem) => userItem.name.singular === ingredient.name
       );
   

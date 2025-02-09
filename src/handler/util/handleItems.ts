@@ -47,5 +47,5 @@ async function getItemModules(client: DiscordClient): Promise<void> {
     }
   }
 
-  Logger.log(`Loaded ${totalItems} items in total.`);
+  // Logger.log(`Loaded ${totalItems} items in total.`);
 }

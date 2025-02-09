@@ -1,5 +1,14 @@
-import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler/types/Command";
-import { ApplicationIntegrationType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
+import {
+  CommandTypes,
+  RegisterTypes,
+  SlashCommandModule,
+} from "../../../handler/types/Command";
+import {
+  ApplicationIntegrationType,
+  EmbedBuilder,
+  InteractionContextType,
+  SlashCommandBuilder,
+} from "discord.js";
 import { Colors, Emojis } from "../../../config";
 
 export = {
@@ -44,7 +53,9 @@ export = {
     const from = interaction.options.getString("from");
     const to = interaction.options.getString("to");
 
-    const economy = await client.utils.getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.getEconomy({
+      guildID: interaction.guildId,
+    });
 
     if (from === to) {
       await interaction.reply({
@@ -84,14 +95,20 @@ export = {
         joined: new Date(),
         displayName: interaction.member.displayName,
         bankingAccounts: {
-            wallet: economy.defaultBalance,
-            bank: 0
+          wallet: economy.defaultBalance,
+          bank: 0,
         },
         privacyOptions: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: {  meals: [], weapons: [], drinks: [], ingredients: [], ammos: [], },
-        effects: []
+        inventory: {
+          meals: [],
+          weapons: [],
+          drinks: [],
+          ingredients: [],
+          ammos: [],
+        },
+        effects: [],
       });
       user = economy.users.find(
         (user) => user.userID === interaction.member.id
@@ -107,9 +124,13 @@ export = {
             new EmbedBuilder()
               .setColor(Colors.Warning)
               .setDescription(
-                `${Emojis.Info} You do not have enough ${economy.name.toLowerCase().replace(/s$/, "")}${
+                `${Emojis.Info} You do not have enough ${economy.name
+                  .toLowerCase()
+                  .replace(/s$/, "")}${
                   amount === 1 ? "" : "s"
-                } in your bank account to transfer ${client.utils.formatNumber(amount)}.`
+                } in your bank account to transfer ${client.utils.formatNumber(
+                  amount
+                )}.`
               ),
           ],
           ephemeral: true,
@@ -120,14 +141,23 @@ export = {
       user.bankingAccounts.bank -= amount;
       user.bankingAccounts.wallet += amount;
 
-      client.utils.setWalletBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.wallet });
-      client.utils.setBankBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.bank });
+      client.utils.setWalletBalance({
+        guildID: interaction.guildId,
+        userID: interaction.member.id,
+        amount: user.bankingAccounts.wallet,
+      });
+      client.utils.setBankBalance({
+        guildID: interaction.guildId,
+        userID: interaction.member.id,
+        amount: user.bankingAccounts.bank,
+      });
 
       const transactionDescription = `Transferred ${client.utils.formatNumber(
         amount
-      )} ${economy.name.toLowerCase().replace(/s$/, "")}${
-        amount === 1 ? "" : "s"
-      } from bank to wallet`;
+      )} ${client.utils.formatEconomyName({
+        economy: economy,
+        amount: amount,
+      })}`;
 
       await client.utils.addTransaction({
         guildID: interaction.guildId,
@@ -142,30 +172,30 @@ export = {
 
       await interaction.reply({
         embeds: [
-          new EmbedBuilder()
-            .setColor(Colors.Success)
-            .setDescription(
-              `${Emojis.Check} Sent ${client.utils.formatNumber(amount)} ${economy.name
-                .toLowerCase()
-                .replace(/s$/, "")}${
-                amount === 1 ? "" : "s"
-              } from your bank to your wallet.`
-            ),
+          new EmbedBuilder().setColor(Colors.Success).setDescription(
+            `${Emojis.Check} Sent ${client.utils.formatNumber(
+              amount
+            )} ${client.utils.formatEconomyName({
+              economy: economy,
+              amount: amount,
+            })} from your bank to your wallet.`
+          ),
         ],
       });
     } else if (from === "wallet" && to === "bank") {
       if (user.bankingAccounts.wallet < amount) {
         await interaction.reply({
           embeds: [
-            new EmbedBuilder()
-              .setColor(Colors.Warning)
-              .setDescription(
-                `${Emojis.Info} You do not have enough ${economy.name
-                  .toLowerCase()
-                  .replace(/s$/, "")}${
-                  amount === 1 ? "" : "s"
-                } in your wallet to transfer ${client.utils.formatNumber(amount)}.`
-              ),
+            new EmbedBuilder().setColor(Colors.Warning).setDescription(
+              `${
+                Emojis.Info
+              } You do not have enough ${client.utils.formatEconomyName({
+                economy: economy,
+                amount: amount,
+              })} in your wallet to transfer ${client.utils.formatNumber(
+                amount
+              )}.`
+            ),
           ],
           ephemeral: true,
         });
@@ -175,16 +205,23 @@ export = {
       user.bankingAccounts.wallet -= amount;
       user.bankingAccounts.bank += amount;
 
-      client.utils.setWalletBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.wallet });
-      client.utils.setBankBalance({ guildID: interaction.guildId, userID: interaction.member.id, amount: user.bankingAccounts.bank });
+      client.utils.setWalletBalance({
+        guildID: interaction.guildId,
+        userID: interaction.member.id,
+        amount: user.bankingAccounts.wallet,
+      });
+      client.utils.setBankBalance({
+        guildID: interaction.guildId,
+        userID: interaction.member.id,
+        amount: user.bankingAccounts.bank,
+      });
 
       const transactionDescription = `Transferred ${client.utils.formatNumber(
         amount
-      )} ${economy.name
-        .toLowerCase()
-        .replace(/s$/, "")}${
-        amount === 1 ? "" : "s"
-      } from wallet to bank`;
+      )} ${client.utils.formatEconomyName({
+        economy: economy,
+        amount: amount,
+      })} from wallet to bank`;
 
       await client.utils.addTransaction({
         guildID: interaction.guildId,
@@ -199,15 +236,14 @@ export = {
 
       await interaction.reply({
         embeds: [
-          new EmbedBuilder()
-            .setColor(Colors.Success)
-            .setDescription(
-              `Sent ${client.utils.formatNumber(amount)} ${economy.name
-                .toLowerCase()
-                .replace(/s$/, "")}${
-                amount === 1 ? "" : "s"
-              } from your wallet to your bank.`
-            ),
+          new EmbedBuilder().setColor(Colors.Success).setDescription(
+            `Sent ${client.utils.formatNumber(
+              amount
+            )} ${client.utils.formatEconomyName({
+              economy: economy,
+              amount: amount,
+            })} from your wallet to your bank.`
+          ),
         ],
       });
     }

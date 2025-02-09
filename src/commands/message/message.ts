@@ -1,7 +1,7 @@
 import { CommandTypes, MessageCommandModule } from "../../handler/types/Command";
 
 export = {
-  name: "Hello",
+  name: "Hello There",
   type: CommandTypes.MessageCommand,
   disabled: false,
   ownerOnly: false,

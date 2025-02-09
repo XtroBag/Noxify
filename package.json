@@ -5,8 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "compile": "rd /s /q dist && tsc",
-    "start": "node --no-warnings dist/index.js",
-    "cs": "npm run compile && npm run start"
+    "start": "npm run compile && node dist/index.js",
+    "deploy": "npm run compile && node dist/deploy.js"
   },
   "keywords": [],
   "author": "XtroBag",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/ms": "^0.7.34",
     "axios": "^1.7.9",
+    "canvas": "^3.1.0",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
     "emoji-regex": "^10.4.0",

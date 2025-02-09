@@ -140,15 +140,13 @@ export = {
           });
         }
 
-        // Function to capitalize the first letter of each word
         const capitalizeWords = (str: string): string => {
           return str
-            .split(" ") // Split by space to handle multi-word items
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
-            .join(" "); // Join back into a string
+            .split(" ")
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(" ");
         };
 
-        // Capitalize the first letter of each word in the item name
         buyingItem = capitalizeWords(buyingItem);
 
         const allItems = client.utils.getAll();

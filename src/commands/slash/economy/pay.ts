@@ -9,7 +9,7 @@ import {
   InteractionContextType,
   SlashCommandBuilder,
 } from "discord.js";
-import { Colors } from "../../../config";
+import { Colors, Emojis } from "../../../config";
 
 export = {
   type: CommandTypes.SlashCommand,
@@ -43,7 +43,7 @@ export = {
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
-            .setDescription(`You are not able to interact with apps`),
+            .setDescription(`${Emojis.Cross} You are not able to interact with apps`),
         ],
         ephemeral: true,
       });
@@ -56,7 +56,7 @@ export = {
           new EmbedBuilder()
             .setColor(Colors.Error)
             .setDescription(
-              "Decimals are not allowed. Please provide a whole number."
+              `${Emojis.Cross} Decimals are not allowed. Please provide a whole number.`
             ),
         ],
         ephemeral: true,
@@ -170,7 +170,7 @@ export = {
           new EmbedBuilder()
             .setColor(Colors.Error)
             .setDescription(
-              `An error occurred while updating the user accounts.`
+              `${Emojis.Cross} An error occurred while updating the user accounts.`
             ),
         ],
         ephemeral: true,
@@ -183,7 +183,7 @@ export = {
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Warning)
-            .setDescription(`Insufficient funds.`),
+            .setDescription(`${Emojis.Info} Insufficient funds.`),
         ],
         ephemeral: true,
       });
@@ -208,9 +208,10 @@ export = {
           .setDescription(
             `Successfully transferred ${client.utils.formatNumber(
               amount
-            )} ${economyData.name.toLowerCase().replace(/s$/, "")}${
-              amount === 1 ? "" : "s"
-            } to ${member.displayName}.`
+            )} ${client.utils.formatEconomyName({
+              economy: economyData,
+              amount: amount,
+            })} to ${member.displayName}.`
           ),
       ],
     });

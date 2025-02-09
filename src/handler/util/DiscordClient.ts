@@ -20,7 +20,6 @@ import {
   MessageCommandModule,
   PingCommandModule,
   PrefixCommandModule,
-  RegisterCommandOptions,
   RegisterTypes,
   SlashCommandModule,
 } from "../types/Command";
@@ -81,10 +80,8 @@ export class DiscordClient extends Client {
     await registerEvents(this);
   }
 
-  public async registerCommands(
-    options: RegisterCommandOptions
-  ): Promise<void> {
-    await registerCommands(this, options);
+  public async registerCommands(): Promise<void> {
+    await registerCommands(this);
   }
 
   public async deleteCommand(

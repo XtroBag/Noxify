@@ -11,11 +11,10 @@ import {
   EmbedBuilder,
   inlineCode,
 } from "discord.js";
-import { Economy } from "../../../handler/schemas/models/Models";
 import {
   Meal,
   RequiredIngredient,
-} from "src/handler/types/economy/EconomyItem";
+} from "../../../handler/types/economy/EconomyItem";
 import { Colors, Emojis } from "../../../config";
 
 export = {
@@ -32,9 +31,19 @@ export = {
         .setDescription("The meal you want to cook")
         .setAutocomplete(true)
         .setRequired(true)
+    )
+    .addIntegerOption((option) =>
+      option
+        .setName("amount")
+        .setDescription("How many of this meal do you want to cook?")
+        .setRequired(true)
+        .setMinValue(1)
+        .setMaxValue(50)
     ),
 
   async execute({ client, interaction }) {
+    let selectedMeal = interaction.options.getString("meal");
+
     const economy = await client.utils.getEconomy({
       guildID: interaction.guildId,
     });
@@ -89,7 +98,19 @@ export = {
       (economyUser) => economyUser.userID === interaction.member.id
     );
 
-    const selectedMeal = interaction.options.getString("meal");
+    const capitalizeWords = (str: string): string => {
+      return str
+        .split(" ")
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" ");
+    };
+
+    selectedMeal = capitalizeWords(selectedMeal);
+
+    const quantity = interaction.options.getInteger("amount");
+
     const selectedMealData = client.utils
       .getItemsByType("meals")
       .find((meal) => meal.name.singular === selectedMeal);
@@ -116,15 +137,17 @@ export = {
         (item) => item.name.singular === ingredient.name
       ).length;
 
-      if (amountOwned < ingredient.amountNeeded) {
-        const missingAmount = ingredient.amountNeeded - amountOwned;
+      const requiredAmount = ingredient.amountNeeded * quantity;
+
+      if (amountOwned < requiredAmount) {
+        const missingAmount = requiredAmount - amountOwned;
         missingIngredients.push(
           inlineCode(`${ingredient.name} x${missingAmount}`)
         );
       } else {
         updatedIngredients.push({
           name: ingredient.name,
-          amountNeeded: ingredient.amountNeeded,
+          amountNeeded: requiredAmount,
         });
       }
     }
@@ -139,7 +162,7 @@ export = {
                 Emojis.Info
               } You are missing the following ingredients to cook ${
                 selectedMealData.name.singular
-              }:\n${missingIngredients.join(" ")}`
+              } (x${quantity}):\n${missingIngredients.join(" ")}`
             ),
         ],
         ephemeral: true,
@@ -155,31 +178,30 @@ export = {
       if (ingredientIndex !== -1) {
         user.inventory.ingredients.splice(
           ingredientIndex,
-          ingredient.amountNeeded
+          ingredient.amountNeeded * quantity
         );
       }
     });
 
-    const mealToAdd: Meal = {
-      name: {
-        singular: selectedMealData.name.singular,
-        plural: selectedMealData.name.plural,
-      },
-      description: selectedMealData.description,
-      shopType: "meals",
-      price: selectedMealData.price,
-      disabled: selectedMealData.disabled,
-      effects: selectedMealData.effects,
-      icon: selectedMealData.icon,
-      amountPerUser: selectedMealData.amountPerUser,
-      ingredientsRequired: selectedMealData.ingredientsRequired,
-    };
-
-    client.utils.addMealToInventory({
+    await client.utils.addMealToInventory({
       guildID: interaction.guildId,
       userID: interaction.member.id,
-      meal: mealToAdd,
+      meal: {
+        name: {
+          singular: selectedMealData.name.singular,
+          plural: selectedMealData.name.plural,
+        },
+        description: selectedMealData.description,
+        shopType: "meals",
+        price: selectedMealData.price,
+        disabled: selectedMealData.disabled,
+        effects: selectedMealData.effects,
+        icon: selectedMealData.icon,
+        amountPerUser: selectedMealData.amountPerUser,
+        ingredientsRequired: selectedMealData.ingredientsRequired,
+      },
       item: user.inventory.ingredients,
+      quantity: quantity,
     });
 
     await interaction.reply({
@@ -187,7 +209,7 @@ export = {
         new EmbedBuilder()
           .setColor(Colors.Success)
           .setDescription(
-            `${Emojis.Check} Successfully cooked ${selectedMealData.name.singular}!`
+            `${Emojis.Check} Successfully cooked ${selectedMealData.name.singular} (x${quantity})!`
           ),
       ],
       ephemeral: true,

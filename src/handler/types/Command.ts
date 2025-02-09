@@ -109,6 +109,3 @@ export interface PingCommandModule extends BaseCommandModule {
     execute: (params: { client: DiscordClient, message: Message, args: string[] }) => Promise<any>;
 }
 
-export interface RegisterCommandOptions {
-    deploy: boolean;
-}

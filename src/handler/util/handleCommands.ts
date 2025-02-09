@@ -6,7 +6,6 @@ import { commandsFolderName, ownerId } from "../../config";
 import {
     CommandModule,
     CommandTypes,
-    RegisterCommandOptions,
     RegisterTypes,
 } from "../types/Command";
 import {
@@ -22,9 +21,8 @@ import {
     User
 } from "discord.js";
 
-export async function registerCommands(client: DiscordClient, options: RegisterCommandOptions): Promise<void> {
+export async function registerCommands(client: DiscordClient): Promise<void> {
     await getCommandModules(client);
-    if (options.deploy) await deploySlashCommands(client);
 }
 
 async function getCommandModules(client: DiscordClient): Promise<void> {
@@ -82,51 +80,6 @@ async function getCommandModules(client: DiscordClient): Promise<void> {
             Logger.warn("You can only register 5 Message User Menus.");
             process.exit();
         }
-    }
-}
-
-async function deploySlashCommands(client: DiscordClient): Promise<void> {
-    let guildCommands: any[] = [];
-    let globalCommands: any[] = [];
-
-    for (const module of client.commands.slash) {
-        if (module[1].register === RegisterTypes.Guild) guildCommands.push(module[1].data);
-        if (module[1].register === RegisterTypes.Global) globalCommands.push(module[1].data);
-    }
-
-    for (const module of client.commands.context) {
-        if (module[1].register === RegisterTypes.Guild) guildCommands.push(module[1].data);
-        if (module[1].register === RegisterTypes.Global) globalCommands.push(module[1].data);
-    }
-
-    if (guildCommands.length > 0) await uploadSlashCommands(RegisterTypes.Guild, guildCommands);
-    if (globalCommands.length > 0) await uploadSlashCommands(RegisterTypes.Global, globalCommands);
-}
-
-async function uploadSlashCommands(type: RegisterTypes, commands: Array<any>): Promise<void> {
-    if (!process.env.CLIENT_TOKEN) {
-        return Logger.error("No process.env.TOKEN set.");
-    }
-
-    if (!process.env.CLIENT_ID) {
-        return Logger.error("No process.env.CLIENT_ID set.");
-    }
-
-    if (RegisterTypes.Guild && !process.env.GUILD_ID) {
-        return Logger.error("No process.env.GUILD_ID set.");
-    }
-
-    const rest: REST = new REST({ version: "10" }).setToken(process.env.CLIENT_TOKEN);
-    try {
-        Logger.log(`Started refreshing ${commands.length} application commands.`);
-
-        await rest.put(
-            Routes[type](process.env.CLIENT_ID, process.env.GUILD_ID), { body: commands }
-        );
-
-        Logger.log(`Successfully reloaded ${commands.length} application commands.`);
-    } catch (err) {
-        Logger.error("Error while uploading slash commands.", err);
     }
 }
 

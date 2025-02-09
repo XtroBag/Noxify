@@ -29,14 +29,11 @@ export class Utilities {
 
   async databaseConnection(): Promise<Mongoose | void> {
     try {
-      Logger.log("Connecting to MongoDB.");
+      Logger.log("Successfully connected to MongoDB!");
       return await this.client.db.connect(process.env.MONGOOSE_URI, {
         dbName: "Noxify",
         autoCreate: true,
       });
-
-      Logger.log("Disconnecting from MongoDB.");
-      return await this.client.db.disconnect();
     } catch (error) {
       Logger.error("Database connection failed", error);
       throw error;
@@ -84,6 +81,18 @@ export class Utilities {
       Logger.error("Error validating emoji", error);
       throw error;
     }
+  }
+
+  formatEconomyName({
+    economy,
+    amount,
+  }: {
+    economy: GuildEconomy;
+    amount: number;
+  }): string {
+    return (
+      economy.name.toLowerCase().replace(/s$/, "") + (amount === 1 ? "" : "s")
+    );
   }
 
   //---------------------------------------------------------------------------------------------
@@ -241,8 +250,8 @@ export class Utilities {
       return allItems.push(item);
     });
     this.client.items.ammos.map((item) => {
-      return allItems.push(item)
-    })
+      return allItems.push(item);
+    });
     return allItems;
   }
 
@@ -311,20 +320,47 @@ export class Utilities {
     userID,
     meal,
     item,
+    quantity,
   }: {
     guildID: string;
     userID: string;
     meal: Meal;
     item: Item[];
+    quantity: number;
   }) {
+
+    const updatedIngredients: Item[] = [];
+  
+    for (const ingredient of meal.ingredientsRequired) {
+      const amountNeeded = ingredient.amountNeeded * quantity;
+      const userIngredient = item.find(
+        (userItem) => userItem.name.singular === ingredient.name
+      );
+  
+      if (userIngredient && userIngredient.price >= amountNeeded) {
+        userIngredient.price -= amountNeeded;
+  
+        updatedIngredients.push(userIngredient);
+      }
+    }
+  
+    const mealsToAdd: Meal[] = [];
+    for (let i = 0; i < quantity; i++) {
+      mealsToAdd.push({
+        ...meal,
+        ingredientsRequired: meal.ingredientsRequired,
+        effects: meal.effects,
+      });
+    }
+  
     await Economy.updateOne(
       { guildID: guildID, "users.userID": userID },
       {
         $push: {
-          "users.$.inventory.meals": meal,
+          "users.$.inventory.meals": { $each: mealsToAdd },
         },
         $set: {
-          "users.$.inventory.ingredients": item,
+          "users.$.inventory.ingredients": updatedIngredients,
         },
       }
     );
@@ -495,7 +531,7 @@ export class Utilities {
         itemsToAdd = Array(amount).fill({
           ...itemData,
           speed: ammoItem.speed,
-          specialEffects: ammoItem.specialEffects
+          specialEffects: ammoItem.specialEffects,
         }) as Ammo[];
         break;
       }

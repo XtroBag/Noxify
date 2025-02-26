@@ -63,6 +63,10 @@ export function getLoggerIssueMessage(message: string): string {
   return `${ConsoleColor.Cyan}[ISSUE] ${message}${ConsoleColor.Reset}`;
 }
 
+export function getDebugIssueMessage(message: string): string {
+  return `${ConsoleColor.Blue}[DEBUG] ${message}${ConsoleColor.Reset}`;
+}
+
 // Generates an embed when a user lacks the necessary conditions to execute a command.
 export function getCommandNotAllowedEmbed(
   interaction:
@@ -200,6 +204,17 @@ export enum Emojis {
   Requires = "<:Requires:1337580573362749530>",
   Speed = "<:Speed:1337600796677636136>",
   SpecialEffects = "<:SpecialEffects:1337600829078634519>",
+  Health = "<:Health:1344345265783574649>",
+  StartBlank = "<:StartBlank:1340175509522485280>",
+  MiddleBlank = "<:MiddleFill:1344336666395021474>",
+  EndBlank = "<:EndBlank:1340175583493230632>",
+  StartHalf = "<:StartHalf:1344336992573329459>",
+  MiddleHalf = "<:MiddleHalf:1344337049595150378>",
+  EndHalf = "<:EndHalf:1344337083342389360>",
+  StartFill = "<:StartFill:1344336652826312866>",
+  MiddleFill = "<:MiddleFill:1344336666395021474>",
+  EndFill = "<:EndFill:1344336682169798749>",
+
   //---------------------------------------------------------
   // Drinks
   ChocolateMilk = "<:ChocolateMilk:1337142079348019362>",

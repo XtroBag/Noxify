@@ -197,6 +197,7 @@ export const EconomyUserSchema = new Schema<EconomyUser>({
   displayName: { type: SchemaTypes.String, required: true },
   userID: { type: SchemaTypes.String, required: true },
   joined: { type: SchemaTypes.Date, required: true },
+  health: { type: SchemaTypes.Number, required: true, default: 100 },
   bankingAccounts: { type: EconomyUserAccounts, required: true, default: {} },
   privacyOptions: { type: EconomyUserPrivacy, default: {} },
   inventory: { type: EconomyUserInventory, default: {} },

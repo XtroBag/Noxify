@@ -1,10 +1,7 @@
 import 'dotenv/config';
-import { AutomaticIntents } from './handler/types/Intent';
 import { DiscordClient } from "./handler/util/DiscordClient";
 
-export const client: DiscordClient = new DiscordClient({
-    intents: AutomaticIntents
-});
+export const client: DiscordClient = new DiscordClient();
 
 (async (): Promise<void> => {
     await client.registerEvents();
@@ -12,5 +9,5 @@ export const client: DiscordClient = new DiscordClient({
     await client.registerItems();
     await client.registerCommands();
     await client.registerDatabase();
-    await client.connect(process.env.CLIENT_TOKEN);
+    client.connect();
 })();

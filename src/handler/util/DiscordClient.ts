@@ -1,8 +1,8 @@
 import Logger from "./Logger";
-import { Intent } from "../types/Intent";
+import { AutomaticIntents, Intent } from "../types/Intent";
 import { defaultIntents } from "../../config";
 import { registerEvents } from "./handleEvents";
-import { registerComponents,  } from "./handleComponents";
+import { registerComponents, } from "./handleComponents";
 import { EventIntentMapping } from "../types/EventIntentMapping";
 import { AnySelectMenuInteraction, ButtonInteraction, Client, Collection, IntentsBitField, ModalSubmitInteraction } from "discord.js";
 import { ComponentCollections, ComponentModule } from "../types/Component";
@@ -11,7 +11,6 @@ import {
   deleteCommands,
   registerCommands,
 } from "./HandleCommands";
-import mongoose, { Mongoose } from "mongoose";
 import {
   CommandCollections,
   ContextMenuCommandModule,
@@ -33,11 +32,11 @@ export class DiscordClient extends Client {
   public components: ComponentCollections;
   public cooldowns: CooldownCollections;
   public items: ItemCollections;
-  public db: Mongoose;
   public utils: Utilities;
+  public replies: Map<string, string>
 
-  constructor(options: ConstructorParameters<typeof Client>[0]) {
-    super(options);
+  constructor() {
+    super({ intents: AutomaticIntents });
     this.events = [];
     this.commands = {
       slash: new Collection<string, SlashCommandModule>(),
@@ -68,8 +67,8 @@ export class DiscordClient extends Client {
       meals: new Collection<string, Meal>(),
       ammos: new Collection<string, Ammo>(),
     };
-    this.utils = new Utilities(this)
-    this.db = mongoose;
+    this.utils = new Utilities(this);
+    this.replies = new Map<string, string>();
   }
 
   public async registerDatabase(): Promise<void> {
@@ -110,18 +109,18 @@ export class DiscordClient extends Client {
     await registerItems(this);
   }
 
-  public async connect(token: string | undefined): Promise<void> {
-    if (token === undefined)
+  public connect() {
+    if (process.env.CLIENT_TOKEN === undefined)
       return Logger.error("Token is undefined. Please provide a valid token.");
-    if (!this.options.intents.bitfield) await this.setIntents();
+    if (!this.options.intents.bitfield) this.setIntents();
     try {
-      await this.login(token);
+      this.login(process.env.CLIENT_TOKEN);
     } catch (err) {
       Logger.error("Failed to connect to the bot:", err);
     }
   }
 
-  public async setIntents(): Promise<void> {
+  public setIntents(): IntentsBitField {
     const intentBitField: IntentsBitField = new IntentsBitField();
 
     this.events.forEach((event) => {
@@ -134,6 +133,7 @@ export class DiscordClient extends Client {
       intentBitField.add(intent);
     });
 
-    this.options.intents = intentBitField;
+    return this.options.intents = intentBitField;
+
   }
 }

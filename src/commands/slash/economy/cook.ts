@@ -71,6 +71,7 @@ export = {
         guildID: interaction.guildId,
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
+        health: 100,
         joined: new Date(),
         bankingAccounts: {
           wallet: economy.defaultBalance,

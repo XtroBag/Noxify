@@ -2,18 +2,16 @@ import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Comman
 
 export = {
   name: "emojify",
-  aliases: [],
+  aliases: ['e', 'emoji'],
   category: "fun",
   type: CommandTypes.PrefixCommand,
   async execute({ client, message, args }) {
-    const text = args.join(" ").trim(); // Trim to remove leading/trailing spaces
+    const text = args.join(" ").trim();
 
-    // Check if no text is provided (empty or only spaces)
     if (!text) {
       return message.reply("Please provide a message for me to emojify. Add what you want me to emojify after the command and I'll emojify it.");
     }
 
-    // Check if the text is too long (for example, over 200 characters)
     if (text.length > 30) {
       return message.reply(
         "Sorry, but the message you added is too long. Please keep it under 30 characters long."
@@ -26,7 +24,6 @@ export = {
       );
     }
 
-    // Convert the text to emojis (letters, numbers, and spaces)
     const emojiMap = {
       a: ":regional_indicator_a:",
       b: ":regional_indicator_b:",
@@ -74,10 +71,11 @@ export = {
     const emojiText = text
       .toLowerCase()
       .split("")
-      .map((char) => emojiMap[char] || (char === " " ? "  " : "")) // Convert to emoji if exists in map, otherwise handle spaces
+      .map((char) => emojiMap[char] || (char === " " ? "  " : ""))
       .join("");
 
-    // Send the converted emoji text
-    await message.reply({ content: emojiText });
+    const reply = await message.reply({ content: emojiText });
+
+    client.replies.set(message.id, reply.id);
   },
 } as PrefixCommandModule;

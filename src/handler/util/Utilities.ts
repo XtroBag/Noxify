@@ -19,6 +19,7 @@ import {
   Meal,
   Weapon,
 } from "../types/economy/EconomyItem";
+import mongoose from "mongoose";
 
 export class Utilities {
   private client: DiscordClient;
@@ -30,7 +31,7 @@ export class Utilities {
   async databaseConnection(): Promise<Mongoose | void> {
     try {
       Logger.log("Successfully connected to MongoDB!");
-      return await this.client.db.connect(process.env.MONGOOSE_URI, {
+      return await mongoose.connect(process.env.MONGOOSE_URI, {
         dbName: "Noxify",
         autoCreate: true,
       });
@@ -83,7 +84,7 @@ export class Utilities {
     }
   }
 
-  formatEconomyName({
+  formatNameByAmount({
     economy,
     amount,
   }: {
@@ -94,6 +95,30 @@ export class Utilities {
       economy.name.toLowerCase().replace(/s$/, "") + (amount === 1 ? "" : "s")
     );
   }
+
+  generateHealthBar(health: number, showBar: boolean): string {
+    if (!showBar) {
+      return ""; // Return an empty string if the bar should not be shown
+  }
+  
+      let bar = "";
+      let healthBlocks = Math.floor(health / 10);
+      let remainder = health % 10;
+
+      for (let i = 0; i < 10; i++) {
+        if (i < healthBlocks) {
+          bar += "🟩"; // Full health segments
+        } else if (i === healthBlocks && remainder > 0) {
+          bar += "🟨"; // Partial health segment
+        } else {
+          bar += "🟥"; // Empty health segments
+        }
+      }
+
+      return bar;
+
+  }
+
 
   //---------------------------------------------------------------------------------------------
 
@@ -330,20 +355,20 @@ export class Utilities {
   }) {
 
     const updatedIngredients: Item[] = [];
-  
+
     for (const ingredient of meal.ingredientsRequired) {
       const amountNeeded = ingredient.amountNeeded * quantity;
       const userIngredient = items.find(
         (userItem) => userItem.name.singular === ingredient.name
       );
-  
+
       if (userIngredient && userIngredient.price >= amountNeeded) {
         userIngredient.price -= amountNeeded;
-  
+
         updatedIngredients.push(userIngredient);
       }
     }
-  
+
     const mealsToAdd: Meal[] = [];
     for (let i = 0; i < quantity; i++) {
       mealsToAdd.push({
@@ -352,7 +377,7 @@ export class Utilities {
         effects: meal.effects,
       });
     }
-  
+
     await Economy.updateOne(
       { guildID: guildID, "users.userID": userID },
       {
@@ -428,11 +453,9 @@ export class Utilities {
         $push: {
           "users.$[sender].transactions": {
             type: "payment",
-            description: `Paid ${
-              updatedRecipient.displayName
-            } ${amount} ${economy.name.toLowerCase().replace(/s$/, "")}${
-              amount === 1 ? "" : "s"
-            }`,
+            description: `Paid ${updatedRecipient.displayName
+              } ${amount} ${economy.name.toLowerCase().replace(/s$/, "")}${amount === 1 ? "" : "s"
+              }`,
             amount: amount,
             time: new Date(),
           },
@@ -441,9 +464,8 @@ export class Utilities {
             description: `Received ${amount} ${economy.name.replace(
               /s$/,
               ""
-            )} ${economy.name.toLowerCase().replace(/s$/, "")}${
-              amount === 1 ? "" : "s"
-            } from ${updatedSender.displayName}`,
+            )} ${economy.name.toLowerCase().replace(/s$/, "")}${amount === 1 ? "" : "s"
+              } from ${updatedSender.displayName}`,
             amount: amount,
             time: new Date(),
           },

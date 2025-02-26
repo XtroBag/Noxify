@@ -77,6 +77,7 @@ export = {
         userID: member.id,
         displayName: member.displayName,
         joined: new Date(),
+        health: 100,
         bankingAccounts: {
           wallet: economy.defaultBalance,
           bank: 0,
@@ -135,14 +136,13 @@ export = {
       })
       .setDescription(
         `${Emojis.Joined} Joined: ${person.joined.toDateString()}\n` +
-          `${Emojis.Transactions} Transactions: ${inlineCode(
-            person.transactions.length.toString()
-          )}\n` +
-          `${Emojis.ActiveEffects} Active Effects: ${inlineCode(
-            person.effects.length.toString()
-          )}\n` +
-          `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n`
+        `${Emojis.Transactions} Transactions: ${inlineCode(person.transactions.length.toString())}\n` +
+        `${Emojis.ActiveEffects} Active Effects: ${inlineCode(person.effects.length.toString())}\n` +
+        `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n` + 
+        `${Emojis.Health} Health: ${inlineCode(person.health.toString())}\n` +
+        `${client.utils.generateHealthBar(person.health, false)}`
       )
+      
       .setFields([
         {
           name: `${Emojis.Bank} **Bank**`,

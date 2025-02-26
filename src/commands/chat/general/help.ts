@@ -23,7 +23,7 @@ export = {
         const disabled = command.disabled ? "Yes" : "No";
         const cooldown = formatCooldown(command.cooldown);
 
-        await message.reply({
+       const reply = await message.reply({
           embeds: [
             new EmbedBuilder()
               .setTitle(
@@ -49,6 +49,10 @@ export = {
               .setColor(Colors.Normal),
           ],
         });
+
+      //  const response = await reply.fetchReference()
+       client.replies.set(message.id, reply.id);
+
       } else {
         await message.reply({
           content: `No command found with the name **${cmdsearch}**. Please check the command name and try again.`,
@@ -83,16 +87,19 @@ export = {
       const usefulDescription = formatCommands(usefulCommands);
       const funDescription = formatCommands(funCommands);
 
-      await message.reply({
+      const reply = await message.reply({
         embeds: [
           new EmbedBuilder()
             .setTitle("Command List")
             .setDescription(
               `**General:**\n${generalDescription}\n**Useful:**\n${usefulDescription}\n**Fun:**\n${funDescription}`
             )
+            .setFooter({ text: 'Use .help <cmd> to get more info' })
             .setColor(Colors.Normal),
         ],
       });
+
+      client.replies.set(message.id, reply.id);
     }
   },
 } as PrefixCommandModule;

@@ -123,6 +123,7 @@ export = {
         }
       );
 
-    await message.reply({ embeds: [embed] });
+    const reply = await message.reply({ embeds: [embed] });
+    client.replies.set(message.id, reply.id);
   },
 } as PrefixCommandModule;

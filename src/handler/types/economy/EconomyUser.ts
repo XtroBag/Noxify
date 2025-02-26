@@ -35,6 +35,7 @@ export interface EconomyUser {
   displayName: string;
   userID: string;
   joined: Date;
+  health: number;
   bankingAccounts: {
     wallet: number;
     bank: number;

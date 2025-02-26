@@ -86,7 +86,7 @@ export interface ContextMenuCommandModule extends BaseCommandModule {
 
 export interface PrefixCommandModule extends BaseCommandModule {
     name: string;
-    aliases?: string[];
+    aliases: string[];
     category: string;
     permissions?: string[];
     type: CommandTypes.PrefixCommand;

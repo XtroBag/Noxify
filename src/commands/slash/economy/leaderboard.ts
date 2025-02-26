@@ -35,6 +35,7 @@ export = {
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
         joined: new Date(),
+        health: 100,
         bankingAccounts: {
             wallet: economyData.defaultBalance,
             bank: 0

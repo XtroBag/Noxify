@@ -17,17 +17,14 @@ export = {
   async execute({ client, message, args }) {
     const user = message.mentions.users.first();
 
-    // If no user is mentioned, reply with a message asking for a user
     if (!user) {
       await message.reply({ content: "Please provide a valid member in this server" });
       return;
     }
 
-    // Try to find the member object by user ID in the guild's member cache
     const member = message.guild.members.cache.get(user.id);
   
 
-    // If the member is not in the server, inform the user
     if (!member) {
       await message.reply({ content: "The mentioned user is not in this server" });
       return;
@@ -91,6 +88,7 @@ export = {
       }
     });
 
+    client.replies.set(message.id, reply.id);
 
     if (embeds.length > 1) {
       const collector = reply.createMessageComponentCollector({

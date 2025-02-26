@@ -1,5 +1,14 @@
-import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler/types/Command";
-import { ApplicationIntegrationType, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
+import {
+  CommandTypes,
+  RegisterTypes,
+  SlashCommandModule,
+} from "../../../handler/types/Command";
+import {
+  ApplicationIntegrationType,
+  EmbedBuilder,
+  InteractionContextType,
+  SlashCommandBuilder,
+} from "discord.js";
 import { Colors, Emojis } from "../../../config";
 
 export = {
@@ -13,7 +22,9 @@ export = {
     .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
 
   async execute({ client, interaction }) {
-    const economy = await client.utils.getEconomy({ guildID: interaction.guildId });
+    const economy = await client.utils.getEconomy({
+      guildID: interaction.guildId,
+    });
 
     if (!economy) {
       await interaction.reply({
@@ -33,19 +44,28 @@ export = {
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
         joined: new Date(),
+        health: 100,
         bankingAccounts: {
-            wallet: economy.defaultBalance,
-            bank: 0
+          wallet: economy.defaultBalance,
+          bank: 0,
         },
         privacyOptions: { receiveNotifications: true, viewInventory: false },
         milestones: [],
         transactions: [],
-        inventory: { meals: [], weapons: [], drinks: [], ingredients: [], ammos: [], },
-        effects: []
+        inventory: {
+          meals: [],
+          weapons: [],
+          drinks: [],
+          ingredients: [],
+          ammos: [],
+        },
+        effects: [],
       });
     }
 
-    const updatedEconomy = await client.utils.getEconomy({ guildID: interaction.guildId });
+    const updatedEconomy = await client.utils.getEconomy({
+      guildID: interaction.guildId,
+    });
     const user = updatedEconomy.users.find(
       (user) => user.userID === interaction.member.id
     );
@@ -61,11 +81,17 @@ export = {
     });
 
     await interaction.reply({
-      embeds: [new EmbedBuilder().setColor(Colors.Success).setDescription(`${Emojis.Check} You collected you're daily amount of ${gained} ${economy.name
-        .toLowerCase()
-        .replace(/s$/, "")}${
-        gained === 1 ? "" : "s"
-      }`)]
+      embeds: [
+        new EmbedBuilder()
+          .setColor(Colors.Success)
+          .setDescription(
+            `${
+              Emojis.Check
+            } You collected you're daily amount of ${gained} ${client.utils.formatNameByAmount(
+              { economy: updatedEconomy, amount: gained }
+            )}`
+          ),
+      ],
     });
   },
 } as SlashCommandModule;

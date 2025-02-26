@@ -107,6 +107,7 @@ export = {
         userID: interaction.member.id,
         displayName: interaction.member.displayName,
         joined: new Date(),
+        health: 100,
         bankingAccounts: {
             wallet: economyData.defaultBalance,
             bank: 0
@@ -137,6 +138,7 @@ export = {
             userID: interaction.member.id,
             displayName: interaction.member.displayName,
             joined: new Date(),
+            health: 100,
             bankingAccounts: {
                 wallet: economyData.defaultBalance,
                 bank: 0
@@ -208,7 +210,7 @@ export = {
           .setDescription(
             `Successfully transferred ${client.utils.formatNumber(
               amount
-            )} ${client.utils.formatEconomyName({
+            )} ${client.utils.formatNameByAmount({
               economy: economyData,
               amount: amount,
             })} to ${member.displayName}.`

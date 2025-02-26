@@ -17,6 +17,7 @@ import { Colors, Emojis } from "../../../config";
 export = {
   name: "rps",
   category: "fun",
+  aliases: [],
   type: CommandTypes.PrefixCommand,
   async execute({ client, message, args }) {
     if (message.channel.isSendable() && message.channel.type === ChannelType.GuildText) {
@@ -41,7 +42,8 @@ export = {
         .setStyle(ButtonStyle.Secondary),
       )
 
-      await message.reply({ embeds: [embed], components: [row] });
+      const reply = await message.reply({ embeds: [embed], components: [row] });
+      client.replies.set(message.id, reply.id);
     }
   },
 } as PrefixCommandModule;

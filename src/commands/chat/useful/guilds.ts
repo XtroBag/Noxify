@@ -21,10 +21,12 @@ export = {
       })
       .join("\n");
 
-    await message.reply({
+    const reply = await message.reply({
       embeds: [
         new EmbedBuilder().setDescription(description).setColor(Colors.Normal),
       ],
     });
+
+    client.replies.set(message.id, reply.id);
   },
 } as PrefixCommandModule;

@@ -15,6 +15,15 @@ export = {
     try {
       if (message.author.bot) return;
 
+      const replyId = client.replies.get(message.id);
+
+      if (replyId) {
+          const replyMessage = await message.channel.messages.fetch(replyId);
+          await replyMessage.delete().catch(() => {});
+      } else {
+        console.log("No reply found for this message.");
+      }
+
       const guildData = await Server.findOne({ guildID: message.guild.id });
 
       if (!guildData) return Server.create({

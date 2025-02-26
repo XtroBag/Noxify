@@ -93,6 +93,7 @@ export = {
         guildID: interaction.guildId,
         userID: interaction.member.id,
         joined: new Date(),
+        health: 100,
         displayName: interaction.member.displayName,
         bankingAccounts: {
           wallet: economy.defaultBalance,
@@ -154,7 +155,7 @@ export = {
 
       const transactionDescription = `Transferred ${client.utils.formatNumber(
         amount
-      )} ${client.utils.formatEconomyName({
+      )} ${client.utils.formatNameByAmount({
         economy: economy,
         amount: amount,
       })}`;
@@ -175,7 +176,7 @@ export = {
           new EmbedBuilder().setColor(Colors.Success).setDescription(
             `${Emojis.Check} Sent ${client.utils.formatNumber(
               amount
-            )} ${client.utils.formatEconomyName({
+            )} ${client.utils.formatNameByAmount({
               economy: economy,
               amount: amount,
             })} from your bank to your wallet.`
@@ -189,7 +190,7 @@ export = {
             new EmbedBuilder().setColor(Colors.Warning).setDescription(
               `${
                 Emojis.Info
-              } You do not have enough ${client.utils.formatEconomyName({
+              } You do not have enough ${client.utils.formatNameByAmount({
                 economy: economy,
                 amount: amount,
               })} in your wallet to transfer ${client.utils.formatNumber(
@@ -218,7 +219,7 @@ export = {
 
       const transactionDescription = `Transferred ${client.utils.formatNumber(
         amount
-      )} ${client.utils.formatEconomyName({
+      )} ${client.utils.formatNameByAmount({
         economy: economy,
         amount: amount,
       })} from wallet to bank`;
@@ -239,7 +240,7 @@ export = {
           new EmbedBuilder().setColor(Colors.Success).setDescription(
             `Sent ${client.utils.formatNumber(
               amount
-            )} ${client.utils.formatEconomyName({
+            )} ${client.utils.formatNameByAmount({
               economy: economy,
               amount: amount,
             })} from your wallet to your bank.`

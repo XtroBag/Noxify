@@ -1,13 +1,13 @@
 import { Mongoose, UpdateResult } from "mongoose";
 import { DiscordClient } from "./DiscordClient";
 import Logger from "./Logger";
-import { Economy } from "../schemas/models/Models";
+import { Economy, Server } from "../schemas/models/Models";
 import {
   EconomyUser,
   Milestone,
   Transaction,
 } from "../types/economy/EconomyUser";
-import { GuildEconomy } from "../types/Database";
+import { GuildEconomy, ServerData } from "../types/Database";
 import { ChatInputCommandInteraction } from "discord.js";
 import {
   Ammo,
@@ -39,6 +39,10 @@ export class Utilities {
       Logger.error("Database connection failed", error);
       throw error;
     }
+  }
+
+  async getGuild(guildId: string): Promise<ServerData> {
+    return await Server.findOne({ guildID: guildId });
   }
 
   formatNumber(amount: number): string {

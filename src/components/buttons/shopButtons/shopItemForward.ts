@@ -7,8 +7,8 @@ import {
   inlineCode,
   StringSelectMenuBuilder,
 } from "discord.js";
-import { Colors, Emojis } from "../../config";
-import { ComponentTypes, ComponentModule } from "../../handler/types/Component";
+import { Colors, Emojis } from "../../../config";
+import { ComponentTypes, ComponentModule } from "../../../handler/types/Component";
 import {
   Drink,
   Item,
@@ -16,7 +16,7 @@ import {
   Meal,
   Weapon,
   WeaponType,
-} from "../../handler/types/economy/EconomyItem";
+} from "../../../handler/types/economy/EconomyItem";
 
 export = {
   id: `shopItemForward`,

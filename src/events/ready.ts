@@ -9,7 +9,7 @@ export = {
     if (!client.user) return;
 
     const serverAmount = (await client.guilds.fetch()).size.toString();
-    let today = new Date().toISOString().slice(5, 10); // Get MM-DD format
+    let today = new Date().toISOString().slice(5, 10);
 
     // today = '';
 

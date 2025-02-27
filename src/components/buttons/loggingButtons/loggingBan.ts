@@ -4,7 +4,7 @@ import {
   PermissionFlagsBits,
   userMention,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
+import { ComponentModule, ComponentTypes } from "../../../handler/types/Component";
 
 export = {
   id: "loggingBan",

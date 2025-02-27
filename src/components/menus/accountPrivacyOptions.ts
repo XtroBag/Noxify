@@ -16,12 +16,10 @@ import {
     type: ComponentTypes.SelectMenu,
     async execute(client, menu, extras): Promise<void> {
   
-      // Extract userID from customId
       const userId = extras[0];
       const economy = await client.utils.getEconomy({ guildID: menu.guildId });
       const person = economy.users.find((user) => user.userID === userId);
   
-      // Ensure the member ID matches the userID for permissions
       if (menu.member.id !== person.userID) {
          menu.reply({
           embeds: [
@@ -34,7 +32,7 @@ import {
           ephemeral: true,
         });
       } else {
-        // Defer the update immediately
+
         await menu.deferUpdate();
         
           await client.utils.updatePrivacyOptions({ 
@@ -74,7 +72,6 @@ import {
         const economy = await client.utils.getEconomy({ guildID: menu.guildId });
         const updatedPerson = economy.users.find((user) => user.userID === userId);
   
-        // Create reply with embedded data and select menu
          await menu.editReply({
           components: [row, backbutton],
           embeds: [

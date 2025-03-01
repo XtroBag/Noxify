@@ -6,6 +6,7 @@ export interface AutoSlowMode {
   moderateTime: number;
   highestTime: number;
   messageCounts: { timestamp: number; count: number }[];
+  channels: string[]
 }
 
 

@@ -10,7 +10,7 @@ export = {
         .setDescription("This command enables various server systems for user management and more.")
         .setContexts([InteractionContextType.Guild])
         .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
     async execute({ client, interaction }) {
 
         const embed = new EmbedBuilder()
@@ -19,11 +19,11 @@ export = {
 
         const row = new ActionRowBuilder<StringSelectMenuBuilder>()
             .setComponents(new StringSelectMenuBuilder()
-                .setCustomId(`securityMenu`)
+                .setCustomId(`SecurityMenu|${interaction.member.id}`)
                 .setPlaceholder('Click a system to enable it.')
                 .addOptions([
-                    { emoji: `${Emojis.AutoSlowMode}`, label: 'Auto Slowmode', value: 'autoSlowmode', description: `A custom slowmode per amount of messages sent.` },
-                    { emoji: `${Emojis.AntiCaps}`, label: 'Anti Caps', value: 'antiCaps', description: `A limit to set on amount of caps allowed in a message.` }
+                    { emoji: `${Emojis.AutoSlowMode}`, label: 'Auto Slowmode', value: 'ASM-Selection', description: `A custom slowmode per amount of messages sent.` },
+                    { emoji: `${Emojis.AntiCaps}`, label: 'Anti Caps', value: 'ATC-Selection', description: `A limit to set on amount of caps allowed in a message.` }
                 ])
             );
 

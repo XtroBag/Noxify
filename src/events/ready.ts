@@ -42,9 +42,8 @@ export = {
 
     const updateStatus = () => {
       if (seasonalStatuses[today]) {
-        client.user.setPresence({ activities: [seasonalStatuses[today]], status: "online" });
         Logger.debug(`Seasonal Status Active: ${seasonalStatuses[today].name}`);
-        return;
+        return client.user.setPresence({ activities: [seasonalStatuses[today]], status: "online" });
       }
 
       if (index === statusList.length) index = 0;

@@ -17,6 +17,7 @@ export = {
   type: ComponentTypes.Button,
   async execute(client, button, extras) {
     const originalUserID = extras[0];
+    const selected = extras[1]
 
     if (button.member.id !== originalUserID) {
       await button.reply({
@@ -31,7 +32,7 @@ export = {
       });
     } else {
       const modal = new ModalBuilder()
-        .setCustomId(`ASMTimes|${originalUserID}`)
+        .setCustomId(`ASMTimes|${originalUserID}|${selected}`)
         .setTitle("Slowmode Cooldown Times");
 
       const shortestTime = new TextInputBuilder()

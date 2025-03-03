@@ -15,6 +15,7 @@ export = {
   async execute(client, menu, extras): Promise<void> {
     const originalUserID = extras[0];
     const channels = menu.values;
+    const selected = extras[1];
 
     if (menu.member.id !== originalUserID) {
       await menu.reply({
@@ -34,20 +35,26 @@ export = {
       );
 
       const embed = new EmbedBuilder()
-        .setTitle("Configuration Settings")
-        .setColor(Colors.Normal);
+      .setTitle("Slowmode Settings")
+      .setDescription(
+        "Use the buttons below to configure automatic slowmode settings:\n\n" +
+        "**Back** – Return to the main options menu.\n" +
+        "**Cooldowns** – Adjust cooldown settings.\n" +
+        "**Channels** – Manage which channels have slow mode enabled."
+      )
+      .setColor(Colors.Normal);
 
       const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
         new ButtonBuilder()
-          .setCustomId(`ASMMainOptions|${originalUserID}`)
+          .setCustomId(`ASMMainOptions|${originalUserID}|${selected}`)
           .setLabel("Back")
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-          .setCustomId(`ASMCooldowns|${originalUserID}`)
+          .setCustomId(`ASMCooldowns|${originalUserID}|${selected}`)
           .setLabel("Cooldowns")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
-          .setCustomId(`ASMChannels|${originalUserID}`)
+          .setCustomId(`ASMChannels|${originalUserID}|${selected}`)
           .setLabel("Channels")
           .setStyle(ButtonStyle.Primary)
       );

@@ -15,6 +15,7 @@ export = {
   type: ComponentTypes.Modal,
   async execute(client, interaction, extras) {
     const originalUserID = extras[0];
+    const selected = extras[1];
 
     if (interaction.member.id !== originalUserID) {
       await interaction.reply({
@@ -71,15 +72,15 @@ export = {
 
       const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
         new ButtonBuilder()
-          .setCustomId(`ASMMainOptions|${originalUserID}`)
+          .setCustomId(`ASMMainOptions|${originalUserID}|${selected}`)
           .setLabel("Back")
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-          .setCustomId(`ASMCooldowns|${originalUserID}`)
+          .setCustomId(`ASMCooldowns|${originalUserID}|${selected}`)
           .setLabel("Cooldowns")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
-          .setCustomId(`ASMChannels|${originalUserID}`)
+          .setCustomId(`ASMChannels|${originalUserID}|${selected}`)
           .setLabel("Channels")
           .setStyle(ButtonStyle.Primary)
       );

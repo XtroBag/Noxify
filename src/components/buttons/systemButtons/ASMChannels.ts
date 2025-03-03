@@ -19,6 +19,7 @@ export = {
   type: ComponentTypes.Button,
   async execute(client, button, extras) {
     const originalUserID = extras[0];
+    const selected = extras[1];
 
     if (button.member.id !== originalUserID) {
       await button.reply({
@@ -60,7 +61,7 @@ export = {
             missingPermissions.push(inlineCode("SendMessages"));
 
           const missingPermissionsText = missingPermissions.length
-            ? `Missing Permissions: ${missingPermissions.join(" | ")}`
+            ? `${missingPermissions.join(" | ")}`
             : "Unknown issue with permissions.";
 
           channelNamesMissingPermissions.push(
@@ -69,31 +70,23 @@ export = {
         }
       }
 
-      // Embed with two separate sections
       const embed = new EmbedBuilder()
         .setDescription(
-          `
-        **Channels with permissions:**
-        ${
-          channelNamesWithPermissions.length
-            ? channelNamesWithPermissions.join("\n")
-            : "None"
-        }
-        
-        **Channels missing permissions:**
-        ${
-          channelNamesMissingPermissions.length
-            ? channelNamesMissingPermissions.join("\n")
-            : "None"
-        }
-      `
+          `**Channels with permissions:**\n` +
+            (channelNamesWithPermissions.length
+              ? channelNamesWithPermissions.join("\n")
+              : "None") +
+            `\n\n**Channels missing permissions:**\n` +
+            (channelNamesMissingPermissions.length
+              ? channelNamesMissingPermissions.join("\n")
+              : "None")
         )
         .setColor(Colors.Normal);
 
       const menurow =
         new ActionRowBuilder<ChannelSelectMenuBuilder>().addComponents(
           new ChannelSelectMenuBuilder()
-            .setCustomId(`ASMPicks|${originalUserID}`)
+            .setCustomId(`ASMPicks|${originalUserID}|${selected}`)
             .setChannelTypes([ChannelType.GuildText])
             .setMinValues(1)
             .setMaxValues(25)
@@ -102,7 +95,7 @@ export = {
 
       const buttonrow = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
-          .setCustomId(`ASMConfigMenu|${originalUserID}`)
+          .setCustomId(`ASMConfigMenu|${originalUserID}|${selected}`)
           .setLabel("Back")
           .setStyle(ButtonStyle.Secondary)
       );

@@ -7,8 +7,6 @@ import {
 import {
   ActionRowBuilder,
   ApplicationIntegrationType,
-  ButtonBuilder,
-  ButtonStyle,
   ComponentType,
   EmbedBuilder,
   InteractionContextType,

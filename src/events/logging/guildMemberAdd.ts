@@ -68,6 +68,47 @@ export = {
         flags: ["SuppressNotifications"],
         allowedMentions: { repliedUser: false },
       });
+
+
+      // ------------------------------------------------------------------------------------
+
+
+
+      //   // Define placeholders and their replacements
+      //   const placeholders = {
+      //     "{username}": interaction.user.username,
+      //     "{userid}": interaction.user.id,
+      //     "{userjoined}": `<t:${Math.floor(
+      //       interaction.member.joinedTimestamp / 1000
+      //     )}:F>`,
+      //     "{mentionuser:<ID>}": (id: string) => {
+      //       const user = client.users.cache.get(id);
+      //       return user ? `<@${user.id}>` : "Unknown";
+      //     },
+      //     "{mentionchannel:<ID>}": (id: string) => {
+      //       const channel = interaction.guild.channels.cache.get(id);
+      //       return channel ? `<#${channel.id}>` : "Unknown";
+      //     },
+      //     "{newline}": "\n",
+      //     "{servername}": interaction.guild.name,
+      //     "{membercount}": interaction.guild.memberCount.toString(),
+      //     "{owner}": `<@${interaction.guild.ownerId}>`,
+      //     "{time}": `<t:${Math.floor(Date.now() / 1000)}:T>`,
+      //     "{userrole}": interaction.member.roles.highest
+      //       ? interaction.member.roles.highest.name
+      //       : "No Role",
+      //   };
+
+      //   // Replace placeholders in the message
+      //   const formattedMessage = message.replace(
+      //     /{mentionuser:<(\d+)>}|{mentionchannel:<(\d+)>}|{\w+}/g,
+      //     (match, userId, channelId) => {
+      //       if (userId) return placeholders["{mentionuser:<ID>}"](userId);
+      //       if (channelId)
+      //         return placeholders["{mentionchannel:<ID>}"](channelId);
+      //       return placeholders[match] || match;
+      //     }
+      //   );
     }
   },
 } as EventModule<"guildMemberAdd">;

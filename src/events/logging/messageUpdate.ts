@@ -18,8 +18,7 @@ export = {
 
     if (!guildData) return Server.create({
       name: oldMessage.guild.name,
-      guildID: oldMessage.guild.id,
-      prefix: '.'
+      guildID: oldMessage.guild.id
     })
 
     if (!guildData || !guildData.loggingActive) {

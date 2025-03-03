@@ -9,6 +9,11 @@ export interface AutoSlowMode {
   channels: string[]
 }
 
+export interface AutoWelcome {
+  enabled: boolean;
+  message: string;
+  channel: string
+}
 
 export interface ServerData {
   name: string;
@@ -17,6 +22,7 @@ export interface ServerData {
   loggingChannel: string;
   loggingActive: boolean;
   autoSlowmode: AutoSlowMode;
+  autoWelcome: AutoWelcome;
 }
 
 export interface GuildEconomy {

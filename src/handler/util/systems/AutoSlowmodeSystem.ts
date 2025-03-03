@@ -8,12 +8,10 @@ export async function autoSlowmodeSystem(message: Message) {
   const guild = await Server.findOne({ guildID: message.guildId });
 
   if (!guild) {
-    await Server.create({
+    return await Server.create({
       name: message.guild.name,
       guildID: message.guildId,
-      prefix: defaultPrefix,
     });
-    return;
   }
 
   if (!guild.autoSlowmode?.enabled) return;

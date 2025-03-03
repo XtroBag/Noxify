@@ -8,8 +8,7 @@ export = {
   async execute({ client, args: [guild] }) {
     await Server.create({
       name: guild.name,
-      guildID: guild.id,
-      prefix: defaultPrefix
+      guildID: guild.id
     });
   },
 } as EventModule<'guildCreate'>;

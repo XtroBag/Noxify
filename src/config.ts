@@ -206,7 +206,7 @@ export enum Emojis {
   SpecialEffects = "<:SpecialEffects:1337600829078634519>",
   Health = "<:Health:1344345265783574649>",
   AutoSlowMode = "<:AutoSlowmode:1344474006992191488>",
-  AntiCaps = "<:AntiCaps:1344474080426070086>",
+  AutoWelcome = "<:Welcome:1345809843931320370>",
   // StartBlank = "<:StartBlank:1340175509522485280>",
   // MiddleBlank = "<:MiddleFill:1344336666395021474>",
   // EndBlank = "<:EndBlank:1340175583493230632>",

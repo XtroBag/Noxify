@@ -9,7 +9,7 @@ import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import { Colors, Emojis } from "../../config";
 
 export = {
-  id: "SecurityMenu",
+  id: "SystemMenu",
   type: ComponentTypes.SelectMenu,
   async execute(client, menu, extras): Promise<void> {
     const selected = menu.values[0];
@@ -30,8 +30,8 @@ export = {
 
         const embed = new EmbedBuilder()
           .setDescription(
-            "**AutoSlowmode System**\n\n" +
-              "Manage the AutoSlowmode system to prevent spam and control chat flow.\n\n" +
+            "**Auto Slowmode System**\n\n" +
+              "Manage the Auto Slowmode system to prevent spam and control chat flow.\n\n" +
               "**Menu** – Return to the main menu.\n" +
               "**Enable/Disable** – Toggle the system on or off.\n" +
               "**Config** – Customize settings (only available when enabled)."
@@ -44,7 +44,7 @@ export = {
             .setLabel("Menu")
             .setStyle(ButtonStyle.Secondary),
           new ButtonBuilder()
-            .setCustomId(`ASMStatus|${originalUserID}`)
+            .setCustomId(`ASMStatus|${originalUserID}|${selected}`)
             .setLabel(guild.autoSlowmode.enabled ? "Disable" : "Enable")
             .setStyle(
               guild.autoSlowmode.enabled
@@ -52,28 +52,47 @@ export = {
                 : ButtonStyle.Success
             ),
           new ButtonBuilder()
-            .setCustomId(`ASMConfigMenu|${originalUserID}`)
+            .setCustomId(`ASMConfigMenu|${originalUserID}|${selected}`)
             .setLabel("Config")
             .setDisabled(guild.autoSlowmode.enabled ? false : true)
             .setStyle(ButtonStyle.Primary)
         );
 
         await menu.update({ components: [row], embeds: [embed] });
-      } else if (selected === "ATC-Selection") {
-        // const embed = new EmbedBuilder()
-        //   .setDescription("Configure the settings for the AntiCaps system")
-        //   .setColor(Colors.Normal);
-        // const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
-        //   new ButtonBuilder()
-        //     .setCustomId(`ASMBackMain`)
-        //     .setLabel("Back")
-        //     .setStyle(ButtonStyle.Secondary),
-        //   new ButtonBuilder()
-        //     .setCustomId(`ASMConfigMenu`)
-        //     .setLabel("Config")
-        //     .setStyle(ButtonStyle.Primary)
-        // );
-        // await menu.update({ components: [row], embeds: [embed] });
+      } else if (selected === "AW-Selection") {
+
+        const guild = await client.utils.getGuild(menu.guildId);
+
+        const embed = new EmbedBuilder()
+        .setDescription(
+          "**Auto Welcome System**\n\n" +
+            "Manage the Auto Welcome system to greet new members and enhance engagement.\n\n" +
+            "**Menu** – Return to the main menu.\n" +
+            "**Enable/Disable** – Toggle the welcome system on or off.\n" +
+            "**Config** – Customize settings (only available when enabled)."
+        )
+        .setColor(Colors.Normal);
+
+        const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
+          new ButtonBuilder()
+            .setCustomId(`ASMMainMenu|${originalUserID}`)
+            .setLabel("Menu")
+            .setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder()
+            .setCustomId(`ASMStatus|${originalUserID}|${selected}`)
+            .setLabel(guild.autoWelcome.enabled ? "Disable" : "Enable")
+            .setDisabled(guild.autoWelcome.enabled ? false : true)
+            .setStyle(
+              guild.autoWelcome.enabled
+                ? ButtonStyle.Danger
+                : ButtonStyle.Success
+            ),
+          new ButtonBuilder()
+            .setCustomId(`ASMConfigMenu|${originalUserID}|${selected}`)
+            .setLabel("Config")
+            .setStyle(ButtonStyle.Primary)
+        );
+        await menu.update({ components: [row], embeds: [embed] });
       }
     }
   },

@@ -11,6 +11,9 @@ import {
 } from "discord.js";
 import { createEmbed, getImageUrl } from "../../../handler/util/AssetsGenerators";
 
+// This has a "unknown message" error happening
+// C:\Users\scgra\Desktop\Noxify\dist\commands\slash\fun\assets.js:123:13
+
 const sgdb = new SGDB({
   key: process.env.SGDB_APIKEY,
   baseURL: "https://www.steamgriddb.com/api/v2",

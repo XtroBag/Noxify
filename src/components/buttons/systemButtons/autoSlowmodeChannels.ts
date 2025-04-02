@@ -15,7 +15,6 @@ export = {
   id: "AutoSlowmodeChannels",
   type: ComponentTypes.Button,
   async execute(client, button, extras) {
-    // make the permission checking embed to show if the bot don't got access to some channels.
 
     const server = await client.utils.getGuild(button.guildId);
 

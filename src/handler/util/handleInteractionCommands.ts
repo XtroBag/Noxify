@@ -16,6 +16,7 @@ import {
   Interaction,
 } from "discord.js";
 import { DiscordClient } from "./DiscordClient";
+import { Server } from "../schemas/models/Models";
 
 export async function handleInteractionCommands(
   client: DiscordClient,
@@ -45,6 +46,23 @@ async function handleCommand(
     | ChatInputCommandInteraction<"cached">
     | ContextMenuCommandInteraction<"cached">
 ) {
+
+  try {
+    const existingGuild = await Server.findOne({ guildID: interaction.guildId });
+    if (!existingGuild) {
+      await Server.create({
+        name: interaction.guild.name,
+        guildID: interaction.guildId,
+      })
+      Logger.log(`Created new server document for Guild ID: ${interaction.guildId}`);
+    }
+  } catch (DatabaseError) {
+    Logger.error(
+      `Database error while checking/creating guild document:`,
+      DatabaseError
+    );
+  }
+
   const commandModule = client.commands[type].get(interaction.commandName);
   if (!commandModule) {
     return Logger.error(

@@ -28,15 +28,6 @@ export = {
   async execute({ client, interaction }) {
     const server = await client.utils.getGuild(interaction.guildId);
 
-    if (!server)
-      return await interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(Colors.Error)
-            .setDescription(`${Emojis.Cross} This server has no saved data.`),
-        ],
-      });
-
     const isEnabled = server.autoSlowmode.enabled;
 
     const buttons = new ActionRowBuilder<ButtonBuilder>().setComponents(

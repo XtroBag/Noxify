@@ -62,7 +62,7 @@ export = {
     const gameID = Number(interaction.options.getString("game"));
     const type = interaction.options.getString("type");
 
-    await interaction.deferReply({ fetchReply: true });
+    await interaction.deferReply({ fetchReply: true }); // could be this
 
     if (gameID === null) return;
 

@@ -100,29 +100,31 @@ export class Utilities {
     );
   }
 
-  generateHealthBar(health: number, showBar: boolean): string {
-    if (!showBar) {
-      return ""; // Return an empty string if the bar should not be shown
+  async autoSlowmodeToggle({ guildID, toggle }: { guildID: string, toggle: boolean }) {
+   return await Server.updateOne(
+      { guildID: guildID },
+      { $set: { "autoSlowmode.enabled": toggle } }
+    );
+
   }
+
+  async autoSlowmodeSetTimes({ guildID, shortest, moderate, highest }: { guildID: string, shortest?: number, moderate?: number, highest?: number }) {
+    const updateFields: Record<string, number> = {};
   
-      let bar = "";
-      let healthBlocks = Math.floor(health / 10);
-      let remainder = health % 10;
-
-      for (let i = 0; i < 10; i++) {
-        if (i < healthBlocks) {
-          bar += "🟩"; // Full health segments
-        } else if (i === healthBlocks && remainder > 0) {
-          bar += "🟨"; // Partial health segment
-        } else {
-          bar += "🟥"; // Empty health segments
-        }
-      }
-
-      return bar;
-
+    if (shortest !== null) updateFields['autoSlowmode.shortestTime'] = shortest;
+    if (moderate !== null) updateFields['autoSlowmode.moderateTime'] = moderate;
+    if (highest !== null) updateFields['autoSlowmode.highestTime'] = highest;
+  
+    if (Object.keys(updateFields).length === 0) {
+      Logger.warn(`No valid slowmode values provided for update in guild: ${guildID}. At least one of 'shortest', 'moderate', or 'highest' should be specified.`);
+      return null;
+    }
+  
+    return await Server.updateOne(
+      { guildID },
+      { $set: updateFields }
+    );
   }
-
 
   //---------------------------------------------------------------------------------------------
 
@@ -131,7 +133,7 @@ export class Utilities {
     guildID,
     icon,
     defaultBalance,
-    users = [],
+    users = [], 
   }: {
     name: string;
     guildID: string;
@@ -357,7 +359,6 @@ export class Utilities {
     items: Item[];
     quantity: number;
   }) {
-
     const updatedIngredients: Item[] = [];
 
     for (const ingredient of meal.ingredientsRequired) {
@@ -457,9 +458,11 @@ export class Utilities {
         $push: {
           "users.$[sender].transactions": {
             type: "payment",
-            description: `Paid ${updatedRecipient.displayName
-              } ${amount} ${economy.name.toLowerCase().replace(/s$/, "")}${amount === 1 ? "" : "s"
-              }`,
+            description: `Paid ${
+              updatedRecipient.displayName
+            } ${amount} ${economy.name.toLowerCase().replace(/s$/, "")}${
+              amount === 1 ? "" : "s"
+            }`,
             amount: amount,
             time: new Date(),
           },
@@ -468,8 +471,9 @@ export class Utilities {
             description: `Received ${amount} ${economy.name.replace(
               /s$/,
               ""
-            )} ${economy.name.toLowerCase().replace(/s$/, "")}${amount === 1 ? "" : "s"
-              } from ${updatedSender.displayName}`,
+            )} ${economy.name.toLowerCase().replace(/s$/, "")}${
+              amount === 1 ? "" : "s"
+            } from ${updatedSender.displayName}`,
             amount: amount,
             time: new Date(),
           },

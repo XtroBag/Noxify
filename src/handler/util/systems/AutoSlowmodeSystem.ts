@@ -1,6 +1,5 @@
 import { Message, TextChannel } from "discord.js";
 import { Server } from "../../../handler/schemas/models/Models";
-import { defaultPrefix } from "../../../config";
 
 export async function autoSlowmodeSystem(message: Message) {
   if (!message.guild) return;

@@ -11,27 +11,25 @@ export = {
     const serverAmount = (await client.guilds.fetch()).size.toString();
     let today = new Date().toISOString().slice(5, 10);
 
-    // today = '';
-
-    const seasonalStatuses: Record<string, ActivitiesOptions> = {
+    const events: Record<string, ActivitiesOptions> = {
       "01-01": { name: "Happy New Year! 🎇", type: ActivityType.Custom },
       "02-06": { name: "Happy Birthday, XtroBag! 🎂", type: ActivityType.Custom },
       "02-14": { name: "Happy Valentine's Day! ❤️", type: ActivityType.Custom },
       "03-17": { name: "Happy Saint Patrick's Day! 🍀", type: ActivityType.Custom },
       "04-01": { name: "April Fools! 🤡", type: ActivityType.Custom },
-      "04-05": { name: "Happy Easter! 🥚", type: ActivityType.Custom }, // Need to keep changing this every year
+      "04-20": { name: "Happy Easter! 🥚", type: ActivityType.Custom },
       "05-04": { name: "May The Fourth Be With You! ⭐️", type: ActivityType.Custom },
-      "05-26": { name: "Honor the Fallen. 🥀 ", type: ActivityType.Custom }, // Need to keep changing this every year
+      "05-26": { name: "Honor the Fallen. 🥀 ", type: ActivityType.Custom },
       "06-19": { name: "Happy Juneteenth! ✊🏿", type: ActivityType.Custom },
       "07-04": { name: "Happy Independence Day! 🎆", type: ActivityType.Custom },
       "10-13": { name: "Happy Birthday, BroBoiler! 🎂", type: ActivityType.Custom },
       "10-31": { name: "Happy Halloween! 🎃", type: ActivityType.Custom },
       "11-11": { name: "Happy Veterans Day! 🇺🇸", type: ActivityType.Custom },
-      "11-27": { name: "Happy Thanksgiving! 🦃", type: ActivityType.Custom }, // Need to keep changing this every year
+      "11-27": { name: "Happy Thanksgiving! 🦃", type: ActivityType.Custom },
       "12-25": { name: "Merry Christmas! 🎄", type: ActivityType.Custom },
     };
 
-    const statusList: ActivitiesOptions[] = [
+    const status: ActivitiesOptions[] = [
       { name: `${serverAmount} Servers`, type: ActivityType.Watching },
       { name: `Use .help for Commands`, type: ActivityType.Custom },
       { name: `Chats`, type: ActivityType.Watching },
@@ -40,15 +38,19 @@ export = {
     let index = 0;
     const statusInterval = 25_000; // 25 seconds
 
+    const isEventActive = events[today] !== undefined;
+    
+    if (isEventActive) {
+      Logger.log(`Seasonal Status Active: ${events[today].name}`);
+    }
+
     const updateStatus = () => {
-      if (seasonalStatuses[today]) {
-        Logger.debug(`Seasonal Status Active: ${seasonalStatuses[today].name}`);
-        return client.user.setPresence({ activities: [seasonalStatuses[today]], status: "online" });
+      if (isEventActive) {
+        return client.user.setPresence({ activities: [events[today]], status: "online" });
       }
 
-      if (index === statusList.length) index = 0;
-      const status = statusList[index];
-      client.user.setPresence({ activities: [status], status: "online" });
+      if (index === status.length) index = 0;
+      client.user.setPresence({ activities: [status[index]], status: "online" });
       index++;
     };
 

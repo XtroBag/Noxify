@@ -47,8 +47,7 @@ export = {
         `${Emojis.Transactions} Transactions: ${inlineCode(person.transactions.length.toString())}\n` +
         `${Emojis.ActiveEffects} Active Effects: ${inlineCode(person.effects.length.toString())}\n` +
         `${Emojis.Leaderboard} Leaderboard Rank: ${inlineCode(`#${rank}`)}\n` + 
-        `${Emojis.Health} Health: ${inlineCode(person.health.toString())}\n` +
-        `${client.utils.generateHealthBar(person.health, false)}`
+        `${Emojis.Health} Health: ${inlineCode(person.health.toString())}\n`
       )
       .setFields([
         {

@@ -46,7 +46,7 @@ export enum ConsoleColor {
 
 // Layout for the info logging message.
 export function getLoggerLogMessage(message: string): string {
-  return `${ConsoleColor.Green}[INFO] ${message}${ConsoleColor.Reset}`;
+  return `${ConsoleColor.Green}[LOG] ${message}${ConsoleColor.Reset}`;
 }
 
 // Layout for the warning logging message.

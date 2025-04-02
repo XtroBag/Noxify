@@ -126,6 +126,13 @@ export class Utilities {
     );
   }
 
+  async autoSlowmodeSetChannels({ guildID, channels }: { guildID: string, channels: string[] }) {
+    return await Server.findOneAndUpdate(
+      { guildID: guildID },
+      { $set: { "autoSlowmode.channels": channels } }
+    );
+  }
+
   //---------------------------------------------------------------------------------------------
 
   async createEconomy({

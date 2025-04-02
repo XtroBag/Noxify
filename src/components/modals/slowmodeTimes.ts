@@ -1,4 +1,9 @@
-import { bold, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
+import {
+  bold,
+  EmbedBuilder,
+  ModalSubmitInteraction,
+  userMention,
+} from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import Logger from "../../handler/util/Logger";
 import { Colors, Emojis } from "../../config";
@@ -9,6 +14,21 @@ export = {
   type: ComponentTypes.Modal,
   async execute(client, modal, extras) {
     const MAX_SLOWMODE_TIME = 21600; // 6 hours in seconds
+
+    if (extras[0] !== modal.member.id) {
+      return await modal.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Error)
+            .setDescription(
+              `This menu is exclusively available for ${userMention(
+                extras[0]
+              )} only.`
+            ),
+        ],
+        ephemeral: true,
+      });
+    }
 
     const parseTime = (input: string, fieldName: string) => {
       let timeInMs;

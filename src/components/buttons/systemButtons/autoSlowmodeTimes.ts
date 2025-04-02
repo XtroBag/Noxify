@@ -1,19 +1,37 @@
 import {
   ActionRowBuilder,
   ButtonInteraction,
+  EmbedBuilder,
   ModalBuilder,
   TextInputBuilder,
   TextInputStyle,
+  userMention,
 } from "discord.js";
 import {
   ComponentModule,
   ComponentTypes,
 } from "../../../handler/types/Component";
+import { Colors } from "../../../config";
 
 export = {
   id: "AutoSlowmodeTimes",
   type: ComponentTypes.Button,
   async execute(client, button, extras) {
+    if (extras[0] !== button.member.id) {
+      return await button.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Error)
+            .setDescription(
+              `This menu is exclusively available for ${userMention(
+                extras[0]
+              )} only.`
+            ),
+        ],
+        ephemeral: true,
+      });
+    }
+
     const modal = new ModalBuilder()
       .setTitle("Slowmode Cooldown Times")
       .setCustomId("SlowmodeTimesModal");

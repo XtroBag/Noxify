@@ -2,6 +2,7 @@ import {
   inlineCode,
   StringSelectMenuInteraction,
   EmbedBuilder,
+  userMention,
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
 import { Emojis, Colors } from "../../config";
@@ -9,8 +10,23 @@ import { Emojis, Colors } from "../../config";
 export = {
   id: "slowmodeChannels",
   type: ComponentTypes.SelectMenu,
-  async execute(client, menu, extras): Promise<void> {
+  async execute(client, menu, extras) {
     const channelIDs = menu.values;
+
+    if (extras[0] !== menu.member.id) {
+      return await menu.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Error)
+            .setDescription(
+              `This menu is exclusively available for ${userMention(
+                extras[0]
+              )} only.`
+            ),
+        ],
+        ephemeral: true,
+      });
+    }
 
     const channelNamesWithPermissions: string[] = [];
     const channelNamesMissingPermissions: string[] = [];

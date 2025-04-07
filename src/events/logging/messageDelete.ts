@@ -8,6 +8,7 @@ import {
 } from "discord.js";
 import { Server } from "../../handler/schemas/models/Models";
 import { Colors } from "../../config";
+import Logger from "../../handler/util/Logger";
 
 export = {
   name: Events.MessageDelete,
@@ -21,7 +22,7 @@ export = {
           const replyMessage = await message.channel.messages.fetch(replyId);
           await replyMessage.delete().catch(() => {});
       } else {
-        console.log("No reply found for this message.");
+        Logger.debug('No reply found for this message. [MessageDelete]')
       }
 
       const guildData = await Server.findOne({ guildID: message.guild.id });

@@ -61,7 +61,6 @@ export async function registerComponents(client: DiscordClient): Promise<void> {
   }
 }
 
-
 export async function handleComponents(
   client: DiscordClient,
   interaction: Interaction

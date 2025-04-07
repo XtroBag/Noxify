@@ -46,7 +46,7 @@ export = {
       components: [
         new ActionRowBuilder<ChannelSelectMenuBuilder>().addComponents(
           new ChannelSelectMenuBuilder()
-            .setCustomId(`slowmodeChannels|${params.Id}`)
+            .setCustomId(`slowmodeChannels|<Id:${params.Id}>`)
             .setPlaceholder("Select Channels")
             .setChannelTypes([ChannelType.GuildText, ChannelType.PublicThread])
             .setDefaultChannels(server.autoSlowmode.channels)

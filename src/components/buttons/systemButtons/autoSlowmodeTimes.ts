@@ -17,14 +17,16 @@ export = {
   id: "AutoSlowmodeTimes",
   type: ComponentTypes.Button,
   async execute(client, button, params) {
-    if (params.Id !== button.member.id) {
+    const orignalUser = params.Id;
+  
+    if (orignalUser !== button.member.id) {
       return await button.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
             .setDescription(
               `This menu is exclusively available for ${userMention(
-                params.Id
+                orignalUser
               )} only.`
             ),
         ],
@@ -34,23 +36,23 @@ export = {
 
     const modal = new ModalBuilder()
       .setTitle("Slowmode Cooldown Times")
-      .setCustomId("SlowmodeTimesModal");
+      .setCustomId(`SlowmodeTimesModal|<Id:${orignalUser}>`);
 
     const shortestTimeInput = new TextInputBuilder()
       .setCustomId("shortestTime")
-      .setLabel("Shortest Time (in seconds)")
+      .setLabel("Shortest Time")
       .setStyle(TextInputStyle.Short)
       .setRequired(true);
 
     const moderateTimeInput = new TextInputBuilder()
       .setCustomId("moderateTime")
-      .setLabel("Moderate Time (in seconds)")
+      .setLabel("Moderate Time")
       .setStyle(TextInputStyle.Short)
       .setRequired(true);
 
     const highestTimeInput = new TextInputBuilder()
       .setCustomId("highestTime")
-      .setLabel("Highest Time (in seconds)")
+      .setLabel("Highest Time")
       .setStyle(TextInputStyle.Short)
       .setRequired(true);
 

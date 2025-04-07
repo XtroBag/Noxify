@@ -5,24 +5,25 @@ import {
   userMention,
 } from "discord.js";
 import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
-import Logger from "../../handler/util/Logger";
 import { Colors, Emojis } from "../../config";
 import ms from "ms";
 
 export = {
   id: "SlowmodeTimesModal",
   type: ComponentTypes.Modal,
-  async execute(client, modal, extras) {
+  async execute(client, modal, params) {
     const MAX_SLOWMODE_TIME = 21600; // 6 hours in seconds
 
-    if (extras[0] !== modal.member.id) {
+    const orignalUser = params.Id;
+
+    if (orignalUser !== modal.member.id) {
       return await modal.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
             .setDescription(
               `This menu is exclusively available for ${userMention(
-                extras[0]
+                orignalUser
               )} only.`
             ),
         ],
@@ -41,7 +42,7 @@ export = {
 
       if (!timeInMs || timeInMs < 1000) {
         throw new Error(
-          `Invalid input for ${fieldName}. Use a valid time format (e.g., "10s", "1m", or just a number in seconds).`
+          `Invalid input for ${fieldName}. Use a valid time format ("10s", "5m", "2h").`
         );
       }
 

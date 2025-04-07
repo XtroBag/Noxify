@@ -10,17 +10,17 @@ import { Emojis, Colors } from "../../config";
 export = {
   id: "slowmodeChannels",
   type: ComponentTypes.SelectMenu,
-  async execute(client, menu, extras) {
+  async execute(client, menu, params) {
     const channelIDs = menu.values;
 
-    if (extras[0] !== menu.member.id) {
+    if (params.Id !== menu.member.id) {
       return await menu.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
             .setDescription(
               `This menu is exclusively available for ${userMention(
-                extras[0]
+                params.Id
               )} only.`
             ),
         ],

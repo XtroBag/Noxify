@@ -29,15 +29,15 @@ export = {
       const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
-        .setCustomId(`Rock|${message.member.id}`)
+        .setCustomId(`Rock|<UserID:${message.member.id}>`)
         .setEmoji(Emojis.Rock)
         .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-        .setCustomId(`Paper|${message.member.id}`)
+        .setCustomId(`Paper|<UserID:${message.member.id}>`)
         .setEmoji(Emojis.Paper)
         .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-        .setCustomId(`Scissors|${message.member.id}`)
+        .setCustomId(`Scissors|<UserID:${message.member.id}>`)
         .setEmoji(Emojis.Scissors)
         .setStyle(ButtonStyle.Secondary),
       )

@@ -13,8 +13,8 @@ import { Items } from "../../../handler/types/economy/EconomyItem";
 export = {
   id: "accountInventory",
   type: ComponentTypes.Button,
-  async execute(client, button, extras) {
-    const userId = extras[0];
+  async execute(client, button, params) {
+    const userId = params.OrignalUserId;
 
     const economy = await client.utils.getEconomy({ guildID: button.guildId });
     const person = economy.users.find((user) => user.userID === userId);
@@ -200,7 +200,7 @@ async function displayInventory(
     components: [
       new ActionRowBuilder<ButtonBuilder>().setComponents(
         new ButtonBuilder()
-          .setCustomId(`accountBack|${userId}`)
+          .setCustomId(`accountBack|<OrignalUserId:${userId}>`)
           .setLabel("Back")
           .setStyle(ButtonStyle.Secondary)
       ),

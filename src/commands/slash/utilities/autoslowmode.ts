@@ -32,16 +32,16 @@ export = {
 
     const buttons = new ActionRowBuilder<ButtonBuilder>().setComponents(
       new ButtonBuilder()
-        .setCustomId(`AutoSlowmodeToggle|${interaction.member.id}`)
+        .setCustomId(`AutoSlowmodeToggle|<Id:${interaction.member.id}>`)
         .setLabel(isEnabled ? "Enabled" : "Disabled")
         .setStyle(isEnabled ? ButtonStyle.Success : ButtonStyle.Danger),
       new ButtonBuilder()
-        .setCustomId(`AutoSlowmodeTimes|${interaction.member.id}`)
+        .setCustomId(`AutoSlowmodeTimes|<Id:${interaction.member.id}>`)
         .setLabel("Times")
         .setStyle(ButtonStyle.Primary)
         .setDisabled(!isEnabled),
       new ButtonBuilder()
-        .setCustomId(`AutoSlowmodeChannels|${interaction.member.id}`)
+        .setCustomId(`AutoSlowmodeChannels|<Id:${interaction.member.id}>`)
         .setLabel("Channels")
         .setStyle(ButtonStyle.Primary)
         .setDisabled(!isEnabled)

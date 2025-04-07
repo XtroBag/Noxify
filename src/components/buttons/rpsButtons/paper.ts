@@ -14,12 +14,8 @@ import { Emojis, Colors } from "../../../config";
 export = {
   id: "Paper",
   type: ComponentTypes.Button,
-  async execute(
-    client,
-    button: ButtonInteraction<"cached">,
-    extras
-  ): Promise<any> {
-    const userID = extras[0];
+  async execute(client, button: ButtonInteraction<"cached">, params) {
+    const userID = params.UserID;
 
     if (button.member.id !== userID) {
       const member = await client.users.fetch(userID);
@@ -32,12 +28,13 @@ export = {
               `${Emojis.Info} This menu is for ${member.displayName}, so you cannot use it.`
             ),
         ],
-        ephemeral: true
+        ephemeral: true,
       });
     } else {
       const choices = ["Rock", "Paper", "Scissors"];
 
       const userChoice = button.customId.split("|")[0];
+
       const botChoice = choices[Math.floor(Math.random() * choices.length)];
 
       let resultMessage = "It's a Tie!";
@@ -70,7 +67,7 @@ export = {
         components: [
           new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder()
-              .setCustomId(`newGame|${userID}`)
+              .setCustomId(`newGame|<UserID:${userID}>`)
               .setStyle(ButtonStyle.Secondary)
               .setLabel("New Game")
           ),

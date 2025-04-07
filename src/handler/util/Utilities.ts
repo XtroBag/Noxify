@@ -20,6 +20,7 @@ import {
   Weapon,
 } from "../types/economy/EconomyItem";
 import mongoose from "mongoose";
+import axios from "axios";
 
 export class Utilities {
   private client: DiscordClient;
@@ -37,6 +38,29 @@ export class Utilities {
       });
     } catch (error) {
       Logger.error("Database connection failed", error);
+      throw error;
+    }
+  }
+
+  async uploadPaste(content: string, language: string): Promise<string> {
+    try {
+      const response = await axios.post(
+        'https://api.pastes.dev/post',
+        content,
+        {
+          headers: {
+            'Content-Type': `text/${language}`,   // e.g., text/javascript
+            'User-Agent': 'Noxify'
+          }
+        }
+      );
+  
+      const key = response.data?.key // || response.headers['location']?.split('/').pop();
+      if (!key) console.error('Paste key not found in response.');
+  
+      return `https://pastes.dev/${key}`;
+    } catch (error) {
+      console.error('Failed to upload paste:', error);
       throw error;
     }
   }

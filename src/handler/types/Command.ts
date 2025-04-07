@@ -1,6 +1,7 @@
 import { DiscordClient } from "../util/DiscordClient";
 import {
     AutocompleteInteraction,
+    ButtonInteraction,
     ChatInputCommandInteraction,
     Collection,
     ContextMenuCommandBuilder,

@@ -12,9 +12,9 @@ export = {
   async execute(
     client,
     button: ButtonInteraction<"cached">,
-    extras
+    params
   ): Promise<any> {
-    const userId = extras[0];
+    const userId = params.loggedUserId;
 
     /**
      * Might need to add checks for if the user is higher then the person clicking the ban <person> button and same for kick

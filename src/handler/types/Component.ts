@@ -9,12 +9,11 @@ import { DiscordClient } from "../util/DiscordClient";
 
 export interface ComponentModule<T extends Interaction = Interaction<'cached'>> {
   id?: string;
-  group?: string;
   type: ComponentTypes;
   execute: (
     client: DiscordClient,
     interaction: T,
-    extras: string[]
+    params: Record<string, string>
   ) => Promise<any>;
 }
 

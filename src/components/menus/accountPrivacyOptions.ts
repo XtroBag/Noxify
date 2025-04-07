@@ -1,11 +1,9 @@
 import {
-    ButtonInteraction,
     EmbedBuilder,
     ActionRowBuilder,
     StringSelectMenuBuilder,
     ButtonBuilder,
     ButtonStyle,
-    ComponentType,
     StringSelectMenuInteraction,
   } from "discord.js";
   import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
@@ -14,9 +12,9 @@ import {
   export = {
     id: "accountPrivacyOptions",
     type: ComponentTypes.SelectMenu,
-    async execute(client, menu, extras): Promise<void> {
+    async execute(client, menu, params): Promise<void> {
   
-      const userId = extras[0];
+      const userId = params.OrignalUserId;
       const economy = await client.utils.getEconomy({ guildID: menu.guildId });
       const person = economy.users.find((user) => user.userID === userId);
   
@@ -43,7 +41,7 @@ import {
   
         const row = new ActionRowBuilder<StringSelectMenuBuilder>().setComponents(
           new StringSelectMenuBuilder()
-            .setCustomId(`accountPrivacyOptions|${userId}`)
+            .setCustomId(`accountPrivacyOptions|<OrignalUserId:${userId}>`)
             .setPlaceholder("Select permissions to enable")
             .setOptions([
               {
@@ -64,7 +62,7 @@ import {
   
         const backbutton = new ActionRowBuilder<ButtonBuilder>().setComponents(
           new ButtonBuilder()
-            .setCustomId(`accountBack|${userId}`)
+            .setCustomId(`accountBack|<OrignalUserId:${userId}>`)
             .setLabel("Back")
             .setStyle(ButtonStyle.Secondary)
         );

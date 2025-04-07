@@ -51,7 +51,6 @@ export = {
               `New Message: ${newMessage.content || "*No content*"}`
           );
 
-        // Send the embed to the logging channel
         await loggingChannel.send({
           embeds: [embed],
           flags: ["SuppressNotifications"],

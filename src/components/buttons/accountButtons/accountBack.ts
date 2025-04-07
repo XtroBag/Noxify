@@ -13,8 +13,8 @@ import { EconomyUser } from "../../../handler/types/economy/EconomyUser";
 export = {
   id: "accountBack",
   type: ComponentTypes.Button,
-  async execute(client, button, extras) {
-    const userId = extras[0];
+  async execute(client, button, params) {
+    const userId = params.OrignalUserId;
 
     const userData = await button.guild.members.fetch({ user: userId });
 
@@ -69,15 +69,15 @@ export = {
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
-        .setCustomId(`accountRefresh|${userId}`)
+        .setCustomId(`accountRefresh|<OrignalUserId:${userId}>`)
         .setLabel("Refresh")
         .setStyle(ButtonStyle.Secondary),
       new ButtonBuilder()
-        .setCustomId(`accountInventory|${userId}`)
+        .setCustomId(`accountInventory|<OrignalUserId:${userId}>`)
         .setLabel("Inventory")
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
-        .setCustomId(`accountPrivacy|${userId}`)
+        .setCustomId(`accountPrivacy|<OrignalUserId:${userId}>`)
         .setLabel("Privacy")
         .setStyle(ButtonStyle.Danger)
     );

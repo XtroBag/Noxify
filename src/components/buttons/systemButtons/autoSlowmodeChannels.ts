@@ -4,6 +4,7 @@ import {
   ChannelSelectMenuBuilder,
   ChannelType,
   EmbedBuilder,
+  MessageFlags,
   userMention,
 } from "discord.js";
 import {
@@ -15,15 +16,15 @@ import { Colors } from "../../../config";
 export = {
   id: "AutoSlowmodeChannels",
   type: ComponentTypes.Button,
-  async execute(client, button, extras) {
-    if (extras[0] !== button.member.id) {
+  async execute(client, button, params) {
+    if (params.Id !== button.member.id) {
       return await button.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
             .setDescription(
               `This menu is exclusively available for ${userMention(
-                extras[0]
+                params.Id
               )} only.`
             ),
         ],
@@ -45,7 +46,7 @@ export = {
       components: [
         new ActionRowBuilder<ChannelSelectMenuBuilder>().addComponents(
           new ChannelSelectMenuBuilder()
-            .setCustomId(`slowmodeChannels|${extras[0]}`)
+            .setCustomId(`slowmodeChannels|${params.Id}`)
             .setPlaceholder("Select Channels")
             .setChannelTypes([ChannelType.GuildText, ChannelType.PublicThread])
             .setDefaultChannels(server.autoSlowmode.channels)

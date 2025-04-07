@@ -78,7 +78,7 @@ export = {
         const menuRow =
           new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
             new StringSelectMenuBuilder()
-              .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
+              .setCustomId(`shopCategoryItems|<ItemsPerPage:${itemsPerPage}>|<PageIndex:${0}>`)
               .setMaxValues(1)
               .setMinValues(1)
               .setPlaceholder("Pick a category")

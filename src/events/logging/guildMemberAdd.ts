@@ -53,11 +53,11 @@ export = {
 
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
-          .setCustomId(`loggingKick|${member.id}`)
+          .setCustomId(`loggingKick|<loggedUserId:${member.id}>`)
           .setLabel("Kick")
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-          .setCustomId(`loggingBan|${member.id}`)
+          .setCustomId(`loggingBan|<loggedUserId:${member.id}>`)
           .setLabel("Ban")
           .setStyle(ButtonStyle.Danger)
       );

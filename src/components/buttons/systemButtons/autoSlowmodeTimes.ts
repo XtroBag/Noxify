@@ -16,15 +16,15 @@ import { Colors } from "../../../config";
 export = {
   id: "AutoSlowmodeTimes",
   type: ComponentTypes.Button,
-  async execute(client, button, extras) {
-    if (extras[0] !== button.member.id) {
+  async execute(client, button, params) {
+    if (params.Id !== button.member.id) {
       return await button.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
             .setDescription(
               `This menu is exclusively available for ${userMention(
-                extras[0]
+                params.Id
               )} only.`
             ),
         ],

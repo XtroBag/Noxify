@@ -21,10 +21,10 @@ import {
 export = {
   id: `shopItemBack`,
   type: ComponentTypes.Button,
-  async execute(client, interaction, extras) {
-    let pageIndex = Number(extras[0]);
-    const itemsPerPage = Number(extras[1]);
-    const selectedType = String(extras[2]) as ItemType;
+  async execute(client, interaction, params) {
+    let pageIndex = Number(params.PageIndex);
+    const itemsPerPage = Number(params.ItemsPerPage);
+    const selectedType = String(params.SelectedType) as ItemType;
 
     const economy = await client.utils.getEconomy({
       guildID: interaction.guildId,
@@ -84,14 +84,14 @@ export = {
                   new ActionRowBuilder<ButtonBuilder>().addComponents(
                     new ButtonBuilder()
                       .setCustomId(
-                        `shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`
+                        `shopItemBack|<PageIndex:${pageIndex}>|<ItemsPerPage:${itemsPerPage}>|<SelectedType:${selectedType}>`
                       )
                       .setEmoji(Emojis.Back)
                       .setStyle(ButtonStyle.Secondary)
                       .setDisabled(pageIndex === 0),
                     new ButtonBuilder()
                       .setCustomId(
-                        `shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`
+                        `shopItemForward|<PageIndex:${pageIndex}>|<ItemsPerPage:${itemsPerPage}>|<SelectedType:${selectedType}>`
                       )
                       .setEmoji(Emojis.Forward)
                       .setStyle(ButtonStyle.Secondary)
@@ -105,7 +105,7 @@ export = {
             components: [
               new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
                 new StringSelectMenuBuilder()
-                  .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
+                  .setCustomId(`shopCategoryItems|<ItemsPerPage:${itemsPerPage}>|<PageIndex:${0}>`)
                   .setMaxValues(1)
                   .setMinValues(1)
                   .setPlaceholder("Pick a category")
@@ -200,14 +200,14 @@ export = {
                   new ActionRowBuilder<ButtonBuilder>().addComponents(
                     new ButtonBuilder()
                       .setCustomId(
-                        `shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`
+                        `shopItemBack|<PageIndex:${pageIndex}>|<ItemsPerPage:${itemsPerPage}>|<SelectedType:${selectedType}>`
                       )
                       .setEmoji(Emojis.Back)
                       .setStyle(ButtonStyle.Secondary)
                       .setDisabled(pageIndex === 0),
                     new ButtonBuilder()
                       .setCustomId(
-                        `shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`
+                        `shopItemForward|<PageIndex:${pageIndex}>|<ItemsPerPage:${itemsPerPage}>|<SelectedType:${selectedType}>`
                       )
                       .setEmoji(Emojis.Forward)
                       .setStyle(ButtonStyle.Secondary)
@@ -221,7 +221,7 @@ export = {
             components: [
               new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
                 new StringSelectMenuBuilder()
-                  .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
+                  .setCustomId(`shopCategoryItems|<ItemsPerPage:${itemsPerPage}>|<PageIndex:${0}>`)
                   .setMaxValues(1)
                   .setMinValues(1)
                   .setPlaceholder("Pick a category")
@@ -317,14 +317,14 @@ export = {
                   new ActionRowBuilder<ButtonBuilder>().addComponents(
                     new ButtonBuilder()
                       .setCustomId(
-                        `shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`
+                        `shopItemBack|<PageIndex:${pageIndex}>|<ItemsPerPage:${itemsPerPage}>|<SelectedType:${selectedType}>`
                       )
                       .setEmoji(Emojis.Back)
                       .setStyle(ButtonStyle.Secondary)
                       .setDisabled(pageIndex === 0),
                     new ButtonBuilder()
                       .setCustomId(
-                        `shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`
+                        `shopItemForward|<PageIndex:${pageIndex}>|<ItemsPerPage:${itemsPerPage}>|<SelectedType:${selectedType}>`
                       )
                       .setEmoji(Emojis.Forward)
                       .setStyle(ButtonStyle.Secondary)
@@ -338,7 +338,7 @@ export = {
             components: [
               new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
                 new StringSelectMenuBuilder()
-                  .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
+                  .setCustomId(`shopCategoryItems|<ItemsPerPage:${itemsPerPage}>|<PageIndex:${0}>`)
                   .setMaxValues(1)
                   .setMinValues(1)
                   .setPlaceholder("Pick a category")
@@ -454,14 +454,14 @@ export = {
                   new ActionRowBuilder<ButtonBuilder>().addComponents(
                     new ButtonBuilder()
                       .setCustomId(
-                        `shopItemBack|${pageIndex}|${itemsPerPage}|${selectedType}`
+                        `shopItemBack|<PageIndex:${pageIndex}>|<ItemsPerPage:${itemsPerPage}>|<SelectedType:${selectedType}>`
                       )
                       .setEmoji(Emojis.Back)
                       .setStyle(ButtonStyle.Secondary)
                       .setDisabled(pageIndex === 0),
                     new ButtonBuilder()
                       .setCustomId(
-                        `shopItemForward|${pageIndex}|${itemsPerPage}|${selectedType}`
+                        `shopItemForward|<PageIndex:${pageIndex}>|<ItemsPerPage:${itemsPerPage}>|<SelectedType:${selectedType}>`
                       )
                       .setEmoji(Emojis.Forward)
                       .setStyle(ButtonStyle.Secondary)
@@ -475,7 +475,7 @@ export = {
             components: [
               new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
                 new StringSelectMenuBuilder()
-                  .setCustomId(`shopCategoryItems|${itemsPerPage}|${0}`)
+                  .setCustomId(`shopCategoryItems|<ItemsPerPage:${itemsPerPage}>|<PageIndex:${0}>`)
                   .setMaxValues(1)
                   .setMinValues(1)
                   .setPlaceholder("Pick a category")

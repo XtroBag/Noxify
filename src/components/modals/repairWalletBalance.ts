@@ -5,8 +5,8 @@ import { Economy } from "../../handler/schemas/models/Models";
 export = {
   id: "repair-wallet-balance",
   type: ComponentTypes.Modal,
-  async execute(client, interaction, extras) {
-    const userID = extras[0];
+  async execute(client, interaction, params) {
+    const userID = params.OrignalUserId;
 
     let newBalance = interaction.fields.getTextInputValue(
       "repaired-wallet-balance"

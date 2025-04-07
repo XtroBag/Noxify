@@ -9,8 +9,8 @@ import { ComponentModule, ComponentTypes } from "../../../handler/types/Componen
 export = {
   id: "loggingKick",
   type: ComponentTypes.Button,
-  async execute(client, button: ButtonInteraction<"cached">, extras): Promise<any> {
-    const userId = extras[0];
+  async execute(client, button: ButtonInteraction<"cached">, params): Promise<any> {
+    const userId = params.loggedUserId;
 
     await button.deferUpdate();
 

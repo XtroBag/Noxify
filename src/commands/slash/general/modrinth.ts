@@ -1,22 +1,23 @@
-// ─── Imports ──────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// 📦 Imports
+// ─────────────────────────────────────────────────────────────────────────────
 import {
   ModrinthFullProject,
   ModrinthSearchResponse,
-  ModrinthSearchResultProject,
   ModrinthSideSupport,
   ModrinthTeamMember,
   ModrinthUser,
   ProjectDependenciesResponse,
-  ProjectDependency,
-} from "../../../handler/types/Modrinth"; // → Types: Modrinth API
-import { Colors, Emojis } from "../../../config"; // → Config: Emojis and Colors
+} from "../../../handler/types/Modrinth";
+
+import { Colors, Emojis } from "../../../config";
 import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler/types/Command"; // → Command Typing
+} from "../../../handler/types/Command";
+
 import {
-  ActionRowBuilder,
   ApplicationCommandOptionChoiceData,
   ApplicationIntegrationType,
   ButtonBuilder,
@@ -32,19 +33,17 @@ import {
   StringSelectMenuBuilder,
   TextDisplayBuilder,
   ThumbnailBuilder,
-} from "discord.js"; // → Discord.js Components
-import user from "../utilities/user"; // → Custom Utility (Unused?)
-import sharp from "sharp"; // → Image Processing (Unused?)
+} from "discord.js";
 
-// ─── Command Definition ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// 🟦 Command Setup
+// ─────────────────────────────────────────────────────────────────────────────
 export = {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
-
-  // ─── Slash Command Builder ─────────────────────────────────────────────────────
   data: new SlashCommandBuilder()
     .setName("modrinth")
-    .setDescription("find stuff from modrinth and show it on discord")
+    .setDescription("Find stuff from Modrinth and show it on Discord")
     .setContexts([
       InteractionContextType.Guild,
       InteractionContextType.PrivateChannel,
@@ -53,173 +52,196 @@ export = {
       ApplicationIntegrationType.GuildInstall,
       ApplicationIntegrationType.UserInstall
     )
-    // ── Subcommand: mod
     .addSubcommand((sub) =>
       sub
         .setName("mod")
-        .setDescription("search for a mod on modrinth to show")
+        .setDescription("Search for a mod on Modrinth")
         .addStringOption((option) =>
           option
             .setName("name")
-            .setDescription("the name of the minecraft mod")
+            .setDescription("The name of the Minecraft mod")
             .setAutocomplete(true)
             .setRequired(true)
         )
     )
-    // ── Subcommand: user
     .addSubcommand((sub) =>
       sub
         .setName("user")
-        .setDescription("search for a user on modrinth to show")
+        .setDescription("Search for a user on Modrinth")
         .addStringOption((option) =>
           option
             .setName("name")
-            .setDescription("the name of the modrinth user")
+            .setDescription("The name of the Modrinth user")
             .setRequired(true)
         )
     ),
 
-  // ─── Command Execution ─────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
+  // ⚙️ Command Execution
+  // ─────────────────────────────────────────────────────────────────────────
   async execute({ client, interaction }) {
-    const option = interaction.options.getSubcommand(true);
+    const subcommand = interaction.options.getSubcommand(true);
 
-    if (option === "mod") {
-      // ── Fetch Mod Project Data ─────────────────────────────────────────────────
+    if (subcommand === "mod") {
       try {
         const slug = interaction.options.getString("name");
-        const response = await fetch(
+        const projectRes = await fetch(
           `https://api.modrinth.com/v2/project/${slug}`
         );
 
-        if (!response.ok)
-          throw new Error(`Failed to fetch project: ${response.statusText}`);
-        const project: ModrinthFullProject = await response.json();
+        if (!projectRes.ok) {
+         return await interaction.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setColor(Colors.Error)
+                .setDescription(`${Emojis.Cross} That project doesn't seem to exist. Try using autocomplete.`),
+            ],
+          });
+        }
 
-        // ── Loader Icons + Formatting ────────────────────────────────────────────
-        const loaderEmojis: Record<string, string> = {
-          forge: "<:Forge_Icon:1370591845981098024>",
-          fabric: "<:Fabric_Icon:1370591780357148722>",
-          quilt: "<:Quilt_Icon:1370591879447580692>",
-          neoforge: "<:NeoForge_Icon:1370591862909436004>",
+        const projectData: ModrinthFullProject = await projectRes.json();
+
+        const loaderEmojiMap: Record<string, string> = {
+          bukkit: Emojis.Bukkit,
+          bungeecord: Emojis.BungeeCord,
+          fabric: Emojis.Fabric,
+          folia: Emojis.Folia,
+          forge: Emojis.Forge,
+          liteloader: Emojis.LiteLoader,
+          modloader: Emojis.ModLoader,
+          neoforge: Emojis.NeoForge,
+          quilt: Emojis.Quilt,
+          rift: Emojis.Rift,
+          paper: Emojis.PaperMC,
+          purpur: Emojis.Purpur,
+          spigot: Emojis.Spigot,
+          sponge: Emojis.Sponge,
+          velocity: Emojis.Velocity,
+          waterfall: Emojis.Waterfall,
         };
 
-        const formattedLoaders = project.loaders
-          .map((loader) => {
-            const formattedLoader =
-              loader === "neoforge"
-                ? "NeoForge"
-                : loader.charAt(0).toUpperCase() + loader.slice(1);
+        const loaderEmojiDisplay = projectData.loaders
+          .map((loader) => loaderEmojiMap[loader] ?? Emojis.ModrinthOther)
+          .join(" | ");
 
-            return `${loaderEmojis[loader] || "❓"} ${inlineCode(formattedLoader)}`;
-          })
-          .join(" ");
-
-        const supportEmojis: Record<ModrinthSideSupport, string> = {
+        const sideSupportEmojiMap: Record<ModrinthSideSupport, string> = {
           required: Emojis.Check,
           optional: Emojis.Info,
           unsupported: Emojis.Cross,
           unknown: Emojis.Cross,
         };
 
-        // ── Fetch Dependencies ───────────────────────────────────────────────────
-        const fetchDependencies = await fetch(
+        const dependencyRes = await fetch(
           `https://api.modrinth.com/v2/project/${slug}/dependencies`
         );
-        const dependencies: ProjectDependenciesResponse =
-          await fetchDependencies.json();
-        const filteredDependencies = dependencies.projects.filter(
-          (project) => project.title !== "Fabric API"
+        const dependencyData: ProjectDependenciesResponse =
+          await dependencyRes.json();
+        const optionalDependencies = dependencyData.projects.filter(
+          (p) => p.title !== "Fabric API"
         );
 
-        // ── Fetch Team Members ───────────────────────────────────────────────────
-        const fetchTeam = await fetch(
+        const teamRes = await fetch(
           `https://api.modrinth.com/v2/project/${slug}/members`
         );
-        const teamMembers: ModrinthTeamMember[] = await fetchTeam.json();
+        const teamMembers: ModrinthTeamMember[] = await teamRes.json();
 
-        // ─── Container UI Layout ─────────────────────────────────────────────────
-        const container = new ContainerBuilder()
-          .setAccentColor(project.color)
+        const uiContainer = new ContainerBuilder().setAccentColor(
+          projectData.color
+        );
 
-          // ── Section: Basic Info ────────────────────────────────────────────────
-          .addSectionComponents(
-            new SectionBuilder()
-              .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(
-                  [
-                    `# ${project.title}`,
-                    `${project.description}`,
-                    `### Updated: <t:${Math.floor(new Date(project.updated).getTime() / 1000)}:R> | Published: <t:${Math.floor(new Date(project.published).getTime() / 1000)}:R>`,
-                  ].join("\n")
-                )
+        uiContainer.addSectionComponents(
+          new SectionBuilder()
+            .addTextDisplayComponents(
+              new TextDisplayBuilder().setContent(
+                `# ${projectData.title}\n${projectData.description}`
               )
-              .setThumbnailAccessory(
-                new ThumbnailBuilder().setURL(project.icon_url)
-              )
-          )
-
-          // ── Divider ────────────────────────────────────────────────────────────
-          .addSeparatorComponents((builder) =>
-            builder.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
-          )
-
-          // ── Section: Loaders & Support Info ────────────────────────────────────
-          .addSectionComponents(
-            new SectionBuilder()
-              .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(
-                  [
-                    `Platforms: ${formattedLoaders}`,
-                    `Client Side: ${supportEmojis[project.client_side as ModrinthSideSupport]} (${project.client_side.charAt(0).toUpperCase() + project.client_side.slice(1)})`,
-                    `Server Side: ${supportEmojis[project.server_side as ModrinthSideSupport]} (${project.server_side.charAt(0).toUpperCase() + project.server_side.slice(1)})`,
-                  ].join("\n")
-                )
-              )
-              .setButtonAccessory((button) =>
-                button
-                  .setLabel("Link")
-                  .setStyle(ButtonStyle.Link)
-                  .setURL(`https://modrinth.com/mod/${project.slug}`)
-              )
-          )
-
-          // ── Select Menu: Dependencies ─────────────────────────────────────────
-          .addActionRowComponents((builder) =>
-            builder.addComponents([
-              new StringSelectMenuBuilder()
-                .setCustomId("dependency-view")
-                .setPlaceholder("View more about a dependency")
-                .addOptions(
-                  filteredDependencies.length > 0
-                    ? filteredDependencies.map((project) => ({
-                        label: project.title,
-                        value: project.id,
-                      }))
-                    : [
-                        {
-                          label: "No Dependencies",
-                          value: "none",
-                          default: true,
-                        },
-                      ]
-                ),
-            ])
-          )
-
-          // ── TODO: Created By (Incomplete line) ────────────────────────────────
-          .addTextDisplayComponents((builder) =>
-            builder.setContent(
-              `-# Created By: ${teamMembers.find((member) => member.role === "developer" || "Unknown").user.username}`
             )
+            .setThumbnailAccessory(
+              new ThumbnailBuilder().setURL(projectData.icon_url)
+            )
+        );
+
+        uiContainer.addSeparatorComponents((sep) =>
+          sep.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
+        );
+
+        uiContainer.addSectionComponents(
+          new SectionBuilder()
+            .addTextDisplayComponents(
+              new TextDisplayBuilder().setContent(
+                [
+                  `### Updated: <t:${Math.floor(new Date(projectData.updated).getTime() / 1000)}:R> | Published: <t:${Math.floor(new Date(projectData.published).getTime() / 1000)}:R>`,
+                  `- Loaders: ${loaderEmojiDisplay}`,
+                  `- Categories: ${projectData.categories
+                    .map((c) =>
+                      inlineCode(c.charAt(0).toUpperCase() + c.slice(1))
+                    )
+                    .join(" | ")}`,
+                  `${Emojis.ModEnviromentClient} Client Side: ${sideSupportEmojiMap[projectData.client_side]} (${projectData.client_side[0].toUpperCase() + projectData.client_side.slice(1)})`,
+                  `${Emojis.ModEnviromentServer} Server Side: ${sideSupportEmojiMap[projectData.server_side]} (${projectData.server_side[0].toUpperCase() + projectData.server_side.slice(1)})`,
+                ].join("\n")
+              )
+            )
+            .setButtonAccessory((button) =>
+              button
+                .setLabel("Link")
+                .setStyle(ButtonStyle.Link)
+                .setURL(`https://modrinth.com/mod/${projectData.slug}`)
+            )
+        );
+
+        uiContainer.addActionRowComponents((row) =>
+          row.addComponents([
+            new StringSelectMenuBuilder()
+              .setCustomId("dependency-view")
+              .setPlaceholder("View more about a dependency")
+              .addOptions(
+                optionalDependencies.length > 0
+                  ? optionalDependencies.map((p) => ({
+                      label: p.title,
+                      value: p.id,
+                    }))
+                  : [{ label: "No Dependencies", value: "none", default: true }]
+              )
+              .setDisabled(optionalDependencies.length === 0),
+          ])
+        );
+
+        uiContainer.addSeparatorComponents((sep) =>
+          sep.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
+        );
+
+        const externalLinkButtons = [
+          { label: "Source", url: projectData.source_url },
+          { label: "Wiki", url: projectData.wiki_url },
+          { label: "Discord", url: projectData.discord_url },
+          { label: "Issues", url: projectData.issues_url },
+        ]
+          .filter(({ url }) => !!url)
+          .map(({ label, url }) =>
+            new ButtonBuilder()
+              .setLabel(label)
+              .setStyle(ButtonStyle.Link)
+              .setURL(url!)
           );
 
-        // ── Send Response ───────────────────────────────────────────────────────
+        if (externalLinkButtons.length > 0) {
+          uiContainer.addActionRowComponents((row) =>
+            row.addComponents(externalLinkButtons)
+          );
+
+          uiContainer.addTextDisplayComponents((text) =>
+            text.setContent(
+              `-# Created By: ${teamMembers.map((member) => member.user.username).join(', ')}`
+            )
+          );
+        }
+
         await interaction.reply({
-          components: [container],
+          components: [uiContainer],
           flags: MessageFlags.IsComponentsV2,
         });
       } catch (error) {
-        // ── Error Handling ──────────────────────────────────────────────────────
         console.error("[Modrinth] Error fetching project:", error);
         await interaction.reply({
           content:
@@ -229,27 +251,26 @@ export = {
       }
     }
 
-    // ─── User Subcommand ────────────────────────────────────────────────────────
-    else if (option === "user") {
+    // ─────────────────────────────────────────────
+    // 👤 User Subcommand
+    // ─────────────────────────────────────────────
+    else if (subcommand === "user") {
       const username = interaction.options.getString("name");
-
-      const response = await fetch(
+      const userRes = await fetch(
         `https://api.modrinth.com/v2/user/${username}`
       );
-      const data: ModrinthUser = await response.json();
-
-      console.log(data);
+      const userData: ModrinthUser = await userRes.json();
 
       await interaction.reply({
         embeds: [
           new EmbedBuilder()
-            .setTitle(data.username)
-            .setDescription(data.bio)
-            .setThumbnail(data.avatar_url)
+            .setTitle(userData.username)
+            .setDescription(userData.bio)
+            .setThumbnail(userData.avatar_url)
             .setFields([
               {
-                name: "Created: ",
-                value: `<t:${Math.floor(new Date(data.created).getTime() / 1000)}:R>`,
+                name: "Created:",
+                value: `<t:${Math.floor(new Date(userData.created).getTime() / 1000)}:R>`,
               },
             ]),
         ],
@@ -257,29 +278,29 @@ export = {
     }
   },
 
-  // ─── Autocomplete Handler ─────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
+  // ✨ Autocomplete Handler
+  // ─────────────────────────────────────────────────────────────────────────
   async autocomplete(interaction, client) {
-    const input = interaction.options.getFocused();
-    const option = interaction.options.getSubcommand(true);
+    const focusedInput = interaction.options.getFocused();
+    const subcommand = interaction.options.getSubcommand(true);
 
-    if (option === "mod") {
+    if (subcommand === "mod") {
       try {
-        const response = await fetch(
-          `https://api.modrinth.com/v2/search?query=${input}&limit=25&facets=[["project_type:mod"]]`
+        const searchRes = await fetch(
+          `https://api.modrinth.com/v2/search?query=${focusedInput}&limit=25&facets=[["project_type:mod"]]`
         );
-        if (!response.ok)
-          throw new Error(`Failed to search: ${response.statusText}`);
+        if (!searchRes.ok)
+          throw new Error(`Failed to search: ${searchRes.statusText}`);
 
-        const data: ModrinthSearchResponse = await response.json();
-
-        const results: ApplicationCommandOptionChoiceData[] = data.hits.map(
-          (project: ModrinthSearchResultProject) => ({
+        const searchData: ModrinthSearchResponse = await searchRes.json();
+        const searchResults: ApplicationCommandOptionChoiceData[] =
+          searchData.hits.map((project) => ({
             name: project.title ?? "Unknown",
             value: project.slug ?? "unknown",
-          })
-        );
+          }));
 
-        await interaction.respond(results);
+        await interaction.respond(searchResults);
       } catch (err) {
         console.error("[Modrinth] Autocomplete error:", err);
         await interaction.respond([

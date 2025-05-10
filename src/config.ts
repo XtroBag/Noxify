@@ -268,6 +268,28 @@ export enum Emojis {
   // Ammos
   Arrow = "<:Arrow:1337580232915288074>",
   Bullet = "<:Bullet:1337580206877179935>",
+  //---------------------------------------------------------
+  // Modrinth Icons
+  Bukkit = "<:Bukkit:1370856265902723162>",
+  BungeeCord = "<:BungeeCord:1370856325759897690>",
+  Fabric = "<:Fabric:1370847660445143220>",
+  Folia = "<:Folia:1370856363277811852>",
+  Forge = "<:Forge:1370847712957698148>",
+  LiteLoader = "<:LiteLoader:1370847896261496955>",
+  ModLoader = "<:ModLoader:1370847936266633266>",
+  NeoForge = "<:NeoForge:1370847970559262802>",
+  Quilt = "<:Quilt:1370848003832942613>",
+  Rift = "<:Rift:1370848035323641957>",
+  PaperMC = "<:Paper_Modrinth:1370856393867006022>",
+  Purpur = "<:Purpur:1370856859988262962>",
+  Spigot = "<:Spigot:1370856889042210899>",
+  Sponge = "<:Sponge:1370856952262955061>",
+  Velocity = "<:Velocity:1370856982751215658>",
+  Waterfall = "<:Waterfall:1370857010815569992>",
+  ModrinthOther = "<:Other_Modrinth:1370860702545346620>",
+  ModEnviromentServer = "<:Server:1370876768117850152>",
+  ModEnviromentClient = "<:Client:1370876806021775490>",
+  ModEnviromentClientAndServer = "<:Server_and_Client:1370876831690919956>",
 }
 
 export enum Colors {

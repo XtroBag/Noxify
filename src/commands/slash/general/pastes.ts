@@ -10,7 +10,7 @@ import {
   InteractionContextType,
   SlashCommandBuilder,
 } from "discord.js";
-import { BuiltInParserName, format } from "prettier";
+import { format } from "prettier";
 
 export = {
   type: CommandTypes.SlashCommand,

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "commonjs",
+    "module": "CommonJS",
     "rootDir": "./src/",
     "outDir": "./dist/",
     "strictNullChecks": false,
@@ -22,6 +22,6 @@
     "noUnusedLocals": false,
   },
   "files": ["src/index.ts"],
-  "include": ["./**/*.ts", "src/components/buttons/rpsButtons/scissors.ts"],
+  "include": ["./**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

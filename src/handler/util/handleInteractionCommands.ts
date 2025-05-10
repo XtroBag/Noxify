@@ -47,17 +47,24 @@ export async function handleInteractionCommands(
       | ContextMenuCommandInteraction<"cached">
   ) {
     try {
-      const existingGuild = await Server.findOne({
-        guildID: interaction.guildId,
-      });
-      if (!existingGuild) {
-        await Server.create({
-          name: interaction.guild.name,
+      // Only attempt to check/create a server document if the interaction is in a guild
+      if (interaction.guild && interaction.guildId) {
+        const existingGuild = await Server.findOne({
           guildID: interaction.guildId,
         });
-        Logger.log(
-          `Created new server document for Guild ID: ${interaction.guildId}`
-        );
+    
+        if (!existingGuild) {
+          await Server.create({
+            name: interaction.guild.name,
+            guildID: interaction.guildId,
+          });
+    
+          Logger.log(
+            `Created new server document for Guild ID: ${interaction.guildId}`
+          );
+        }
+      } else /* If interaction was used in private DM/Other */  {
+        Logger.debug("Interaction is not in a guild. Skipping guild DB check.");
       }
     } catch (DatabaseError) {
       Logger.error(

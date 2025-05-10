@@ -2,9 +2,17 @@ import Logger from "./Logger";
 import { AutomaticIntents, Intent } from "../types/Intent";
 import { defaultIntents } from "../../config";
 import { registerEvents } from "./handleEvents";
-import { registerComponents, } from "./handleComponents";
+import { registerComponents } from "./handleComponents";
 import { EventIntentMapping } from "../types/EventIntentMapping";
-import { AnySelectMenuInteraction, ButtonInteraction, Client, Collection, IntentsBitField, ModalSubmitInteraction } from "discord.js";
+import {
+  AnySelectMenuInteraction,
+  ButtonInteraction,
+  Client,
+  Collection,
+  IntentsBitField,
+  ModalSubmitInteraction,
+  SimpleShardingStrategy,
+} from "discord.js";
 import { ComponentCollections, ComponentModule } from "../types/Component";
 import {
   deleteAllCommands,
@@ -22,7 +30,13 @@ import {
   RegisterTypes,
   SlashCommandModule,
 } from "../types/Command";
-import { Meal, Drink, Weapon, Item as Ingredient, Ammo } from "../types/economy/EconomyItem";
+import {
+  Meal,
+  Drink,
+  Weapon,
+  Item as Ingredient,
+  Ammo,
+} from "../types/economy/EconomyItem";
 import { registerItems } from "./handleItems";
 import { Utilities } from "./Utilities";
 
@@ -33,10 +47,20 @@ export class DiscordClient extends Client {
   public cooldowns: CooldownCollections;
   public items: ItemCollections;
   public utils: Utilities;
-  public replies: Map<string, string>
+  public replies: Map<string, string>;
 
   constructor() {
-    super({ intents: AutomaticIntents });
+    super({
+      intents: AutomaticIntents,
+      // This is how you can make a bot using discord.js have a mobile status icon !
+      //
+      // ws: {
+      //   buildStrategy: (ws) => {
+      //     ws.options.identifyProperties.browser = "Discord iOS";
+      //     return new SimpleShardingStrategy(ws);
+      //   },
+      // },
+    });
     this.events = [];
     this.commands = {
       slash: new Collection<string, SlashCommandModule>(),
@@ -53,9 +77,18 @@ export class DiscordClient extends Client {
       },
     };
     this.components = {
-      buttons: new Collection<string, ComponentModule<ButtonInteraction<'cached'>>>(),
-      selectMenus: new Collection<string, ComponentModule<AnySelectMenuInteraction<'cached'>>>(),
-      modals: new Collection<string, ComponentModule<ModalSubmitInteraction<'cached'>>>(),
+      buttons: new Collection<
+        string,
+        ComponentModule<ButtonInteraction<"cached">>
+      >(),
+      selectMenus: new Collection<
+        string,
+        ComponentModule<AnySelectMenuInteraction<"cached">>
+      >(),
+      modals: new Collection<
+        string,
+        ComponentModule<ModalSubmitInteraction<"cached">>
+      >(),
     };
     this.cooldowns = {
       user: new Collection<string, Collection<string, number>>(),
@@ -72,7 +105,7 @@ export class DiscordClient extends Client {
   }
 
   public async registerDatabase(): Promise<void> {
-    this.utils.databaseConnection()
+    this.utils.databaseConnection();
   }
 
   public async registerEvents(): Promise<void> {
@@ -133,7 +166,6 @@ export class DiscordClient extends Client {
       intentBitField.add(intent);
     });
 
-    return this.options.intents = intentBitField;
-
+    return (this.options.intents = intentBitField);
   }
 }

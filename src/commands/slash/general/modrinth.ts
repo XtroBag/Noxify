@@ -1,24 +1,19 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// 📦 Imports
-// ─────────────────────────────────────────────────────────────────────────────
 import {
-  ModrinthFullProject,
-  ModrinthSearchResponse,
-  ModrinthSideSupport,
-  ModrinthTeamMember,
-  ModrinthUser,
-  ProjectDependenciesResponse,
-} from "../../../handler/types/Modrinth";
-
-import { Colors, Emojis } from "../../../config";
+  Facet,
+  FacetGroup,
+  FacetOperation,
+  FacetType,
+  Modrinth,
+  Project,
+  SearchFacets,
+  SearchIndex,
+} from "typerinth";
 import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
 } from "../../../handler/types/Command";
-
 import {
-  ApplicationCommandOptionChoiceData,
   ApplicationIntegrationType,
   ButtonBuilder,
   ButtonStyle,
@@ -34,10 +29,10 @@ import {
   TextDisplayBuilder,
   ThumbnailBuilder,
 } from "discord.js";
+import { Colors, Emojis } from "../../../config";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 🟦 Command Setup
-// ─────────────────────────────────────────────────────────────────────────────
+const modrinth = new Modrinth({ userAgent: "XtroBag/Noxify/1.0.0" });
+
 export = {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
@@ -52,264 +47,228 @@ export = {
       ApplicationIntegrationType.GuildInstall,
       ApplicationIntegrationType.UserInstall
     )
-    .addSubcommand((sub) =>
-      sub
-        .setName("mod")
-        .setDescription("Search for a mod on Modrinth")
-        .addStringOption((option) =>
-          option
-            .setName("name")
-            .setDescription("The name of the Minecraft mod")
-            .setAutocomplete(true)
-            .setRequired(true)
+    .addStringOption((option) =>
+      option
+        .setName("type")
+        .setDescription(
+          "Search a Modrinth Mod, Resource Pack, Data Pack, Shader, Mod Pack, and Plugin"
         )
+        .addChoices([
+          { name: "Mod", value: "mod" },
+          { name: "Resourcepack", value: "resourcepack" },
+          { name: "Datapack", value: "datapack" },
+          { name: "Shader", value: "shader" },
+          { name: "Modpack", value: "modpack" },
+          { name: "Plugin", value: "plugin" },
+        ])
+        .setRequired(true)
     )
-    .addSubcommand((sub) =>
-      sub
-        .setName("user")
-        .setDescription("Search for a user on Modrinth")
-        .addStringOption((option) =>
-          option
-            .setName("name")
-            .setDescription("The name of the Modrinth user")
-            .setRequired(true)
-        )
+    .addStringOption((option) =>
+      option
+        .setName("item")
+        .setDescription("Pick a specific item for Modrinth to search")
+        .setAutocomplete(true)
+        .setRequired(true)
     ),
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // ⚙️ Command Execution
-  // ─────────────────────────────────────────────────────────────────────────
   async execute({ client, interaction }) {
-    const subcommand = interaction.options.getSubcommand(true);
+    const item = interaction.options.getString("item");
 
-    if (subcommand === "mod") {
-      try {
-        const slug = interaction.options.getString("name");
-        const projectRes = await fetch(
-          `https://api.modrinth.com/v2/project/${slug}`
-        );
+    try {
 
-        if (!projectRes.ok) {
-         return await interaction.reply({
-            embeds: [
-              new EmbedBuilder()
-                .setColor(Colors.Error)
-                .setDescription(`${Emojis.Cross} That project doesn't seem to exist. Try using autocomplete.`),
-            ],
-          });
+      const project = await modrinth.getProject(item);
+
+      const loaderEmojiMap: Record<string, string> = {
+        bukkit: Emojis.Bukkit,
+        bungeecord: Emojis.BungeeCord,
+        canvas: Emojis.Canvas,
+        fabric: Emojis.Fabric,
+        folia: Emojis.Folia,
+        forge: Emojis.Forge,
+        iris: Emojis.Iris,
+        liteloader: Emojis.LiteLoader,
+        modloader: Emojis.ModLoader,
+        neoforge: Emojis.NeoForge,
+        quilt: Emojis.Quilt,
+        rift: Emojis.Rift,
+        optifine: Emojis.Optifine,
+        paper: Emojis.PaperMC,
+        purpur: Emojis.Purpur,
+        spigot: Emojis.Spigot,
+        sponge: Emojis.Sponge,
+        velocity: Emojis.Velocity,
+        waterfall: Emojis.Waterfall,
+      };
+
+      const supportEmojiMap: Record<string, string> = {
+        required: Emojis.Check,
+        optional: Emojis.Info,
+        unsupported: Emojis.Cross,
+        unknown: Emojis.Cross,
+      };
+
+      const versions = project.game_versions.sort((a, b) => {
+        const aParts = a.split(".").map(Number);
+        const bParts = b.split(".").map(Number);
+
+        for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+          const aNum = aParts[i] ?? 0;
+          const bNum = bParts[i] ?? 0;
+          if (aNum !== bNum) return aNum - bNum;
         }
 
-        const projectData: ModrinthFullProject = await projectRes.json();
+        return 0;
+      });
 
-        const loaderEmojiMap: Record<string, string> = {
-          bukkit: Emojis.Bukkit,
-          bungeecord: Emojis.BungeeCord,
-          fabric: Emojis.Fabric,
-          folia: Emojis.Folia,
-          forge: Emojis.Forge,
-          liteloader: Emojis.LiteLoader,
-          modloader: Emojis.ModLoader,
-          neoforge: Emojis.NeoForge,
-          quilt: Emojis.Quilt,
-          rift: Emojis.Rift,
-          paper: Emojis.PaperMC,
-          purpur: Emojis.Purpur,
-          spigot: Emojis.Spigot,
-          sponge: Emojis.Sponge,
-          velocity: Emojis.Velocity,
-          waterfall: Emojis.Waterfall,
-        };
+      const fetchedDependencies: { projects: Project[] } = await fetch(
+        modrinth.getApiUrl() + `/project/${project.slug}/dependencies`
+      ).then((res) => res.json());
 
-        const loaderEmojiDisplay = projectData.loaders
-          .map((loader) => loaderEmojiMap[loader] ?? Emojis.ModrinthOther)
-          .join(" | ");
+      const dependencies = fetchedDependencies.projects.filter(
+        (p) => p.title !== "Fabric API"
+      );
+      const team = await modrinth.getProjectTeamMembers(project.id);
 
-        const sideSupportEmojiMap: Record<ModrinthSideSupport, string> = {
-          required: Emojis.Check,
-          optional: Emojis.Info,
-          unsupported: Emojis.Cross,
-          unknown: Emojis.Cross,
-        };
+      const uiContainer = new ContainerBuilder().setAccentColor(project.color);
 
-        const dependencyRes = await fetch(
-          `https://api.modrinth.com/v2/project/${slug}/dependencies`
-        );
-        const dependencyData: ProjectDependenciesResponse =
-          await dependencyRes.json();
-        const optionalDependencies = dependencyData.projects.filter(
-          (p) => p.title !== "Fabric API"
-        );
+      uiContainer.addSectionComponents(
+        new SectionBuilder()
+          .addTextDisplayComponents(
+            new TextDisplayBuilder().setContent(
+              `# ${project.title}\n${project.description}`
+            )
+          )
+          .setThumbnailAccessory(
+            new ThumbnailBuilder().setURL(project.icon_url)
+          )
+      );
 
-        const teamRes = await fetch(
-          `https://api.modrinth.com/v2/project/${slug}/members`
-        );
-        const teamMembers: ModrinthTeamMember[] = await teamRes.json();
+      uiContainer.addSeparatorComponents((sep) =>
+        sep.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
+      );
 
-        const uiContainer = new ContainerBuilder().setAccentColor(
-          projectData.color
-        );
-
-        uiContainer.addSectionComponents(
-          new SectionBuilder()
-            .addTextDisplayComponents(
-              new TextDisplayBuilder().setContent(
-                `# ${projectData.title}\n${projectData.description}`
+      uiContainer.addSectionComponents(
+        new SectionBuilder()
+          .addTextDisplayComponents(
+            new TextDisplayBuilder().setContent(
+              [
+                `### Updated: <t:${Math.floor(new Date(project.updated).getTime() / 1000)}:R> | Published: <t:${Math.floor(new Date(project.published).getTime() / 1000)}:R>`,
+                `- Loaders: ${project.loaders.map((l) => loaderEmojiMap[l] ?? Emojis.ModrinthOther).join(" | ")}`,
+                `- Categories: ${project.categories.map((c) => inlineCode(c)).join(" | ")}`,
+                `- Versions: ${versions[0]} - ${versions[versions.length - 1]} (${versions.length} versions supported)`,
+                `- Client Side: ${supportEmojiMap[project.client_side]} (${project.client_side[0].toUpperCase() + project.client_side.slice(1)})`,
+                `- Server Side: ${supportEmojiMap[project.server_side]} (${project.server_side[0].toUpperCase() + project.server_side.slice(1)})`,
+              ].join("\n")
+            )
+          )
+          .setButtonAccessory((button) =>
+            button
+              .setLabel("Link")
+              .setStyle(ButtonStyle.Link)
+              .setURL(
+                `https://modrinth.com/${project.project_type}/${project.slug}`
               )
-            )
-            .setThumbnailAccessory(
-              new ThumbnailBuilder().setURL(projectData.icon_url)
-            )
-        );
+          )
+      );
 
-        uiContainer.addSeparatorComponents((sep) =>
-          sep.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
-        );
-
-        uiContainer.addSectionComponents(
-          new SectionBuilder()
-            .addTextDisplayComponents(
-              new TextDisplayBuilder().setContent(
-                [
-                  `### Updated: <t:${Math.floor(new Date(projectData.updated).getTime() / 1000)}:R> | Published: <t:${Math.floor(new Date(projectData.published).getTime() / 1000)}:R>`,
-                  `- Loaders: ${loaderEmojiDisplay}`,
-                  `- Categories: ${projectData.categories
-                    .map((c) =>
-                      inlineCode(c.charAt(0).toUpperCase() + c.slice(1))
-                    )
-                    .join(" | ")}`,
-                  `${Emojis.ModEnviromentClient} Client Side: ${sideSupportEmojiMap[projectData.client_side]} (${projectData.client_side[0].toUpperCase() + projectData.client_side.slice(1)})`,
-                  `${Emojis.ModEnviromentServer} Server Side: ${sideSupportEmojiMap[projectData.server_side]} (${projectData.server_side[0].toUpperCase() + projectData.server_side.slice(1)})`,
-                ].join("\n")
-              )
-            )
-            .setButtonAccessory((button) =>
-              button
-                .setLabel("Link")
-                .setStyle(ButtonStyle.Link)
-                .setURL(`https://modrinth.com/mod/${projectData.slug}`)
-            )
-        );
-
+      if (dependencies.length > 0) {
         uiContainer.addActionRowComponents((row) =>
           row.addComponents([
             new StringSelectMenuBuilder()
               .setCustomId("dependency-view")
               .setPlaceholder("View more about a dependency")
               .addOptions(
-                optionalDependencies.length > 0
-                  ? optionalDependencies.map((p) => ({
+                dependencies.length > 25
+                  ? dependencies
+                      .slice(0, 24)
+                      .map((p) => ({
+                        label: p.title,
+                        value: p.id,
+                        emoji: undefined,
+                      }))
+                      .concat([
+                        {
+                          label: "Too many dependencies to list...",
+                          value: "overflow",
+                          emoji: "❌",
+                        },
+                      ])
+                  : dependencies.map((p) => ({
                       label: p.title,
                       value: p.id,
                     }))
-                  : [{ label: "No Dependencies", value: "none", default: true }]
-              )
-              .setDisabled(optionalDependencies.length === 0),
+              ),
           ])
         );
+      }
 
-        uiContainer.addSeparatorComponents((sep) =>
-          sep.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
+      uiContainer.addSeparatorComponents((sep) =>
+        sep.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
+      );
+
+      const externalLinkButtons = [
+        { label: "Source", url: project.source_url },
+        { label: "Wiki", url: project.wiki_url },
+        { label: "Discord", url: project.discord_url },
+        { label: "Issues", url: project.issues_url },
+      ]
+        .filter(({ url }) => !!url)
+        .map(({ label, url }) =>
+          new ButtonBuilder()
+            .setLabel(label)
+            .setStyle(ButtonStyle.Link)
+            .setURL(url!)
         );
 
-        const externalLinkButtons = [
-          { label: "Source", url: projectData.source_url },
-          { label: "Wiki", url: projectData.wiki_url },
-          { label: "Discord", url: projectData.discord_url },
-          { label: "Issues", url: projectData.issues_url },
-        ]
-          .filter(({ url }) => !!url)
-          .map(({ label, url }) =>
-            new ButtonBuilder()
-              .setLabel(label)
-              .setStyle(ButtonStyle.Link)
-              .setURL(url!)
-          );
+      if (externalLinkButtons.length > 0) {
+        uiContainer.addActionRowComponents((row) =>
+          row.addComponents(externalLinkButtons)
+        );
 
-        if (externalLinkButtons.length > 0) {
-          uiContainer.addActionRowComponents((row) =>
-            row.addComponents(externalLinkButtons)
-          );
-
+        if (team.length > 0) {
           uiContainer.addTextDisplayComponents((text) =>
             text.setContent(
-              `-# Created By: ${teamMembers.map((member) => member.user.username).join(', ')}`
+              `-# By: ${team
+                .map((member) => `**[${member.role}]** ${member.user.username}`)
+                .join(" | ")}`
             )
           );
         }
-
-        await interaction.reply({
-          components: [uiContainer],
-          flags: MessageFlags.IsComponentsV2,
-        });
-      } catch (error) {
-        console.error("[Modrinth] Error fetching project:", error);
-        await interaction.reply({
-          content:
-            "❌ Failed to fetch the mod from Modrinth. Please try again later.",
-          flags: MessageFlags.Ephemeral,
-        });
       }
-    }
 
-    // ─────────────────────────────────────────────
-    // 👤 User Subcommand
-    // ─────────────────────────────────────────────
-    else if (subcommand === "user") {
-      const username = interaction.options.getString("name");
-      const userRes = await fetch(
-        `https://api.modrinth.com/v2/user/${username}`
-      );
-      const userData: ModrinthUser = await userRes.json();
+      return await interaction.reply({
+        components: [uiContainer],
+        flags: [MessageFlags.IsComponentsV2],
+      });
+    } catch (err) {
+      console.error("[Modrinth] Error:", err);
 
-      await interaction.reply({
+      return await interaction.reply({
         embeds: [
           new EmbedBuilder()
-            .setTitle(userData.username)
-            .setDescription(userData.bio)
-            .setThumbnail(userData.avatar_url)
-            .setFields([
-              {
-                name: "Created:",
-                value: `<t:${Math.floor(new Date(userData.created).getTime() / 1000)}:R>`,
-              },
-            ]),
+            .setColor(Colors.Error)
+            .setDescription(`${Emojis.Cross} No project found for **${item}**`),
         ],
+        flags: [MessageFlags.Ephemeral],
       });
     }
   },
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // ✨ Autocomplete Handler
-  // ─────────────────────────────────────────────────────────────────────────
   async autocomplete(interaction, client) {
-    const focusedInput = interaction.options.getFocused();
-    const subcommand = interaction.options.getSubcommand(true);
+    const item = interaction.options.getString("item");
+    const type = interaction.options.getString("type");
 
-    if (subcommand === "mod") {
-      try {
-        const searchRes = await fetch(
-          `https://api.modrinth.com/v2/search?query=${focusedInput}&limit=25&facets=[["project_type:mod"]]`
-        );
-        if (!searchRes.ok)
-          throw new Error(`Failed to search: ${searchRes.statusText}`);
+    const search = await modrinth.search(item, {
+      limit: 25,
+      index: SearchIndex.Downloads,
+      facets: new SearchFacets(
+        new FacetGroup(
+          new Facet(FacetType.ProjectType, FacetOperation.Equals, type)
+        )
+      ),
+    });
 
-        const searchData: ModrinthSearchResponse = await searchRes.json();
-        const searchResults: ApplicationCommandOptionChoiceData[] =
-          searchData.hits.map((project) => ({
-            name: project.title ?? "Unknown",
-            value: project.slug ?? "unknown",
-          }));
-
-        await interaction.respond(searchResults);
-      } catch (err) {
-        console.error("[Modrinth] Autocomplete error:", err);
-        await interaction.respond([
-          {
-            name: "⚠️ Error fetching results",
-            value: "error",
-          },
-        ]);
-      }
-    }
+    await interaction.respond(
+      search.hits.map((mod) => ({ name: mod.title, value: mod.slug }))
+    );
   },
 } as SlashCommandModule;

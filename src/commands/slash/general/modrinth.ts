@@ -15,6 +15,7 @@ import {
 } from "../../../handler/types/Command";
 import {
   ApplicationIntegrationType,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   ContainerBuilder,
@@ -73,10 +74,24 @@ export = {
 
   async execute({ client, interaction }) {
     const item = interaction.options.getString("item");
+    const type = interaction.options.getString("type");
+
+    await interaction.deferReply();
 
     try {
-
       const project = await modrinth.getProject(item);
+
+      if (project.project_type !== type) {
+        return await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(Colors.Warning)
+              .setDescription(
+                `${Emojis.Info} Your input matched a **${project.project_type}**, not a ${type}.`
+              ),
+          ],
+        });
+      }
 
       const loaderEmojiMap: Record<string, string> = {
         bukkit: Emojis.Bukkit,
@@ -139,7 +154,9 @@ export = {
             )
           )
           .setThumbnailAccessory(
-            new ThumbnailBuilder().setURL(project.icon_url)
+            new ThumbnailBuilder().setURL(
+              project.icon_url || "attachment://Unknown.png"
+            )
           )
       );
 
@@ -236,20 +253,25 @@ export = {
         }
       }
 
-      return await interaction.reply({
+      return await interaction.editReply({
         components: [uiContainer],
         flags: [MessageFlags.IsComponentsV2],
+        files: [
+          new AttachmentBuilder("./src/images/Unknown.png", {
+            name: "Unknown.png",
+            description: "This is for incase a image does not load",
+          }),
+        ],
       });
     } catch (err) {
-      console.error("[Modrinth] Error:", err);
-
-      return await interaction.reply({
+      return await interaction.editReply({
         embeds: [
           new EmbedBuilder()
             .setColor(Colors.Error)
-            .setDescription(`${Emojis.Cross} No project found for **${item}**`),
+            .setDescription(
+              `${Emojis.Cross} Couldn't find **${item}** — try using autocomplete.`
+            ),
         ],
-        flags: [MessageFlags.Ephemeral],
       });
     }
   },

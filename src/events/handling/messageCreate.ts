@@ -1,9 +1,9 @@
-import { EventModule } from "../../handler/types/EventModule";
+import { EventModule } from "../../System/Types/EventModule.js";
 import { Events } from "discord.js";
-import { handleMessageCommands } from "../../handler/util/HandleChatCommands";
-import { autoSlowmodeSystem } from "../../handler/util/systems/AutoSlowmodeSystem";
+import { handleMessageCommands } from "../../System/Utils/Functions/Handlers/HandleChatCommands.js";
+import { autoSlowmodeSystem } from "../../System/Utils/Functions/Other/AutoSlowmodeSystem.js";
 
-export = {
+export default {
   name: Events.MessageCreate,
   async execute({ client, args: [message] }) {
     if (message.author.bot) return;

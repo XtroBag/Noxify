@@ -1,9 +1,10 @@
 import { REST, Routes } from "discord.js";
-import { RegisterTypes, SlashCommandModule } from "./handler/types/Command";
-import Logger from "./handler/util/Logger";
+import { RegisterTypes, SlashCommandModule } from "./System/Types/Command.js";
+import Logger from "./System/Utils/Functions/Handlers/Logger.js";
 import { glob } from "glob";
-import { commandsFolderName } from "./config";
+import { commandsFolderName } from "./config.js";
 import "dotenv/config";
+import { pathToFileURL } from "node:url";
 
 async function uploadSlashCommands(
   type: RegisterTypes,
@@ -48,7 +49,9 @@ async function getSlashCommandFiles(): Promise<any[]> {
 
   for (const commandPath of commandPaths) {
     try {
-      const module: SlashCommandModule = (await import(commandPath)).default;
+        const fileUrl = pathToFileURL(commandPath).href;
+
+        const module: SlashCommandModule = (await import(fileUrl)).default;
 
       if (
         !module.data ||

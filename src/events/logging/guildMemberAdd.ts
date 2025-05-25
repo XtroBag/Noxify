@@ -1,5 +1,5 @@
-import { Server } from "../../handler/schemas/models/Models";
-import { EventModule } from "../../handler/types/EventModule";
+import { Server } from "../../System/Schemas/Models/Models.js";
+import { EventModule } from "../../System/Types/EventModule.js";
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -10,9 +10,9 @@ import {
   inlineCode,
   userMention,
 } from "discord.js";
-import { Colors, defaultPrefix } from "../../config";
+import { Colors, defaultPrefix } from "../../config.js";
 
-export = {
+export default {
   name: Events.GuildMemberAdd,
   async execute({ client, args: [member] }) {
     const guild = await Server.findOne({ guildID: member.guild.id });

@@ -1,5 +1,5 @@
 import SGDB, { SGDBImage } from "steamgriddb";
-import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler/types/Command";
+import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../System/Types/Command.js";
 import {
   ApplicationIntegrationType,
   InteractionContextType,
@@ -9,7 +9,7 @@ import {
   ActionRowBuilder,
   AttachmentBuilder,
 } from "discord.js";
-import { createEmbed, getImageUrl } from "../../../handler/util/AssetsGenerators";
+import { createEmbed, getImageUrl } from "../../../System/Utils/Functions/Other/AssetsGenerators.js";
 
 // This has a "unknown message" error happening
 // C:\Users\scgra\Desktop\Noxify\dist\commands\slash\fun\assets.js:123:13
@@ -22,7 +22,7 @@ const sgdb = new SGDB({
   },
 });
 
-export = {
+export default {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
   disabled: false,
@@ -62,7 +62,7 @@ export = {
     const gameID = Number(interaction.options.getString("game"));
     const type = interaction.options.getString("type");
 
-    await interaction.deferReply({ fetchReply: true }); // could be this
+    await interaction.deferReply({ withResponse: true }); // could be this
 
     if (gameID === null) return;
 
@@ -176,7 +176,7 @@ export = {
             nextButton.setDisabled(true)
           ),
         ],
-      });
+      }).catch(() => {});
     });
  },
 

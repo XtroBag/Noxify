@@ -1,4 +1,4 @@
-import { Intent } from "./handler/types/Intent";
+import { Intent } from "./System/Types/Intent.js";
 import {
   ChatInputCommandInteraction,
   ContextMenuCommandInteraction,
@@ -21,13 +21,6 @@ export const defaultIntents: Intent[] = [
 export const eventsFolderName: string = "events";
 export const commandsFolderName: string = "commands";
 export const componentsFolderName: string = "components";
-export const itemsFolderName: string = "items";
-
-export const milestones: number[] = [
-  1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000,
-  13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000,
-];
-export const validCurrencySymbols = ["$", "€", "£", "¥", "₣", "₹"];
 
 // Your Discord ID (for owner only commands)
 export const ownerId: string = "149621801989701633";

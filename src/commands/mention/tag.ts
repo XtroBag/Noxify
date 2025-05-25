@@ -1,6 +1,6 @@
-import { CommandTypes, PingCommandModule } from "../../handler/types/Command";
+import { CommandTypes, PingCommandModule } from "../../System/Types/Command.js";
 
-export = {
+export default {
     name: "help",
     type: CommandTypes.PingCommand,
     async execute({ client, message, args }) {

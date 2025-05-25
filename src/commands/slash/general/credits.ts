@@ -1,9 +1,9 @@
-import { Colors, Emojis } from "../../../config";
+import { Colors, Emojis } from "../../../config.js";
 import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler/types/Command";
+} from "../../../System/Types/Command.js";
 import {
   ActionRowBuilder,
   ApplicationIntegrationType,
@@ -14,7 +14,7 @@ import {
   StringSelectMenuBuilder,
 } from "discord.js";
 
-export = {
+export default {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
   data: new SlashCommandBuilder()
@@ -90,6 +90,7 @@ export = {
         await menu.update({
           embeds: [personEmbed],
           components: [row],
+          withResponse: true,
         });
       }
     });
@@ -97,7 +98,7 @@ export = {
     collector.on("end", async () => {
       await interaction.editReply({
         components: [],
-      });
+      }).catch(() => {})
     });
   },
 } as SlashCommandModule;

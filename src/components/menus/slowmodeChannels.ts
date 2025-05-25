@@ -4,10 +4,10 @@ import {
   EmbedBuilder,
   userMention,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
-import { Emojis, Colors } from "../../config";
+import { ComponentModule, ComponentTypes } from "../../System/Types/Component.js";
+import { Emojis, Colors } from "../../config.js";
 
-export = {
+export default {
   id: "slowmodeChannels",
   type: ComponentTypes.SelectMenu,
   async execute(client, menu, params) {

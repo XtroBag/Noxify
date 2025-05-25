@@ -1,6 +1,6 @@
-import { CommandTypes, MessageCommandModule } from "../../handler/types/Command";
+import { CommandTypes, MessageCommandModule } from "../../System/Types/Command.js";
 
-export = {
+export default {
   name: "Hello There",
   type: CommandTypes.MessageCommand,
   disabled: false,

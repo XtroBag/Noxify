@@ -4,9 +4,9 @@ import {
   PermissionFlagsBits,
   userMention,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../../handler/types/Component";
+import { ComponentModule, ComponentTypes } from "../../../System/Types/Component.js";
 
-export = {
+export default {
   id: "loggingBan",
   type: ComponentTypes.Button,
   async execute(

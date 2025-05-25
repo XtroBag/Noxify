@@ -1,8 +1,8 @@
 import { inlineCode } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
-import { Server } from '../../../handler/schemas/models/Models';
+import { CommandTypes, PrefixCommandModule } from "../../../System/Types/Command.js";
+import { Server } from '../../../System/Schemas/Models/Models.js';
 
-export = {
+export default {
   name: "prefix",
   aliases: ["pfix", "p"],
   category: "general",

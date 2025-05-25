@@ -1,4 +1,3 @@
-import { EventModule } from "../../handler/types/EventModule";
 import {
   channelMention,
   EmbedBuilder,
@@ -6,11 +5,12 @@ import {
   TextChannel,
   userMention,
 } from "discord.js";
-import { Server } from "../../handler/schemas/models/Models";
-import { Colors } from "../../config";
-import Logger from "../../handler/util/Logger";
+import { EventModule } from "../../System/Types/EventModule.js";
+import { Server } from "../../System/Schemas/Models/Models.js";
+import { Colors } from "../../config.js";
+import Logger from "../../System/Utils/Functions/Handlers/Logger.js";
 
-export = {
+export default {
   name: Events.MessageDelete,
   async execute({ client, args: [message] }) {
     try {

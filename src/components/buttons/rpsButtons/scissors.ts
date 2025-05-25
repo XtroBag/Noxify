@@ -8,10 +8,10 @@ import {
 import {
   ComponentModule,
   ComponentTypes,
-} from "../../../handler/types/Component";
-import { Colors, Emojis } from "../../../config";
+} from "../../../System/Types/Component.js";
+import { Colors, Emojis } from "../../../config.js";
 
-export = {
+export default {
   id: "Scissors",
   type: ComponentTypes.Button,
   async execute(client, button: ButtonInteraction<"cached">, params) {

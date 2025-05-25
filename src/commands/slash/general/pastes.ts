@@ -1,9 +1,9 @@
-import { Colors, Emojis } from "../../../config";
+import { Colors, Emojis } from "../../../config.js";
 import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler/types/Command";
+} from "../../../System/Types/Command.js";
 import {
   ApplicationIntegrationType,
   EmbedBuilder,
@@ -12,7 +12,7 @@ import {
 } from "discord.js";
 import { format } from "prettier";
 
-export = {
+export default {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
   data: new SlashCommandBuilder()

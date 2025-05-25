@@ -1,9 +1,9 @@
-import { Colors, Emojis } from "../../../config";
+import { Colors, Emojis } from "../../../config.js";
 import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler/types/Command";
+} from "../../../System/Types/Command.js";
 import {
   ActionRowBuilder,
   ApplicationIntegrationType,
@@ -15,7 +15,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-export = {
+export default {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
   data: new SlashCommandBuilder()

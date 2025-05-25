@@ -6,10 +6,10 @@ import {
   resolveColor,
   userMention,
 } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
-import { Colors, Emojis } from "../../../config";
+import { CommandTypes, PrefixCommandModule } from "../../../System/Types/Command.js";
+import { Colors, Emojis } from "../../../config.js";
 
-export = {
+export default {
   name: "perms",
   aliases: ["p"],
   category: 'useful',

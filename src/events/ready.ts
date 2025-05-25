@@ -1,8 +1,8 @@
-import Logger from "../handler/util/Logger";
+import Logger from "../System/Utils/Functions/Handlers/Logger.js";
 import { ActivitiesOptions, ActivityType, Events } from "discord.js";
-import { EventModule } from "../handler/types/EventModule";
+import { EventModule } from "../System/Types/EventModule.js";
 
-export = {
+export default {
   name: Events.ClientReady,
   once: true,
   async execute({ client, args: [readyClient] }) {

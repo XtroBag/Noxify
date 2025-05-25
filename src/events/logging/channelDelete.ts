@@ -1,8 +1,8 @@
-import { EventModule } from "../../handler/types/EventModule";
-import { ChannelType, Events, GuildChannel } from "discord.js";
-import { Server } from "../../handler/schemas/models/Models";
+import { EventModule } from "../../System/Types/EventModule.js";
+import { ChannelType, Events } from "discord.js";
+import { Server } from "../../System/Schemas/Models/Models.js";
 
-export = {
+export default {
   name: Events.ChannelDelete,
   async execute({ client, args: [channel] }): Promise<void> {
     if (channel.type === ChannelType.GuildText) {
@@ -15,6 +15,7 @@ export = {
         guildData.loggingChannel = "";
 
         await guildData.save();
+        
       }
     }
   },

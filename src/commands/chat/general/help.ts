@@ -1,8 +1,8 @@
 import { Collection, EmbedBuilder, inlineCode } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
-import { Colors, formatCooldown } from "../../../config";
+import { CommandTypes, PrefixCommandModule } from "../../../System/Types/Command.js";
+import { Colors, formatCooldown } from "../../../config.js";
 
-export = {
+export default {
   name: "help",
   aliases: ["h", "helpme"],
   category: "general",

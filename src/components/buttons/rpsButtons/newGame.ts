@@ -9,10 +9,10 @@ import {
 import {
   ComponentModule,
   ComponentTypes,
-} from "../../../handler/types/Component";
-import { Emojis, Colors } from "../../../config";
+} from "../../../System/Types/Component.js";
+import { Emojis, Colors } from "../../../config.js";
 
-export = {
+export default {
   id: "newGame",
   type: ComponentTypes.Button,
   async execute(client, button: ButtonInteraction<"cached">, params) {

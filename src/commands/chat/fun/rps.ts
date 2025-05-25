@@ -4,17 +4,14 @@ import {
   ButtonStyle,
   ChannelType,
   EmbedBuilder,
-  Message,
-  MessageReaction,
-  User,
 } from "discord.js";
 import {
   CommandTypes,
   PrefixCommandModule,
-} from "../../../handler/types/Command";
-import { Colors, Emojis } from "../../../config";
+} from "../../../System/Types/Command.js";
+import { Colors, Emojis } from "../../../config.js";
 
-export = {
+export default {
   name: "rps",
   category: "fun",
   aliases: [],

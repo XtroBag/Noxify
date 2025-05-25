@@ -1,6 +1,6 @@
-import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
+import { CommandTypes, PrefixCommandModule } from "../../../System/Types/Command.js";
 
-export = {
+export default {
   name: "emojify",
   aliases: ['e', 'emoji'],
   category: "fun",

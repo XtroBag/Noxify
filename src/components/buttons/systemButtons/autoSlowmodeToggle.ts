@@ -9,10 +9,10 @@ import {
 import {
   ComponentModule,
   ComponentTypes,
-} from "../../../handler/types/Component";
-import { Colors } from "../../../config";
+} from "../../../System/Types/Component.js";
+import { Colors } from "../../../config.js";
 
-export = {
+export default {
   id: "AutoSlowmodeToggle",
   type: ComponentTypes.Button,
   async execute(client, button, params) {

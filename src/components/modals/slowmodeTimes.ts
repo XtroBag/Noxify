@@ -4,11 +4,11 @@ import {
   ModalSubmitInteraction,
   userMention,
 } from "discord.js";
-import { ComponentModule, ComponentTypes } from "../../handler/types/Component";
-import { Colors, Emojis } from "../../config";
+import { ComponentModule, ComponentTypes } from "../../System/Types/Component.js";
+import { Colors, Emojis } from "../../config.js";
 import ms from "ms";
 
-export = {
+export default {
   id: "SlowmodeTimesModal",
   type: ComponentTypes.Modal,
   async execute(client, modal, params) {

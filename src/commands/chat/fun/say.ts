@@ -1,7 +1,7 @@
-import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
+import { CommandTypes, PrefixCommandModule } from "../../../System/Types/Command.js";
 import { ChannelType, Message } from "discord.js";
 
-export = {
+export default {
   name: "say",
   aliases: ["s"],
   category: "fun",

@@ -1,8 +1,8 @@
 import { ChannelType, EmbedBuilder } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
-import { Colors } from "../../../config";
+import { CommandTypes, PrefixCommandModule } from "../../../System/Types/Command.js";
+import { Colors } from "../../../config.js";
 
-export = {
+export default {
   name: "guilds",
   aliases: ["g"],
   category: "useful",

@@ -1,8 +1,8 @@
-import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
+import { CommandTypes, PrefixCommandModule } from "../../../System/Types/Command.js";
 import { EmbedBuilder } from "discord.js";
-import { Colors } from "../../../config";
+import { Colors } from "../../../config.js";
 
-export = {
+export default {
   name: "github",
   aliases: ["gh"],
   category: "general",

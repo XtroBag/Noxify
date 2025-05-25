@@ -6,8 +6,8 @@ import {
   Emojis,
   BoostBadges,
   Colors,
-} from "../../../config";
-import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../handler/types/Command";
+} from "../../../config.js";
+import { CommandTypes, RegisterTypes, SlashCommandModule } from "../../../System/Types/Command.js";
 import {
   PermissionFlagsBits,
   SlashCommandBuilder,
@@ -27,7 +27,7 @@ import {
   ApplicationIntegrationType,
 } from "discord.js";
 
-export = {
+export default {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
   disabled: false,

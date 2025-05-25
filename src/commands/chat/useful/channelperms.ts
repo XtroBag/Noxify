@@ -1,7 +1,7 @@
 import { ChannelType } from "discord.js";
-import { CommandTypes, PrefixCommandModule } from "../../../handler/types/Command";
+import { CommandTypes, PrefixCommandModule } from "../../../System/Types/Command.js";
 
-export = {
+export default {
   name: "channelperms",
   aliases: ["cp"],
   category: "useful",

@@ -1,8 +1,8 @@
-import { EventModule } from "../handler/types/EventModule";
+import { EventModule } from "../System/Types/EventModule.js";
 import { Events } from "discord.js";
-import { Server } from "../handler/schemas/models/Models";
+import { Server } from "../System/Schemas/Models/Models.js";
 
-export = {
+export default {
   name: Events.GuildDelete,
   async execute({ client, args: [guild] }) {
     await Server.findOneAndDelete({ guildID: guild.id });

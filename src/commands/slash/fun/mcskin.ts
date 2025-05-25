@@ -2,7 +2,7 @@ import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler/types/Command";
+} from "../../../System/Types/Command.js";
 import {
   ApplicationIntegrationType,
   EmbedBuilder,
@@ -12,14 +12,11 @@ import {
 import {
   RenderCrops,
   RenderTypes,
-} from "../../../handler/types/StarlightSkinAPI";
-import {
-  getRenderTypeCrops,
-  getSkinRender,
-} from "../../../handler/util/McSkinRender";
-import { Colors } from "../../../config";
+} from "../../../System/Types/StarlightSkinAPI.js";
+import { getRenderTypeCrops, getSkinRender } from "../../../System/Utils/Functions/Other/McSkinRender.js";
+import { Colors } from "../../../config.js";
 
-export = {
+export default {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
   disabled: false,

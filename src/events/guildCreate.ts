@@ -1,9 +1,8 @@
-import { EventModule } from "../handler/types/EventModule";
-import { Server } from "../handler/schemas/models/Models";
+import { EventModule } from "../System/Types/EventModule.js";
+import { Server } from "../System/Schemas/Models/Models.js";
 import { Events } from "discord.js";
-import { defaultPrefix } from "../config";
 
-export = {
+export default {
   name: Events.GuildCreate,
   async execute({ client, args: [guild] }) {
     await Server.create({

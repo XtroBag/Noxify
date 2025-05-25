@@ -1,4 +1,4 @@
-import { EventModule } from "../../handler/types/EventModule";
+import { EventModule } from "../../System/Types/EventModule.js";
 import {
   channelMention,
   EmbedBuilder,
@@ -6,10 +6,10 @@ import {
   TextChannel,
   userMention,
 } from "discord.js";
-import { Server } from "../../handler/schemas/models/Models";
-import { Colors } from "../../config";
+import { Server } from "../../System/Schemas/Models/Models.js";
+import { Colors } from "../../config.js";
 
-export = {
+export default {
   name: Events.MessageUpdate,
   async execute({ client, args: [oldMessage, newMessage] }) {
     if (oldMessage.author.bot) return;

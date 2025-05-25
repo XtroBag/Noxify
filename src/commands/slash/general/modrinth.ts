@@ -12,7 +12,7 @@ import {
   CommandTypes,
   RegisterTypes,
   SlashCommandModule,
-} from "../../../handler/types/Command";
+} from "../../../System/Types/Command.js";
 import {
   ApplicationIntegrationType,
   AttachmentBuilder,
@@ -30,11 +30,11 @@ import {
   TextDisplayBuilder,
   ThumbnailBuilder,
 } from "discord.js";
-import { Colors, Emojis } from "../../../config";
+import { Colors, Emojis } from "../../../config.js";
 
 const modrinth = new Modrinth({ userAgent: "XtroBag/Noxify/1.0.0" });
 
-export = {
+export default {
   type: CommandTypes.SlashCommand,
   register: RegisterTypes.Global,
   data: new SlashCommandBuilder()
@@ -257,13 +257,16 @@ export = {
         components: [uiContainer],
         flags: [MessageFlags.IsComponentsV2],
         files: [
-          new AttachmentBuilder("./src/images/Unknown.png", {
+          new AttachmentBuilder("./src/System/Images/Unknown.png", {
             name: "Unknown.png",
             description: "This is for incase a image does not load",
           }),
         ],
       });
     } catch (err) {
+
+      console.log(err)
+
       return await interaction.editReply({
         embeds: [
           new EmbedBuilder()
@@ -276,10 +279,10 @@ export = {
     }
   },
   async autocomplete(interaction, client) {
-    const item = interaction.options.getString("item");
     const type = interaction.options.getString("type");
+    const item = interaction.options.getFocused(true);
 
-    const search = await modrinth.search(item, {
+    const search = await modrinth.search(item.value, {
       limit: 25,
       index: SearchIndex.Downloads,
       facets: new SearchFacets(
@@ -289,8 +292,19 @@ export = {
       ),
     });
 
-    await interaction.respond(
-      search.hits.map((mod) => ({ name: mod.title, value: mod.slug }))
-    );
+    const results =
+      search.hits.length > 0
+        ? search.hits.map((mod) => ({
+            name: mod.title,
+            value: mod.slug,
+          }))
+        : [
+            {
+              name: "We couldn’t find anything matching your input.",
+              value: "no_results",
+            },
+          ];
+
+    await interaction.respond(results);
   },
 } as SlashCommandModule;

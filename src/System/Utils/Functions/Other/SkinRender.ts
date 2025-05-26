@@ -1,19 +1,15 @@
-import { RenderCrops, RenderTypes, SkinRenderOptions } from "../../../Types/StarlightSkinAPI.js";
+import { RenderCrops, RenderTypes, SkinRenderOptions } from "../../../Types/StarlightSkins.js";
 
 export async function getSkinRender(
-  renderType: RenderTypes, // Using the RenderTypes enum
+  renderType: RenderTypes,
   playerName: string,
-  renderCrop: RenderCrops // Using the RenderCrops enum
-): Promise<Buffer> {  // Return type is Buffer
-  // Construct the API URL
+  renderCrop: RenderCrops
+): Promise<Buffer> {
   const url = `https://starlightskins.lunareclipse.studio/render/${renderType}/${playerName}/${renderCrop}`;
 
-  // Send GET request to the API and fetch the image as a buffer
   const response = await fetch(url);
 
-  // Check if the response is not OK
   if (!response.ok) {
-    // Handle the specific HTTP status codes
     switch (response.status) {
       case 404:
         // Player not found

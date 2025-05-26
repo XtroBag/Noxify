@@ -3,8 +3,8 @@ import { RegisterTypes, SlashCommandModule } from "./System/Types/Command.js";
 import Logger from "./System/Utils/Functions/Handlers/Logger.js";
 import { glob } from "glob";
 import { commandsFolderName } from "./config.js";
-import "dotenv/config";
 import { pathToFileURL } from "node:url";
+import "dotenv/config";
 
 async function uploadSlashCommands(
   type: RegisterTypes,

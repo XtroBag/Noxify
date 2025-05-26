@@ -12,8 +12,8 @@ import {
 import {
   RenderCrops,
   RenderTypes,
-} from "../../../System/Types/StarlightSkinAPI.js";
-import { getRenderTypeCrops, getSkinRender } from "../../../System/Utils/Functions/Other/McSkinRender.js";
+} from "../../../System/Types/StarlightSkins.js";
+import { getRenderTypeCrops, getSkinRender } from "../../../System/Utils/Functions/Other/SkinRender.js";
 import { Colors } from "../../../config.js";
 
 export default {
@@ -94,13 +94,10 @@ export default {
 
   async autocomplete(interaction, client) {
     try {
-      // Get the focused option
       const focusedOption = interaction.options.getFocused(true);
   
-      // Get the value for the renderType option, if it exists
       const renderType = interaction.options.getString("type");
   
-      // Handle autocompletion for the 'type' option
       if (focusedOption.name === "type") {
         const choices = Object.values(RenderTypes)
           .filter(
@@ -110,20 +107,16 @@ export default {
           .slice(0, 25)
           .map((type) => ({ name: type, value: type }));
   
-        // Respond with the filtered choices
         await interaction.respond(choices);
       }
   
-      // Handle autocompletion for the 'crop' option
       if (focusedOption.name === "crop") {
-        // Ensure that renderType is valid and is of type RenderTypes
         if (!renderType || !Object.values(RenderTypes).includes(renderType as RenderTypes)) {
-          return await interaction.respond([]); // If renderType is invalid, return no choices
+          return await interaction.respond([]);
         }
   
         const validCrops = getRenderTypeCrops(renderType as RenderTypes);
   
-        // Ensure validCrops is an array
         const cropsArray = Array.isArray(validCrops) ? validCrops : [validCrops];
   
         const filteredCrops = cropsArray
@@ -133,12 +126,10 @@ export default {
           .slice(0, 25)
           .map((crop) => ({ name: crop, value: crop }));
   
-        // Respond with the filtered crops
         await interaction.respond(filteredCrops);
       }
     } catch (error) {
       console.error("Error in autocomplete:", error);
-      // Optionally, you could send a message back to the user or log the error
       await interaction.respond([]);
     }
   }

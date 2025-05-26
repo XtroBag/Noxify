@@ -13,7 +13,7 @@ export class Utilities {
     this.client = client;
   }
 
-  async databaseConnection(): Promise<Mongoose | void> {
+  async registerDatabase(): Promise<Mongoose | void> {
     try {
       Logger.log("Successfully connected to MongoDB!");
       return await mongoose.connect(process.env.MONGOOSE_URI, {

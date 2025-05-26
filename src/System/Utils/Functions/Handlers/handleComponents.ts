@@ -146,7 +146,7 @@ function getIds(interaction: Interaction) {
 
     for (const part of userParts) {
       if (part.startsWith("<") && part.endsWith(">")) {
-        const inner = part.slice(1, -1); // Remove the < and >
+        const inner = part.slice(1, -1);
         const colonIndex = inner.indexOf(":");
         if (colonIndex !== -1) {
           const key = inner.slice(0, colonIndex);

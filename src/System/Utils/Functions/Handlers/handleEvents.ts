@@ -2,12 +2,11 @@ import { glob } from "glob";
 import Logger from "./Logger.js";
 import { eventsFolderName } from "../../../../config.js";
 import { DiscordClient } from "./DiscordClient.js";
-import { EventModule } from "../../../Types/EventModule.js";
+import { EventModule } from "../../../Types/Event.js";
 import { ClientEvents, Events } from "discord.js";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-// Type helper to infer the correct event argument types
 type EventArguments<T extends keyof ClientEvents | Events> =
   T extends keyof ClientEvents ? ClientEvents[T] : never;
 
@@ -26,26 +25,23 @@ export async function registerEvents(client: DiscordClient): Promise<void> {
     const importPath = `./${relativePath}`;
 
     try {
-      // Dynamically import the event module
       const eventModule: EventModule<keyof ClientEvents> = (
         await import(importPath)
       ).default;
 
       const { name, execute, once } = eventModule;
 
-      // Register event with correct argument types
       client.events.push(name);
 
-      // Handle events and their arguments dynamically
       if (once) {
         client.once(
           String(name),
-          (...args: EventArguments<typeof name>) => execute({ client, args }) // Pass client and args in an object
+          (...args: EventArguments<typeof name>) => execute({ client, args })
         );
       } else {
         client.on(
           String(name),
-          (...args: EventArguments<typeof name>) => execute({ client, args }) // Pass client and args in an object
+          (...args: EventArguments<typeof name>) => execute({ client, args })
         );
       }
     } catch (err) {

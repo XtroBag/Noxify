@@ -1,4 +1,4 @@
-import { EventModule } from "../../System/Types/EventModule.js";
+import { EventModule } from "../../System/Types/Event.js";
 import { Events } from "discord.js";
 import { handleMessageCommands } from "../../System/Utils/Functions/Handlers/HandleChatCommands.js";
 import { autoSlowmodeSystem } from "../../System/Utils/Functions/Other/AutoSlowmodeSystem.js";

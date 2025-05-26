@@ -1,7 +1,7 @@
-import { EventModule } from "../../System/Types/EventModule";
+import { EventModule } from "../../System/Types/Event";
 import { Events } from "discord.js";
-import { handleComponents } from "../../System/Utils/Functions/Handlers/handleComponents.js";
-import { handleInteractionCommands } from "../../System/Utils/Functions/Handlers/handleInteractionCommands.js";
+import { handleComponents } from "../../System/Utils/Functions/Handlers/HandleComponents.js";
+import { handleInteractionCommands } from "../../System/Utils/Functions/Handlers/HandleInteractionCommands.js";
 
 export default {
   name: Events.InteractionCreate,

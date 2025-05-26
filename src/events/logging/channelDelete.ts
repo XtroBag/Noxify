@@ -1,4 +1,4 @@
-import { EventModule } from "../../System/Types/EventModule.js";
+import { EventModule } from "../../System/Types/Event.js";
 import { ChannelType, Events } from "discord.js";
 import { Server } from "../../System/Schemas/Models/Models.js";
 

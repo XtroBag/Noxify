@@ -1,5 +1,5 @@
 import { Server } from "../../System/Schemas/Models/Models.js";
-import { EventModule } from "../../System/Types/EventModule.js";
+import { EventModule } from "../../System/Types/Event.js";
 import {
   ActionRowBuilder,
   ButtonBuilder,

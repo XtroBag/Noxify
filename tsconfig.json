@@ -12,9 +12,6 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "types": ["node"],
-    // "paths": {
-    //   "@handlers/*": ["System/Utils/Functions/Handlers/*"],
-    // }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

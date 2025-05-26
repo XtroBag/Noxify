@@ -1,6 +1,6 @@
 import Logger from "../System/Utils/Functions/Handlers/Logger.js";
 import { ActivitiesOptions, ActivityType, Events } from "discord.js";
-import { EventModule } from "../System/Types/EventModule.js";
+import { EventModule } from "../System/Types/Event.js";
 
 export default {
   name: Events.ClientReady,

@@ -2,8 +2,8 @@ import Logger from "./Logger.js";
 import { AutomaticIntents, Intent } from "../../../Types/Intent.js";
 import { defaultIntents } from "../../../../config.js";
 import { registerCommands, deleteAllCommands, deleteCommands } from "./HandleCommands.js";
-import { registerComponents } from "./handleComponents.js";
-import { registerEvents } from "./handleEvents.js";
+import { registerComponents } from "./HandleComponents.js";
+import { registerEvents } from "./HandleEvents.js";
 import { EventIntentMapping } from "../../../Types/EventIntentMapping.js";
 import {
   AnySelectMenuInteraction,
@@ -83,16 +83,20 @@ export class DiscordClient extends Client {
     this.replies = new Map<string, string>();
   }
 
-  public async registerDatabase(): Promise<void> {
-    this.utils.databaseConnection();
+  public async registerDatabase() {
+    this.utils.registerDatabase();
   }
 
-  public async registerEvents(): Promise<void> {
+  public async registerEvents() {
     await registerEvents(this);
   }
 
-  public async registerCommands(): Promise<void> {
+  public async registerCommands() {
     await registerCommands(this);
+  }
+
+  public async registerComponents() {
+    await registerComponents(this);
   }
 
   public async deleteCommand(
@@ -111,10 +115,6 @@ export class DiscordClient extends Client {
 
   public async deleteAllCommands(type: RegisterTypes): Promise<void> {
     await deleteAllCommands(type);
-  }
-
-  public async registerComponents(): Promise<void> {
-    await registerComponents(this);
   }
 
   public connect() {
@@ -142,5 +142,13 @@ export class DiscordClient extends Client {
     });
 
     return (this.options.intents = intentBitField);
+  }
+
+  public start() {
+    this.registerDatabase();
+    this.registerEvents();
+    this.registerCommands();
+    this.registerComponents();
+    this.connect();
   }
 }

@@ -5,6 +5,7 @@ import { Server } from "../../../Schemas/Models/Models.js";
 import { ServerData } from "../../../Types/Database.js";
 import mongoose from "mongoose";
 import axios from "axios";
+import { AttachmentBuilder } from "discord.js";
 
 export class Utilities {
   public client: DiscordClient;
@@ -29,22 +30,22 @@ export class Utilities {
   async uploadPaste(content: string, language: string): Promise<string> {
     try {
       const response = await axios.post(
-        'https://api.pastes.dev/post',
+        "https://api.pastes.dev/post",
         content,
         {
           headers: {
-            'Content-Type': `text/${language}`,   // e.g., text/javascript
-            'User-Agent': 'Noxify'
-          }
+            "Content-Type": `text/${language}`, // e.g., text/javascript
+            "User-Agent": "Noxify",
+          },
         }
       );
-  
-      const key = response.data?.key // || response.headers['location']?.split('/').pop();
-      if (!key) console.error('Paste key not found in response.');
-  
+
+      const key = response.data?.key; // || response.headers['location']?.split('/').pop();
+      if (!key) console.error("Paste key not found in response.");
+
       return `https://pastes.dev/${key}`;
     } catch (error) {
-      console.error('Failed to upload paste:', error);
+      console.error("Failed to upload paste:", error);
       throw error;
     }
   }
@@ -53,38 +54,63 @@ export class Utilities {
     return await Server.findOne({ guildID: guildId });
   }
 
-
-  async autoSlowmodeToggle({ guildID, toggle }: { guildID: string, toggle: boolean }) {
-   return await Server.updateOne(
+  async autoSlowmodeToggle({
+    guildID,
+    toggle,
+  }: {
+    guildID: string;
+    toggle: boolean;
+  }) {
+    return await Server.updateOne(
       { guildID: guildID },
       { $set: { "autoSlowmode.enabled": toggle } }
     );
-
   }
 
-  async autoSlowmodeSetTimes({ guildID, shortest, moderate, highest }: { guildID: string, shortest?: number, moderate?: number, highest?: number }) {
+  async autoSlowmodeSetTimes({
+    guildID,
+    shortest,
+    moderate,
+    highest,
+  }: {
+    guildID: string;
+    shortest?: number;
+    moderate?: number;
+    highest?: number;
+  }) {
     const updateFields: Record<string, number> = {};
-  
-    if (shortest !== null) updateFields['autoSlowmode.shortestTime'] = shortest;
-    if (moderate !== null) updateFields['autoSlowmode.moderateTime'] = moderate;
-    if (highest !== null) updateFields['autoSlowmode.highestTime'] = highest;
-  
+
+    if (shortest !== null) updateFields["autoSlowmode.shortestTime"] = shortest;
+    if (moderate !== null) updateFields["autoSlowmode.moderateTime"] = moderate;
+    if (highest !== null) updateFields["autoSlowmode.highestTime"] = highest;
+
     if (Object.keys(updateFields).length === 0) {
-      Logger.warn(`No valid slowmode values provided for update in guild: ${guildID}. At least one of 'shortest', 'moderate', or 'highest' should be specified.`);
+      Logger.warn(
+        `No valid slowmode values provided for update in guild: ${guildID}. At least one of 'shortest', 'moderate', or 'highest' should be specified.`
+      );
       return null;
     }
-  
-    return await Server.updateOne(
-      { guildID },
-      { $set: updateFields }
-    );
+
+    return await Server.updateOne({ guildID }, { $set: updateFields });
   }
 
-  async autoSlowmodeSetChannels({ guildID, channels }: { guildID: string, channels: string[] }) {
+  async autoSlowmodeSetChannels({
+    guildID,
+    channels,
+  }: {
+    guildID: string;
+    channels: string[];
+  }) {
     return await Server.findOneAndUpdate(
       { guildID: guildID },
       { $set: { "autoSlowmode.channels": channels } }
     );
   }
 
+  async getImage(name: string, description?: string) {
+    return new AttachmentBuilder(`./src/System/Images/${name}`, {
+      name: `${name}.png`,
+      description: description || 'None'
+    });
+  }
 }

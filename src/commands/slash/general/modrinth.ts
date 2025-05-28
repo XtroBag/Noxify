@@ -22,6 +22,8 @@ import {
   EmbedBuilder,
   inlineCode,
   InteractionContextType,
+  MediaGalleryBuilder,
+  MediaGalleryItemBuilder,
   MessageFlags,
   SectionBuilder,
   SeparatorSpacingSize,
@@ -115,12 +117,12 @@ export default {
         waterfall: Emojis.Waterfall,
       };
 
-      const supportEmojiMap: Record<string, string> = {
-        required: Emojis.Check,
-        optional: Emojis.Info,
-        unsupported: Emojis.Cross,
-        unknown: Emojis.Cross,
-      };
+      const isClientOrServerSide: Record<string, string> = {
+        required: Emojis.Required,
+        optional: Emojis.Optional,
+        unsupported: Emojis.Unsupported,
+        unknown: Emojis.Unknown,
+      }
 
       const versions = project.game_versions.sort((a, b) => {
         const aParts = a.split(".").map(Number);
@@ -172,9 +174,10 @@ export default {
                 `### Updated: <t:${Math.floor(new Date(project.updated).getTime() / 1000)}:R> | Published: <t:${Math.floor(new Date(project.published).getTime() / 1000)}:R>`,
                 `- Loaders: ${project.loaders.map((l) => loaderEmojiMap[l] ?? Emojis.ModrinthOther).join(" | ")}`,
                 `- Categories: ${project.categories.map((c) => inlineCode(c)).join(" | ")}`,
-                `- Versions: ${versions[0]} - ${versions[versions.length - 1]} (${versions.length} versions supported)`,
-                `- Client Side: ${supportEmojiMap[project.client_side]} (${project.client_side[0].toUpperCase() + project.client_side.slice(1)})`,
-                `- Server Side: ${supportEmojiMap[project.server_side]} (${project.server_side[0].toUpperCase() + project.server_side.slice(1)})`,
+                `- Versions: ${versions[0]} - ${versions[versions.length - 1]}`,
+                `- Client Side: ${isClientOrServerSide[project.client_side]}`,
+                `- Server Side: ${isClientOrServerSide[project.server_side]}`,
+                `- Creators: ${team.length > 0 ? `${team.map((m) => `**[${m.role}]** ${m.user.username}`).join(" | ")}` : "Unknown"}`,
               ].join("\n")
             )
           )
@@ -241,31 +244,28 @@ export default {
         uiContainer.addActionRowComponents((row) =>
           row.addComponents(externalLinkButtons)
         );
-
-        if (team.length > 0) {
-          uiContainer.addTextDisplayComponents((text) =>
-            text.setContent(
-              `-# By: ${team
-                .map((member) => `**[${member.role}]** ${member.user.username}`)
-                .join(" | ")}`
-            )
-          );
-        }
       }
+
+      uiContainer.addSeparatorComponents((seperator) =>
+        seperator.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
+      );
+
+      if (project.gallery.length > 0)
+        uiContainer.addMediaGalleryComponents(
+          new MediaGalleryBuilder().addItems(
+            project.gallery.slice(0, 10).map((picture) =>
+              new MediaGalleryItemBuilder().setURL(picture.url)
+            )
+          )
+        );
 
       return await interaction.editReply({
         components: [uiContainer],
         flags: [MessageFlags.IsComponentsV2],
-        files: [
-          new AttachmentBuilder("./src/System/Images/Unknown.png", {
-            name: "Unknown.png",
-            description: "This is for incase a image does not load",
-          }),
-        ],
+        files: [await client.utils.getImage("Unknown.png")],
       });
     } catch (err) {
-
-      console.log(err)
+      console.log(err);
 
       return await interaction.editReply({
         embeds: [

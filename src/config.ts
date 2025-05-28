@@ -286,6 +286,11 @@ export enum Emojis {
   ModEnviromentServer = "<:Server:1370876768117850152>",
   ModEnviromentClient = "<:Client:1370876806021775490>",
   ModEnviromentClientAndServer = "<:Server_and_Client:1370876831690919956>",
+  Modrinth = "<:Modrinth:1377346953062649857>",
+  Required = "<:Required_1:1377396327876661378><:Required_2:1377396347736424560><:Required_3:1377396364685873232>",
+  Optional = "<:Optional_1:1377397447269158922><:Optional_2:1377397497844203643><:Optional_3:1377397538428031108>",
+  Unsupported = "<:Unsupported_1:1377400273936584724><:Unsupported_2:1377400288041898165><:Unsupported_3:1377400300645912656><:Unsupported_4:1377400313333551316>",
+  Unknown = "<:Unknown_1:1377398332275822673><:Unknown_2:1377398345106063570><:Unknown_3:1377398358699802815>",
 }
 
 export enum Colors {

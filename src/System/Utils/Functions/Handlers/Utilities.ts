@@ -107,10 +107,12 @@ export class Utilities {
     );
   }
 
-  async getImage(name: string, description?: string) {
-    return new AttachmentBuilder(`./src/System/Images/${name}`, {
-      name: `${name}.png`,
-      description: description || 'None'
-    });
-  }
+getImage(name: string, description?: string) {
+  if (!name.endsWith('.png')) name += '.png';
+
+  return new AttachmentBuilder(`./src/System/Images/${name}`, {
+    name,
+    description: description || 'None'
+  });
+}
 }

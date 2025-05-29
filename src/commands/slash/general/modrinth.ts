@@ -15,13 +15,13 @@ import {
 } from "../../../System/Types/Command.js";
 import {
   ApplicationIntegrationType,
-  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   ContainerBuilder,
   EmbedBuilder,
   inlineCode,
   InteractionContextType,
+  Locale,
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
   MessageFlags,
@@ -33,6 +33,7 @@ import {
   ThumbnailBuilder,
 } from "discord.js";
 import { Colors, Emojis } from "../../../config.js";
+import Logger from '../../../System/Utils/Functions/Handlers/Logger.js'
 
 const modrinth = new Modrinth({ userAgent: "XtroBag/Noxify/1.0.0" });
 
@@ -54,15 +55,13 @@ export default {
       option
         .setName("type")
         .setDescription(
-          "Search a Modrinth Mod, Resource Pack, Data Pack, Shader, Mod Pack, and Plugin"
+          `Search Modrinth for projects.` // Choosing "Mod" includes data packs & plugins.
         )
         .addChoices([
           { name: "Mod", value: "mod" },
           { name: "Resourcepack", value: "resourcepack" },
-          { name: "Datapack", value: "datapack" },
           { name: "Shader", value: "shader" },
           { name: "Modpack", value: "modpack" },
-          { name: "Plugin", value: "plugin" },
         ])
         .setRequired(true)
     )
@@ -118,11 +117,11 @@ export default {
       };
 
       const isClientOrServerSide: Record<string, string> = {
-        required: Emojis.Required,
-        optional: Emojis.Optional,
-        unsupported: Emojis.Unsupported,
-        unknown: Emojis.Unknown,
-      }
+        required: Emojis.RequiredType,
+        optional: Emojis.OptionalType,
+        unsupported: Emojis.UnsupportedType,
+        unknown: Emojis.UnknownType,
+      };
 
       const versions = project.game_versions.sort((a, b) => {
         const aParts = a.split(".").map(Number);
@@ -172,12 +171,13 @@ export default {
             new TextDisplayBuilder().setContent(
               [
                 `### Updated: <t:${Math.floor(new Date(project.updated).getTime() / 1000)}:R> | Published: <t:${Math.floor(new Date(project.published).getTime() / 1000)}:R>`,
-                `- Loaders: ${project.loaders.map((l) => loaderEmojiMap[l] ?? Emojis.ModrinthOther).join(" | ")}`,
-                `- Categories: ${project.categories.map((c) => inlineCode(c)).join(" | ")}`,
-                `- Versions: ${versions[0]} - ${versions[versions.length - 1]}`,
-                `- Client Side: ${isClientOrServerSide[project.client_side]}`,
-                `- Server Side: ${isClientOrServerSide[project.server_side]}`,
-                `- Creators: ${team.length > 0 ? `${team.map((m) => `**[${m.role}]** ${m.user.username}`).join(" | ")}` : "Unknown"}`,
+                `${Emojis.Loaders} - ${project.loaders.map((l) => loaderEmojiMap[l] ?? Emojis.ModrinthOther).join(" | ")}`,
+                `${Emojis.Categories} - ${project.categories.map((c) => inlineCode(c)).join(" | ")}`,
+                `${Emojis.Versions} - ${versions[0]} - ${versions[versions.length - 1]}`,
+                `${Emojis.Downloads} - ${project.downloads.toLocaleString()}`,
+                `${Emojis.ClientSide} - ${isClientOrServerSide[project.client_side]}`,
+                `${Emojis.ServerSide} - ${isClientOrServerSide[project.server_side]}`,
+                `${Emojis.Creators} - ${team.length > 0 ? `${team.map((m) => `**[${m.role}]** ${m.user.username}`).join(" | ")}` : "Unknown"}`,
               ].join("\n")
             )
           )
@@ -253,19 +253,21 @@ export default {
       if (project.gallery.length > 0)
         uiContainer.addMediaGalleryComponents(
           new MediaGalleryBuilder().addItems(
-            project.gallery.slice(0, 10).map((picture) =>
-              new MediaGalleryItemBuilder().setURL(picture.url)
-            )
+            project.gallery
+              .slice(0, 10)
+              .map((picture) =>
+                new MediaGalleryItemBuilder().setURL(picture.url)
+              )
           )
         );
 
       return await interaction.editReply({
         components: [uiContainer],
         flags: [MessageFlags.IsComponentsV2],
-        files: [await client.utils.getImage("Unknown.png")],
+        files: [client.utils.getImage("Unknown.png")],
       });
     } catch (err) {
-      console.log(err);
+      Logger.error("Project Failure:", err);
 
       return await interaction.editReply({
         embeds: [

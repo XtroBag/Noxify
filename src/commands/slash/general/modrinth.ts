@@ -21,7 +21,6 @@ import {
   EmbedBuilder,
   inlineCode,
   InteractionContextType,
-  Locale,
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
   MessageFlags,
@@ -33,7 +32,7 @@ import {
   ThumbnailBuilder,
 } from "discord.js";
 import { Colors, Emojis } from "../../../config.js";
-import Logger from '../../../System/Utils/Functions/Handlers/Logger.js'
+import Logger from "../../../System/Utils/Functions/Handlers/Logger.js";
 
 const modrinth = new Modrinth({ userAgent: "XtroBag/Noxify/1.0.0" });
 
@@ -55,7 +54,7 @@ export default {
       option
         .setName("type")
         .setDescription(
-          `Search Modrinth for projects.` // Choosing "Mod" includes data packs & plugins.
+          `Search Modrinth for projects. "Mod" also searches Plugins & Datapacks.`
         )
         .addChoices([
           { name: "Mod", value: "mod" },
@@ -74,13 +73,13 @@ export default {
     ),
 
   async execute({ client, interaction }) {
-    const item = interaction.options.getString("item");
+    const project_id = interaction.options.getString("item");
     const type = interaction.options.getString("type");
 
     await interaction.deferReply();
 
     try {
-      const project = await modrinth.getProject(item);
+      const project = await modrinth.getProject(project_id);
 
       if (project.project_type !== type) {
         return await interaction.editReply({
@@ -173,10 +172,10 @@ export default {
                 `### Updated: <t:${Math.floor(new Date(project.updated).getTime() / 1000)}:R> | Published: <t:${Math.floor(new Date(project.published).getTime() / 1000)}:R>`,
                 `${Emojis.Loaders} - ${project.loaders.map((l) => loaderEmojiMap[l] ?? Emojis.ModrinthOther).join(" | ")}`,
                 `${Emojis.Categories} - ${project.categories.map((c) => inlineCode(c)).join(" | ")}`,
+                `${Emojis.ServerSide} - ${isClientOrServerSide[project.server_side]}`,
+                `${Emojis.ClientSide} - ${isClientOrServerSide[project.client_side]}`,
                 `${Emojis.Versions} - ${versions[0]} - ${versions[versions.length - 1]}`,
                 `${Emojis.Downloads} - ${project.downloads.toLocaleString()}`,
-                `${Emojis.ClientSide} - ${isClientOrServerSide[project.client_side]}`,
-                `${Emojis.ServerSide} - ${isClientOrServerSide[project.server_side]}`,
                 `${Emojis.Creators} - ${team.length > 0 ? `${team.map((m) => `**[${m.role}]** ${m.user.username}`).join(" | ")}` : "Unknown"}`,
               ].join("\n")
             )
@@ -244,13 +243,7 @@ export default {
         uiContainer.addActionRowComponents((row) =>
           row.addComponents(externalLinkButtons)
         );
-      }
-
-      uiContainer.addSeparatorComponents((seperator) =>
-        seperator.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
-      );
-
-      if (project.gallery.length > 0)
+      } else if (project.gallery.length > 0) {
         uiContainer.addMediaGalleryComponents(
           new MediaGalleryBuilder().addItems(
             project.gallery
@@ -260,6 +253,7 @@ export default {
               )
           )
         );
+      }
 
       return await interaction.editReply({
         components: [uiContainer],
@@ -274,7 +268,7 @@ export default {
           new EmbedBuilder()
             .setColor(Colors.Error)
             .setDescription(
-              `${Emojis.Cross} Couldn't find **${item}** — try using autocomplete.`
+              `${Emojis.Cross} Couldn't find that search — try using autocomplete.`
             ),
         ],
       });
@@ -284,29 +278,42 @@ export default {
     const type = interaction.options.getString("type");
     const item = interaction.options.getFocused(true);
 
+    let facetGroup: FacetGroup;
+
+    if (type === "mod") {
+      facetGroup = new FacetGroup(
+        new Facet(FacetType.ProjectType, FacetOperation.Equals, "mod"),
+        new Facet(FacetType.ProjectType, FacetOperation.Equals, "plugin"),
+        new Facet(FacetType.ProjectType, FacetOperation.Equals, "datapack")
+      );
+    } else {
+      facetGroup = new FacetGroup(
+        new Facet(FacetType.ProjectType, FacetOperation.Equals, type)
+      );
+    }
+
     const search = await modrinth.search(item.value, {
       limit: 25,
-      index: SearchIndex.Downloads,
-      facets: new SearchFacets(
-        new FacetGroup(
-          new Facet(FacetType.ProjectType, FacetOperation.Equals, type)
-        )
-      ),
+      index: SearchIndex.Relevance,
+      facets: new SearchFacets(facetGroup),
     });
 
-    const results =
-      search.hits.length > 0
-        ? search.hits.map((mod) => ({
-            name: mod.title,
-            value: mod.slug,
-          }))
-        : [
-            {
-              name: "We couldn’t find anything matching your input.",
-              value: "no_results",
-            },
-          ];
+    const filtered = search.hits.filter((mod) =>
+      mod.title.toLowerCase().startsWith(item.value.toLowerCase())
+    );
 
-    await interaction.respond(results);
+    const choices = filtered.slice(0, 25).map((mod) => ({
+      name: mod.title,
+      value: mod.project_id,
+    }));
+
+    if (choices.length === 0) {
+      choices.push({
+        name: "No results found. Try a different search term.",
+        value: "no_results",
+      });
+    }
+
+    await interaction.respond(choices);
   },
 } as SlashCommandModule;

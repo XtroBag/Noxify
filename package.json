@@ -1,0 +1,22 @@
+{
+  "name": "noxify",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "@types/node": "^24.7.0"
+  },
+  "scripts": {
+    "compile": "tsc",
+    "start": "node dist/index.js",
+    "build": "rd /s /q dist && yarn compile && yarn start"
+  },
+  "author": "XtroBag",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "discord.js": "^14.22.1",
+    "dotenv": "^17.2.3",
+    "path": "^0.12.7",
+    "typescript": "^5.9.3"
+  }
+}

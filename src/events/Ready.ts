@@ -6,5 +6,7 @@ export default new Event(
   { once: true, enabled: true },
   async (noxify, client) => {
     console.log(`Logged in as ${client.user.tag}!`);
+
+    console.log('testing')
   }
 );

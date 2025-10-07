@@ -7,11 +7,13 @@ import {
 } from "discord.js";
 import { loadEvents } from "./EventHandler";
 import { config } from "dotenv";
+import Command from "../types/Command";
+import { loadCommands } from "./CommandHandler";
 
-config();
+config({ quiet: true });
 
 export class Noxify extends Client<true> {
-  //   readonly commands: Collection<string, Command>;
+  commands: Collection<string, Command>;
 
   constructor() {
     super({
@@ -28,7 +30,7 @@ export class Noxify extends Client<true> {
         repliedUser: true,
       },
     });
-    // this.commands = new Collection();
+    this.commands = new Collection();
   }
 
   /**
@@ -47,7 +49,7 @@ export class Noxify extends Client<true> {
 
   async start(token: string) {
     await loadEvents(this);
-    // await loadCommands(client);
+    await loadCommands(this);
 
     return this.login(token);
   }

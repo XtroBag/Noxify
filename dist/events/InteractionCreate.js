@@ -1,0 +1,47 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const discord_js_1 = require("discord.js");
+const Event_1 = require("../types/Event");
+exports.default = new Event_1.default(discord_js_1.Events.InteractionCreate, { once: false, enabled: true }, async (noxify, interaction) => {
+    if (interaction.inCachedGuild() && interaction.isChatInputCommand()) {
+        const command = noxify.commands.get(interaction.commandName);
+        if (!command) {
+            console.error(`No command matching ${interaction.commandName} was found.`);
+            return;
+        }
+        try {
+            const allowed = ["149621801989701633"];
+            const allowedUsernames = [];
+            for (const id of allowed) {
+                const user = await noxify.users.fetch(id);
+                allowedUsernames.push(user.username);
+            }
+            const devOnly = command.developerOnly ?? false;
+            if (devOnly) {
+                if (!allowed.includes(interaction.user.id)) {
+                    await interaction.reply({
+                        content: `This command can only be used by: **${allowedUsernames.join(", ")}**`,
+                        flags: discord_js_1.MessageFlags.Ephemeral,
+                    });
+                    return;
+                }
+            }
+            await command.execute(noxify, interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: "There was an error while executing this command!",
+                    flags: discord_js_1.MessageFlags.Ephemeral,
+                });
+            }
+            else {
+                await interaction.reply({
+                    content: "There was an error while executing this command!",
+                    flags: discord_js_1.MessageFlags.Ephemeral,
+                });
+            }
+        }
+    }
+});

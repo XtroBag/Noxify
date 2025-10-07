@@ -1,0 +1,5 @@
+Make a class called "Component" for Modals, Buttons, Select Menu...etc
+
+And make the class have data on it for like that type of componenttype it is
+
+type: ComponentType.<Choice>

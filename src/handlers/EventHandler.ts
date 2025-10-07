@@ -19,12 +19,12 @@ export const loadEvents = async (client: Noxify): Promise<void> => {
       typeof event.name !== "string" ||
       typeof event.execute !== "function"
     ) {
-      console.warn(`⚠️ | Skipping invalid event file: ${file}`);
+      console.warn(`Skipping Invalid Event File: ${file}`);
       continue;
     }
 
-      if (event.enabled === false) {
-      console.log(`⚠️ | Skipping disabled event: ${event.name}`);
+    if (event.enabled === false) {
+      console.log(`Skipping Disabled Event: ${event.name}`);
       continue;
     }
 
@@ -36,6 +36,6 @@ export const loadEvents = async (client: Noxify): Promise<void> => {
           event.execute(client, ...args)
         );
 
-    console.log(`✅ | Event Loaded: ${event.name}`);
+    // console.log(`✅ | Event Loaded: ${event.name}`);
   }
 };

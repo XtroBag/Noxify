@@ -4,8 +4,10 @@ exports.Noxify = void 0;
 const discord_js_1 = require("discord.js");
 const EventHandler_1 = require("./EventHandler");
 const dotenv_1 = require("dotenv");
-(0, dotenv_1.config)();
+const CommandHandler_1 = require("./CommandHandler");
+(0, dotenv_1.config)({ quiet: true });
 class Noxify extends discord_js_1.Client {
+    commands;
     constructor() {
         super({
             intents: [
@@ -21,6 +23,7 @@ class Noxify extends discord_js_1.Client {
                 repliedUser: true,
             },
         });
+        this.commands = new discord_js_1.Collection();
     }
     env(key, defaultValue = "") {
         const value = process.env[key] || defaultValue;
@@ -31,6 +34,7 @@ class Noxify extends discord_js_1.Client {
     }
     async start(token) {
         await (0, EventHandler_1.loadEvents)(this);
+        await (0, CommandHandler_1.loadCommands)(this);
         return this.login(token);
     }
 }

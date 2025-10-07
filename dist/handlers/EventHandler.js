@@ -13,17 +13,16 @@ const loadEvents = async (client) => {
         if (!event ||
             typeof event.name !== "string" ||
             typeof event.execute !== "function") {
-            console.warn(`⚠️ | Skipping invalid event file: ${file}`);
+            console.warn(`Skipping Invalid Event File: ${file}`);
             continue;
         }
         if (event.enabled === false) {
-            console.log(`⚠️ | Skipping disabled event: ${event.name}`);
+            console.log(`Skipping Disabled Event: ${event.name}`);
             continue;
         }
         event.once
             ? client.once(event.name, (...args) => event.execute(client, ...args))
             : client.on(event.name, (...args) => event.execute(client, ...args));
-        console.log(`✅ | Event Loaded: ${event.name}`);
     }
 };
 exports.loadEvents = loadEvents;

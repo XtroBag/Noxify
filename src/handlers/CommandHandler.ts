@@ -27,7 +27,7 @@ export const loadCommands = async (client: Noxify): Promise<void> => {
         continue;
       }
 
-      if (command.enabled === false) {
+      if (command.options.enabled === false) {
         console.log(`Skipping Disabled Command: ${command.data.name}`);
         continue;
       }

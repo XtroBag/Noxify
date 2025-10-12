@@ -15,19 +15,29 @@ const rest = new discord_js_1.REST().setToken(process.env.DISCORD_BOT_TOKEN ?? "
         const commandFiles = (0, fs_1.readdirSync)(commandsPath).filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
         for (const file of commandFiles) {
             const filePath = (0, path_1.join)(commandsPath, file);
-            const imported = await Promise.resolve(`${filePath}`).then(s => require(s));
-            const command = imported.default;
-            commands.push(command.data.toJSON());
+            try {
+                const imported = await Promise.resolve(`${filePath}`).then(s => require(s));
+                const command = imported.default;
+                if (!command || !command.data || typeof command.data.toJSON !== "function") {
+                    console.warn(`⚠️ Skipped invalid command file: ${file}`);
+                    continue;
+                }
+                commands.push(command.data.toJSON());
+            }
+            catch (err) {
+                console.error(`❌ Failed to load command file: ${file}`);
+                console.error(err);
+            }
         }
-        try {
-            console.log(`Started refreshing ${commands.length} application (/) commands.`);
-            await rest.put(discord_js_1.Routes.applicationCommands(process.env.DISCORD_BOT_CLIENT_ID ?? ""), {
-                body: commands,
-            });
-            console.log(`Successfully reloaded ${commands.length} application (/) commands.`);
-        }
-        catch (error) {
-            console.error(error);
-        }
+    }
+    try {
+        console.log(`Started refreshing ${commands.length} application (/) commands.`);
+        await rest.put(discord_js_1.Routes.applicationCommands(process.env.DISCORD_BOT_CLIENT_ID ?? ""), {
+            body: commands,
+        });
+        console.log(`✅ Successfully reloaded ${commands.length} application (/) commands.`);
+    }
+    catch (error) {
+        console.error("❌ Failed to register commands:", error);
     }
 })();

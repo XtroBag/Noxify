@@ -16,7 +16,7 @@ exports.default = new Event_1.default(discord_js_1.Events.InteractionCreate, { o
                 const user = await noxify.users.fetch(id);
                 allowedUsernames.push(user.username);
             }
-            const devOnly = command.developerOnly ?? false;
+            const devOnly = command.options.developerOnly ?? false;
             if (devOnly) {
                 if (!allowed.includes(interaction.user.id)) {
                     await interaction.reply({
@@ -26,7 +26,7 @@ exports.default = new Event_1.default(discord_js_1.Events.InteractionCreate, { o
                     return;
                 }
             }
-            await command.execute(noxify, interaction);
+            await command.execute({ client: noxify, interaction: interaction });
         }
         catch (error) {
             console.error(error);

@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Command {
     data;
+    options;
     execute;
-    enabled;
-    developerOnly;
-    constructor(data, options = {}, execute) {
-        this.data = data;
-        this.execute = execute;
-        this.enabled = options.enabled ?? true;
-        this.developerOnly = options.developerOnly ?? false;
+    autocomplete;
+    constructor(definition) {
+        this.data = definition.data;
+        this.options = definition.options;
+        this.execute = definition.execute;
+        this.autocomplete = definition.autocomplete;
     }
 }
 exports.default = Command;

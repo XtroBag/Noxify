@@ -24,7 +24,7 @@ export default new Event(
         }
 
         // Check devonly option in command data
-        const devOnly = command.developerOnly ?? false;
+        const devOnly = command.options.developerOnly ?? false;
 
         if (devOnly) {
           if (!allowed.includes(interaction.user.id)) {
@@ -38,7 +38,7 @@ export default new Event(
           }
         }
 
-        await command.execute(noxify, interaction);
+        await command.execute({ client: noxify, interaction: interaction });
       } catch (error) {
         console.error(error);
         if (interaction.replied || interaction.deferred) {

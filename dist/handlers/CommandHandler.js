@@ -19,7 +19,7 @@ const loadCommands = async (client) => {
                 console.warn(`Skipping Invalid Command File: ${file}`);
                 continue;
             }
-            if (command.enabled === false) {
+            if (command.options.enabled === false) {
                 console.log(`Skipping Disabled Command: ${command.data.name}`);
                 continue;
             }

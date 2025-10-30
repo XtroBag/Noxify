@@ -16,7 +16,7 @@ const loadCommands = async (client) => {
             if (!command ||
                 typeof command.data?.name !== "string" ||
                 typeof command.execute !== "function") {
-                console.warn(`Skipping Invalid Command File: ${file}`);
+                console.log(`Skipping File: ${file}`);
                 continue;
             }
             if (command.options.enabled === false) {

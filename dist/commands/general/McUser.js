@@ -42,7 +42,7 @@ exports.default = new Command_1.default({
         enabled: true,
         developerOnly: false,
     },
-    execute: async ({ interaction }) => {
+    execute: async ({ client, interaction }) => {
         const edition = interaction.options.getString("edition", true);
         const username = interaction.options.getString("username", true);
         const baseUrl = "https://mcprofile.io/api/v1";

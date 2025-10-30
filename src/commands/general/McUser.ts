@@ -76,7 +76,7 @@ export default new Command({
     enabled: true,
     developerOnly: false,
   },
-  execute: async ({ interaction }) => {
+  execute: async ({ client, interaction }) => {
     const edition = interaction.options.getString(
       "edition",
       true

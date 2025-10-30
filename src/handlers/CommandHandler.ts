@@ -23,7 +23,7 @@ export const loadCommands = async (client: Noxify): Promise<void> => {
         typeof command.data?.name !== "string" ||
         typeof command.execute !== "function"
       ) {
-        console.warn(`Skipping Invalid Command File: ${file}`);
+        console.log(`Skipping File: ${file}`);
         continue;
       }
 
@@ -33,7 +33,6 @@ export const loadCommands = async (client: Noxify): Promise<void> => {
       }
 
       client.commands.set(command.data.name, command);
-      // console.log(`✅ | Command Loaded: ${command.data.name}`);
     }
   }
 };

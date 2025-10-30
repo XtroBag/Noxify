@@ -32,6 +32,7 @@ const rest = new discord_js_1.REST().setToken(process.env.DISCORD_BOT_TOKEN ?? "
     }
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
+        console.log(commands);
         await rest.put(discord_js_1.Routes.applicationCommands(process.env.DISCORD_BOT_CLIENT_ID ?? ""), {
             body: commands,
         });

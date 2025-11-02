@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const Event_1 = require("../types/Event");
 exports.default = new Event_1.default(discord_js_1.Events.InteractionCreate, { once: false, enabled: true }, async (noxify, interaction) => {
-    if (interaction.inCachedGuild() && interaction.isChatInputCommand()) {
+    if (interaction.isChatInputCommand()) {
         const command = noxify.commands.get(interaction.commandName);
         if (!command) {
             console.error(`No command matching ${interaction.commandName} was found.`);
@@ -42,6 +42,19 @@ exports.default = new Event_1.default(discord_js_1.Events.InteractionCreate, { o
                     flags: discord_js_1.MessageFlags.Ephemeral,
                 });
             }
+        }
+    }
+    if (interaction.isAutocomplete()) {
+        const command = noxify.commands.get(interaction.commandName);
+        if (!command || !command.autocomplete) {
+            console.error(`No command matching ${interaction.commandName} was found for autocomplete.`);
+            return;
+        }
+        try {
+            await command.autocomplete({ client: noxify, interaction: interaction });
+        }
+        catch (error) {
+            console.error(error);
         }
     }
 });

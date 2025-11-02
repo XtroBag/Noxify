@@ -12,7 +12,7 @@ import type { Noxify } from "../handlers/Client";
  */
 type SlashCommandHandler = (args: {
   client: Noxify;
-  interaction: ChatInputCommandInteraction<"cached">;
+  interaction: ChatInputCommandInteraction;
 }) => Promise<void>;
 
 /**
@@ -20,7 +20,7 @@ type SlashCommandHandler = (args: {
  */
 type AutocompleteHandler = (args: {
   client: Noxify;
-  interaction: AutocompleteInteraction<"cached">;
+  interaction: AutocompleteInteraction;
 }) => Promise<void>;
 
 /**

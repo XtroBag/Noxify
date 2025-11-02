@@ -9,11 +9,13 @@ import { loadEvents } from "./EventHandler";
 import { config } from "dotenv";
 import Command from "../types/Command";
 import { loadCommands } from "./CommandHandler";
+import { Modrinth } from "typerinth";
 
 config({ quiet: true });
 
 export class Noxify extends Client<true> {
   commands: Collection<string, Command>;
+  modrinth: Modrinth;
 
   constructor() {
     super({
@@ -31,6 +33,11 @@ export class Noxify extends Client<true> {
       },
     });
     this.commands = new Collection();
+    this.modrinth = new Modrinth({
+      baseUrl: "https://api.modrinth.com",
+      apiVersion: "v2",
+      userAgent: "Noxify/1.0.0",
+    });
   }
 
   /**

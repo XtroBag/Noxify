@@ -5,7 +5,8 @@ export default new Event(
   Events.InteractionCreate,
   { once: false, enabled: true },
   async (noxify, interaction) => {
-    if (interaction.inCachedGuild() && interaction.isChatInputCommand()) {
+
+    if (interaction.isChatInputCommand()) {
       const command = noxify.commands.get(interaction.commandName);
       if (!command) {
         console.error(
@@ -53,6 +54,22 @@ export default new Event(
           });
         }
       }
+    }
+
+
+    if (interaction.isAutocomplete()) {
+      const command = noxify.commands.get(interaction.commandName);
+      if (!command || !command.autocomplete) {
+        console.error(
+          `No command matching ${interaction.commandName} was found for autocomplete.`
+        );
+        return;
+      }
+      try {
+        await command.autocomplete({ client: noxify, interaction: interaction });
+      } catch (error) {
+        console.error(error);
+      } 
     }
   }
 );

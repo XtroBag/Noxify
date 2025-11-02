@@ -832,6 +832,7 @@ class Guild extends AnonymousGuild {
    * @property {number} [afkTimeout] The AFK timeout of the guild
    * @property {?(BufferResolvable|Base64Resolvable)} [icon] The icon of the guild
    * @property {GuildMemberResolvable} [owner] The owner of the guild
+   * <warn>This property is **deprecated** as API related to guild ownership may no longer be used.</warn>
    * @property {?(BufferResolvable|Base64Resolvable)} [splash] The invite splash image of the guild
    * @property {?(BufferResolvable|Base64Resolvable)} [discoverySplash] The discovery splash image of the guild
    * @property {?(BufferResolvable|Base64Resolvable)} [banner] The banner of the guild
@@ -1197,12 +1198,7 @@ class Guild extends AnonymousGuild {
    * @param {GuildMemberResolvable} owner The new owner of the guild
    * @param {string} [reason] Reason for setting the new owner
    * @returns {Promise<Guild>}
-   * @example
-   * // Edit the guild owner
-   * guild.setOwner(guild.members.cache.first())
-   *  .then(guild => guild.fetchOwner())
-   *  .then(owner => console.log(`Updated the guild owner to ${owner.displayName}`))
-   *  .catch(console.error);
+   * @deprecated API related to guild ownership may no longer be used.
    */
   setOwner(owner, reason) {
     return this.edit({ owner, reason });
@@ -1345,11 +1341,7 @@ class Guild extends AnonymousGuild {
    * @param {GuildMFALevel} level The MFA level
    * @param {string} [reason] Reason for changing the guild's MFA level
    * @returns {Promise<Guild>}
-   * @example
-   * // Set the MFA level of the guild to Elevated
-   * guild.setMFALevel(GuildMFALevel.Elevated)
-   *   .then(guild => console.log("Set guild's MFA level to Elevated"))
-   *   .catch(console.error);
+   * @deprecated API related to guild ownership may no longer be used.
    */
   async setMFALevel(level, reason) {
     await this.client.rest.post(Routes.guildMFA(this.id), {
@@ -1379,6 +1371,7 @@ class Guild extends AnonymousGuild {
   /**
    * Deletes the guild.
    * @returns {Promise<Guild>}
+   * @deprecated API related to guild ownership may no longer be used.
    * @example
    * // Delete a guild
    * guild.delete()

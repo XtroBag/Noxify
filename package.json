@@ -13,9 +13,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "discord.js": "^14.22.1",
+    "discord.js": "^14.24.2",
     "dotenv": "^17.2.3",
     "path": "^0.12.7",
+    "typerinth": "^1.2.0",
     "typescript": "^5.9.3"
   }
 }

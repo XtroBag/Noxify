@@ -5,9 +5,11 @@ const discord_js_1 = require("discord.js");
 const EventHandler_1 = require("./EventHandler");
 const dotenv_1 = require("dotenv");
 const CommandHandler_1 = require("./CommandHandler");
+const typerinth_1 = require("typerinth");
 (0, dotenv_1.config)({ quiet: true });
 class Noxify extends discord_js_1.Client {
     commands;
+    modrinth;
     constructor() {
         super({
             intents: [
@@ -24,6 +26,11 @@ class Noxify extends discord_js_1.Client {
             },
         });
         this.commands = new discord_js_1.Collection();
+        this.modrinth = new typerinth_1.Modrinth({
+            baseUrl: "https://api.modrinth.com",
+            apiVersion: "v2",
+            userAgent: "Noxify/1.0.0",
+        });
     }
     env(key, defaultValue = "") {
         const value = process.env[key] || defaultValue;

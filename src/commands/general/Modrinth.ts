@@ -3,8 +3,10 @@ import {
   ApplicationIntegrationType,
   ButtonBuilder,
   ButtonStyle,
+  Colors,
   ComponentType,
   ContainerBuilder,
+  EmbedBuilder,
   InteractionContextType,
   MessageFlags,
   SectionBuilder,
@@ -203,17 +205,23 @@ export default new Command({
         sep.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
       );
 
-      if (buttons.length > 0) {
-        container.addActionRowComponents((row) => row.addComponents(buttons));
-
-        container.addSeparatorComponents((sep) =>
-          sep.setDivider(true).setSpacing(SeparatorSpacingSize.Small)
-        );
-      }
+      container.addSectionComponents(
+        new SectionBuilder()
+          .addTextDisplayComponents(
+            new TextDisplayBuilder().setContent(
+              `Clicking the button opens a prompt to help you find the right mod file version through a few quick questions.`
+            )
+          )
+          .setButtonAccessory((button) =>
+            button
+              .setCustomId("versions-view")
+              .setLabel("Versions")
+              .setStyle(ButtonStyle.Primary)
+          )
+      );
 
       const maxOptions = 24;
 
-      // Only show dependencies if there are any AND the project is NOT a modpack
       if (
         filteredDependencies.length > 0 &&
         project.project_type !== "modpack"
@@ -246,37 +254,95 @@ export default new Command({
         );
       }
 
+      container.addSeparatorComponents((sep) =>
+        sep.setDivider(false).setSpacing(SeparatorSpacingSize.Small)
+      );
+
+      if (buttons.length > 0) {
+        container.addActionRowComponents((row) => row.addComponents(buttons));
+      }
+
       const reply = await interaction.reply({
         components: [container],
         flags: [MessageFlags.IsComponentsV2],
       });
 
       const collector = reply.createMessageComponentCollector({
-        componentType: ComponentType.StringSelect,
         // filter: (collected) => collected.user.id !== interaction.user.id,
-        time: 60000,
+        time: 300000,
       });
-
 
       collector.on("collect", async (interaction) => {
-        if (interaction.isStringSelectMenu()) {
-          if (interaction.customId === "dependency-view") {
-            await interaction.deferUpdate();
-          }
+        switch (interaction.componentType) {
+          case ComponentType.StringSelect:
+            if (interaction.customId === "dependency-view") {
+              await interaction.deferUpdate();
+            }
+            break;
+
+          case ComponentType.Button:
+            if (interaction.customId === "versions-view") {
+              const versions = await client.modrinth.getProjectVersions(
+                project.slug,
+                {
+                  loaders: project.loaders,
+                  game_versions: project.game_versions,
+                  featured: false,
+                }
+              );
+
+              const versionList = versions
+                .slice(0, 5) // Limit to first 5 versions
+                .map((v) => {
+                  const date = new Date(v.date_published).toLocaleDateString();
+                  const downloads = v.downloads?.toLocaleString() || "0";
+
+                  const filesList = v.files
+                    .map(
+                      (file) =>
+                        `> [${file.filename}](${file.url})${
+                          file.primary ? " (primary)" : ""
+                        }`
+                    )
+                    .join("\n");
+
+                  return [
+                    `**${v.name || v.game_versions[0]}**`,
+                    `> 📅 **Published:** ${date}`,
+                    `> ⬇️ **Downloads:** ${downloads}`,
+                    `> 📁 **Files:**\n${filesList}`,
+                  ].join("\n");
+                })
+                .join("\n\n");
+
+              await interaction.deferReply();
+
+              await interaction.followUp({
+                embeds: [
+                  new EmbedBuilder()
+                    .setTitle(`Version Selection for ${project.title}`)
+                    .setDescription(versionList)
+                    .setColor(Colors.Blue),
+                ],
+                flags: MessageFlags.Ephemeral,
+              });
+            }
+
+            break;
+
+          default:
+            break;
         }
       });
-
-      collector.on("ignore", async (interaction) => {
-        await interaction.followUp({
-          content: `You are not the one who called this menu.`,
-        });
-      });
-      
     } catch (err) {
-      await interaction.reply({
-        content:
-          `Project not found. Please use the autocomplete list to choose a valid project.\n\nDetailed Error: ${err}`,
-      });
+      if (err)
+        await interaction.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setDescription(`**Error:** ${err}`)
+              .setColor(Colors.DarkRed),
+          ],
+        });
     }
   },
   autocomplete: async ({ client, interaction }) => {

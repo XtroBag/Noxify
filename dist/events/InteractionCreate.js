@@ -51,7 +51,10 @@ exports.default = new Event_1.default(discord_js_1.Events.InteractionCreate, { o
             return;
         }
         try {
-            await command.autocomplete({ client: noxify, interaction: interaction });
+            await command.autocomplete({
+                client: noxify,
+                interaction: interaction,
+            });
         }
         catch (error) {
             console.error(error);

@@ -129,10 +129,12 @@ exports.default = new Command_1.default({
                 .setStyle(discord_js_1.ButtonStyle.Link)
                 .setURL(`https://modrinth.com/${project.project_type}/${project.slug}`)));
             container.addSeparatorComponents((sep) => sep.setDivider(true).setSpacing(discord_js_1.SeparatorSpacingSize.Small));
-            if (buttons.length > 0) {
-                container.addActionRowComponents((row) => row.addComponents(buttons));
-                container.addSeparatorComponents((sep) => sep.setDivider(true).setSpacing(discord_js_1.SeparatorSpacingSize.Small));
-            }
+            container.addSectionComponents(new discord_js_1.SectionBuilder()
+                .addTextDisplayComponents(new discord_js_1.TextDisplayBuilder().setContent(`Clicking the button opens a prompt to help you find the right mod file version through a few quick questions.`))
+                .setButtonAccessory((button) => button
+                .setCustomId("versions-view")
+                .setLabel("Versions")
+                .setStyle(discord_js_1.ButtonStyle.Primary)));
             const maxOptions = 24;
             if (filteredDependencies.length > 0 &&
                 project.project_type !== "modpack") {
@@ -157,31 +159,73 @@ exports.default = new Command_1.default({
                     .setPlaceholder("View more about a dependency")
                     .addOptions(dependencyOptions)));
             }
+            container.addSeparatorComponents((sep) => sep.setDivider(false).setSpacing(discord_js_1.SeparatorSpacingSize.Small));
+            if (buttons.length > 0) {
+                container.addActionRowComponents((row) => row.addComponents(buttons));
+            }
             const reply = await interaction.reply({
                 components: [container],
                 flags: [discord_js_1.MessageFlags.IsComponentsV2],
             });
             const collector = reply.createMessageComponentCollector({
-                componentType: discord_js_1.ComponentType.StringSelect,
-                time: 60000,
+                time: 300000,
             });
             collector.on("collect", async (interaction) => {
-                if (interaction.isStringSelectMenu()) {
-                    if (interaction.customId === "dependency-view") {
-                        await interaction.deferUpdate();
-                    }
+                switch (interaction.componentType) {
+                    case discord_js_1.ComponentType.StringSelect:
+                        if (interaction.customId === "dependency-view") {
+                            await interaction.deferUpdate();
+                        }
+                        break;
+                    case discord_js_1.ComponentType.Button:
+                        if (interaction.customId === "versions-view") {
+                            const versions = await client.modrinth.getProjectVersions(project.slug, {
+                                loaders: project.loaders,
+                                game_versions: project.game_versions,
+                                featured: false,
+                            });
+                            const versionList = versions
+                                .slice(0, 5)
+                                .map((v) => {
+                                const date = new Date(v.date_published).toLocaleDateString();
+                                const downloads = v.downloads?.toLocaleString() || "0";
+                                const filesList = v.files
+                                    .map((file) => `> [${file.filename}](${file.url})${file.primary ? " (primary)" : ""}`)
+                                    .join("\n");
+                                return [
+                                    `**${v.name || v.game_versions[0]}**`,
+                                    `> 📅 **Published:** ${date}`,
+                                    `> ⬇️ **Downloads:** ${downloads}`,
+                                    `> 📁 **Files:**\n${filesList}`,
+                                ].join("\n");
+                            })
+                                .join("\n\n");
+                            await interaction.deferReply();
+                            await interaction.followUp({
+                                embeds: [
+                                    new discord_js_1.EmbedBuilder()
+                                        .setTitle(`Version Selection for ${project.title}`)
+                                        .setDescription(versionList)
+                                        .setColor(discord_js_1.Colors.Blue),
+                                ],
+                                flags: discord_js_1.MessageFlags.Ephemeral,
+                            });
+                        }
+                        break;
+                    default:
+                        break;
                 }
-            });
-            collector.on("ignore", async (interaction) => {
-                await interaction.followUp({
-                    content: `You are not the one who called this menu.`,
-                });
             });
         }
         catch (err) {
-            await interaction.reply({
-                content: `Project not found. Please use the autocomplete list to choose a valid project.\n\nDetailed Error: ${err}`,
-            });
+            if (err)
+                await interaction.reply({
+                    embeds: [
+                        new discord_js_1.EmbedBuilder()
+                            .setDescription(`**Error:** ${err}`)
+                            .setColor(discord_js_1.Colors.DarkRed),
+                    ],
+                });
         }
     },
     autocomplete: async ({ client, interaction }) => {

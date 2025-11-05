@@ -18,7 +18,7 @@ import {
 } from "discord.js";
 import Command from "../../types/Command";
 import { Project, SearchIndex } from "typerinth";
-import { Emojis } from "../../types/Emojis";
+import { CategoryEmojis, Emojis } from "../../types/Emojis";
 
 export default new Command({
   data: new SlashCommandBuilder()
@@ -70,6 +70,74 @@ export default new Command({
         sponge: Emojis.Sponge,
         velocity: Emojis.Velocity,
         waterfall: Emojis.Waterfall,
+        "bta-babric": Emojis.BTABabric,
+        babric: Emojis.Babric,
+        datapack: Emojis.DataPack,
+        minecraft: Emojis.Minecraft,
+        "legacy-fabric": Emojis.LegacyFabric,
+        "java-agent": Emojis.JavaAgent,
+        nilloader: Emojis.NilLoader,
+        ornithe: Emojis.Ornithe,
+      };
+
+      const categoryEmojis = {
+        adventure: CategoryEmojis.Adventure,
+        atmosphere: CategoryEmojis.Atmosphere,
+        audio: CategoryEmojis.Audio,
+        blocks: CategoryEmojis.Blocks,
+        bloom: CategoryEmojis.Bloom,
+        cartoon: CategoryEmojis.Cartoon,
+        challenging: CategoryEmojis.Challenging,
+        "colored-lighting": CategoryEmojis.ColoredLighting,
+        combat: CategoryEmojis.Combat,
+        "core-shaders": CategoryEmojis.CoreShaders,
+        cursed: CategoryEmojis.Cursed,
+        decoration: CategoryEmojis.Decoration,
+        economy: CategoryEmojis.Economy,
+        entities: CategoryEmojis.Entities,
+        environment: CategoryEmojis.Environment,
+        equipment: CategoryEmojis.Equipment2,
+        fantasy: CategoryEmojis.Fantasy,
+        foliage: CategoryEmojis.Foliage,
+        fonts: CategoryEmojis.Fonts,
+        food: CategoryEmojis.Food,
+        "game-mechanics": CategoryEmojis.GameMechanics,
+        gui: CategoryEmojis.Gui,
+        high: CategoryEmojis.High,
+        items: CategoryEmojis.Items,
+        "kitchen-sink": CategoryEmojis.KitchenSink,
+        library: CategoryEmojis.Library,
+        lightweight: CategoryEmojis.Lightweight,
+        locale: CategoryEmojis.Locale,
+        low: CategoryEmojis.Low,
+        magic: CategoryEmojis.Magic,
+        management: CategoryEmojis.Management,
+        medium: CategoryEmojis.Medium,
+        minigame: CategoryEmojis.Minigame,
+        mobs: CategoryEmojis.Mobs,
+        modded: CategoryEmojis.Modded,
+        models: CategoryEmojis.Models,
+        multiplayer: CategoryEmojis.Multiplayer,
+        optimization: CategoryEmojis.Optimization,
+        "path-tracing": CategoryEmojis.PathTracing,
+        pbr: CategoryEmojis.Pbr,
+        potato: CategoryEmojis.Potato,
+        quests: CategoryEmojis.Quests,
+        realistic: CategoryEmojis.Realistic,
+        reflections: CategoryEmojis.Reflections,
+        screenshot: CategoryEmojis.Screenshot,
+        "semi-realistic": CategoryEmojis.Semirealistic,
+        shadows: CategoryEmojis.Shadows,
+        simplified: CategoryEmojis.Simplified,
+        social: CategoryEmojis.Social,
+        storage: CategoryEmojis.Storage,
+        technology: CategoryEmojis.Technology,
+        themed: CategoryEmojis.Themed,
+        transportation: CategoryEmojis.Transportation,
+        tweaks: CategoryEmojis.Tweaks,
+        utility: CategoryEmojis.Utility,
+        "vanilla-like": CategoryEmojis.Vanillalike,
+        wordgen: CategoryEmojis.WorldGeneration,
       };
 
       async function getProjectMembers(projectSlug, client) {
@@ -77,6 +145,7 @@ export default new Command({
           const users = (
             await client.modrinth.getProjectTeamMembers(projectSlug)
           ).map((m) => m.user?.username ?? "Unknown");
+
           if (!users.length)
             return "**Project Team Members:**\nNo members found.";
 
@@ -96,7 +165,10 @@ export default new Command({
               shown[shown.length - 1];
           }
 
-          return `**Project Team Members:**\n${formatted}`;
+          const label =
+            users.length === 1 ? "Project Team Member" : "Project Team Members";
+
+          return `**${label}:**\n${formatted}`;
         } catch {
           return "**Project Team Members:**\nUnable to fetch members.";
         }
@@ -150,13 +222,10 @@ export default new Command({
         new SectionBuilder()
           .addTextDisplayComponents(
             new TextDisplayBuilder().setContent(
-              `# ${project.title}\n\n${
-                project.description
-              }\n### Published <t:${Math.floor(
-                new Date(project.published).getTime() / 1000
-              )}:R> ┃ Updated <t:${Math.floor(
-                new Date(project.updated).getTime() / 1000
-              )}:R>`
+              `## ${project.title}\n\n${project.description}\n\n${await getProjectMembers(
+                project.slug,
+                client
+              )}`
             )
           )
           .setThumbnailAccessory(
@@ -173,22 +242,23 @@ export default new Command({
           .addTextDisplayComponents(
             new TextDisplayBuilder().setContent(
               [
-                `${Emojis.Loaders} ${project.loaders
-                  .map((l) => loaderMap[l] ?? Emojis.ModrinthOther)
-                  .join(" | ")}`,
-                `${Emojis.Versions} ${versions[0]} - ${
-                  versions[versions.length - 1]
+                `${Emojis.ClientSide} ${
+                  isClientOrServerSide[project.client_side]
                 }`,
                 `${Emojis.ServerSide} ${
                   isClientOrServerSide[project.server_side]
                 }`,
-                `${Emojis.ClientSide} ${
-                  isClientOrServerSide[project.client_side]
-                }`,
+                `${Emojis.Loaders} ${project.loaders
+                  .map((l) => loaderMap[l] ?? Emojis.Minecraft)
+                  .join(" | ")}`,
+                `${Emojis.Categories} ${project.categories
+                  .map((c) => categoryEmojis[c])
+                  .join(" | ")}`,
                 `${Emojis.Downloads} ${project.downloads.toLocaleString()}`,
-              ].join("\n") +
-                "\n\n" +
-                (await getProjectMembers(project.slug, client))
+                `${Emojis.Versions} ${versions[0]} - ${
+                  versions[versions.length - 1]
+                }`,
+              ].join("\n")
             )
           )
           .setButtonAccessory((button) =>
@@ -209,14 +279,16 @@ export default new Command({
         new SectionBuilder()
           .addTextDisplayComponents(
             new TextDisplayBuilder().setContent(
-              `Clicking the button opens a prompt to help you find the right mod file version through a few quick questions.`
+              `Clicking "Versions" will take you to the Modrinth website, where you can browse all available mod versions and pick the one you need.`
             )
           )
           .setButtonAccessory((button) =>
             button
-              .setCustomId("versions-view")
+              .setURL(
+                `https://modrinth.com/${project.project_type}/${project.slug}/versions`
+              )
               .setLabel("Versions")
-              .setStyle(ButtonStyle.Primary)
+              .setStyle(ButtonStyle.Link)
           )
       );
 
@@ -262,13 +334,26 @@ export default new Command({
         container.addActionRowComponents((row) => row.addComponents(buttons));
       }
 
+       container.addSeparatorComponents((sep) =>
+        sep.setDivider(false).setSpacing(SeparatorSpacingSize.Small)
+      );
+
+      container.addTextDisplayComponents(
+        new TextDisplayBuilder().setContent(
+          `-# Updated: <t:${Math.floor(
+                new Date(project.updated).getTime() / 1000
+              )}:R> ┃ Published <t:${Math.floor(
+                new Date(project.published).getTime() / 1000
+              )}:R>`
+        )
+      );
+
       const reply = await interaction.reply({
         components: [container],
         flags: [MessageFlags.IsComponentsV2],
       });
 
       const collector = reply.createMessageComponentCollector({
-        // filter: (collected) => collected.user.id !== interaction.user.id,
         time: 300000,
       });
 
@@ -280,56 +365,6 @@ export default new Command({
             }
             break;
 
-          case ComponentType.Button:
-            if (interaction.customId === "versions-view") {
-              const versions = await client.modrinth.getProjectVersions(
-                project.slug,
-                {
-                  loaders: project.loaders,
-                  game_versions: project.game_versions,
-                  featured: false,
-                }
-              );
-
-              const versionList = versions
-                .slice(0, 5) // Limit to first 5 versions
-                .map((v) => {
-                  const date = new Date(v.date_published).toLocaleDateString();
-                  const downloads = v.downloads?.toLocaleString() || "0";
-
-                  const filesList = v.files
-                    .map(
-                      (file) =>
-                        `> [${file.filename}](${file.url})${
-                          file.primary ? " (primary)" : ""
-                        }`
-                    )
-                    .join("\n");
-
-                  return [
-                    `**${v.name || v.game_versions[0]}**`,
-                    `> 📅 **Published:** ${date}`,
-                    `> ⬇️ **Downloads:** ${downloads}`,
-                    `> 📁 **Files:**\n${filesList}`,
-                  ].join("\n");
-                })
-                .join("\n\n");
-
-              await interaction.deferReply();
-
-              await interaction.followUp({
-                embeds: [
-                  new EmbedBuilder()
-                    .setTitle(`Version Selection for ${project.title}`)
-                    .setDescription(versionList)
-                    .setColor(Colors.Blue),
-                ],
-                flags: MessageFlags.Ephemeral,
-              });
-            }
-
-            break;
-
           default:
             break;
         }
@@ -339,7 +374,7 @@ export default new Command({
         await interaction.reply({
           embeds: [
             new EmbedBuilder()
-              .setDescription(`**Error:** ${err}`)
+              .setDescription(err instanceof Error ? err.message : String(err))
               .setColor(Colors.DarkRed),
           ],
         });
@@ -347,12 +382,6 @@ export default new Command({
   },
   autocomplete: async ({ client, interaction }) => {
     const input = interaction.options.getFocused(false);
-
-    if (!input || input.trim().length === 0) {
-      return interaction.respond([
-        { name: "Please enter a search term", value: "none" },
-      ]);
-    }
 
     const searchResults = await client.modrinth.search(input, {
       index: SearchIndex.Relevance,
